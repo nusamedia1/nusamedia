@@ -1,0 +1,5 @@
+[33m37d0012[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m Fix: Overwrite vercel output directory to root
+[33mdafdecf[m Fix: Move index.html into public directory to satisfy Vercel output
+[33mae0ab8b[m Fix: Force public output bypass using vercel json config
+[33ma183a9a[m Chore: Sinkronisasi akhir file HTML statis
+[33m2ce7f98[m Fix syntax conflict in package.json
