@@ -15,7 +15,7 @@ export default {
         throw new Error("Kunci rahasia NEWS_API_KEY belum diatur di dashboard Supabase!");
       }
 
-      -- Alamat asli NewsAPI lengkap dengan kategori berita bisnis/tren Indonesia
+      // 2. Alamat asli NewsAPI lengkap dengan kategori berita bisnis/tren Indonesia
       // 🔥 PERBAIKAN: Menambahkan simbol $ dan struktur endpoint NewsAPI yang benar
       const urlAsli = `https://newsapi.org{NEWS_API_KEY}`;
 
@@ -29,7 +29,7 @@ export default {
 
       const dataProxy = await responProxy.json();
       
-      -- Mengubah string teks hasil proksi kembali menjadi format JSON data berita asli
+      // Mengubah string teks hasil proksi kembali menjadi format JSON data berita asli
       const dataNews = JSON.parse(dataProxy.contents);
 
       if (!dataNews || dataNews.status === "error") {
@@ -50,7 +50,7 @@ export default {
         if (!artikel.title || !artikel.description) continue;
         if (setJudulAda.has(artikel.title)) continue; 
 
-        -- Pembuatan slug otomatis ramah SEO mesin pencari Google
+        // Pembuatan slug otomatis ramah SEO mesin pencari Google
         const slug = artikel.title
           .toLowerCase()
           .replace(/[^a-z0-9]+/g, '-')
