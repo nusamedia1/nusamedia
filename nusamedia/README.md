@@ -1,2 +1,0 @@
-# Nusa-Media# nusamedia
-# nusamedia
