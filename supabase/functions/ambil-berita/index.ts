@@ -16,10 +16,9 @@ export default {
       }
 
       // 2. Alamat asli NewsAPI lengkap dengan kategori berita bisnis/tren Indonesia
-      // 🔥 PERBAIKAN: Menambahkan simbol $ dan struktur endpoint NewsAPI yang benar
       const urlAsli = `https://newsapi.org{NEWS_API_KEY}`;
 
-      // 🔥 PERBAIKAN: Menambahkan simbol $ agar fungsi interpolasi string JavaScript aktif
+      // 3. Tembak melalui proksi allorigins dengan format parameter yang benar (?url=)
       const urlProxy = `https://allorigins.win{encodeURIComponent(urlAsli)}`;
       const responProxy = await fetch(urlProxy);
       
@@ -40,12 +39,12 @@ export default {
         return Response.json({ pesan: "Tidak ada berita baru disedot." }, { status: 200 });
       }
 
-      // 3. Tarik semua judul lama di database agar tidak duplikat
+      // 4. Tarik semua judul lama di database agar tidak duplikat
       const { data: listBeritaAda } = await supabase.from('berita').select('judul');
       const setJudulAda = new Set(listBeritaAda?.map(b => b.judul) || []);
       const dataAkanDimasukkan = [];
 
-      // 4. Olah data struktur artikel NewsAPI ke format tabel Anda
+      // 5. Olah data struktur artikel NewsAPI ke format tabel Anda
       for (const artikel of dataNews.articles) {
         if (!artikel.title || !artikel.description) continue;
         if (setJudulAda.has(artikel.title)) continue; 
@@ -70,7 +69,7 @@ export default {
         });
       }
 
-      // 5. Masukkan data sekaligus jika ada artikel baru
+      // 6. Masukkan data sekaligus jika ada artikel baru
       if (dataAkanDimasukkan.length > 0) {
         const { error: insertError } = await supabase.from('berita').insert(dataAkanDimasukkan);
         if (insertError) throw new Error(insertError.message);
@@ -81,8 +80,9 @@ export default {
         pesan: `Robot NewsAPI berhasil! Menambahkan ${dataAkanDimasukkan.length} berita baru lewat proksi.`
       });
 
-    } catch (error: any) {
-      return Response.json({ error: error.message }, { status: 500 });
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      return Response.json({ error: errorMessage }, { status: 500 });
     }
   }),
 };
