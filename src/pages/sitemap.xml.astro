@@ -1,0 +1,42 @@
+---
+// src/pages/sitemap.xml.astro
+import { supabase } from '../lib/supabase';
+
+// Mengaktifkan mode statis/prerender agar sitemap ikut dibuat saat proses build
+export const prerender = true;
+
+// 1. Ambil seluruh data berita dari database cloud Supabase
+const { data: listArtikel } = await supabase
+  .from('berita')
+  .select('id, created_at')
+  .order('created_at', { ascending: false });
+
+const domainUtama = "https://nusa-media.vercel.app";
+
+// 2. Susun susunan dokumen XML secara terstruktur (DIPERBAIKI SECARA RESMI)
+const XMLMurni = `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://sitemaps.org">
+  <!-- Halaman Utama Website -->
+  <url>
+    <loc>${domainUtama}/</loc>
+    <priority>1.0</priority>
+    <changefreq>hourly</changefreq>
+  </url>
+  <url>
+    <loc>${domainUtama}/syarat/</loc>
+    <priority>0.3</priority>
+  </url>
+
+  <!-- Sinkronisasi Daftar Artikel Berita Otomatis Berbasis ID -->
+  ${listArtikel ? listArtikel.map((art) => `  <url>
+    <loc>${domainUtama}/berita/${art.id}</loc>
+    <lastmod>${art.created_at ? new Date(art.created_at).toISOString().split('T')[0] : new Date().toISOString().split('T')[0]}</lastmod>
+    <priority>0.8</priority>
+    <changefreq>daily</changefreq>
+  </url>`).join('\n') : ''}
+</urlset>`.trim();
+
+// 3. Setel header respons dan keluarkan dokumen tanpa merusak struktur HTML Astro
+Astro.response.headers.set('Content-Type', 'application/xml');
+---
+<Fragment set:html={XMLMurni} />

@@ -1,0 +1,10 @@
+---
+// src/pages/pendukung.astro
+export const prerender = false; // Menggunakan mode dinamis SSR agar formulir input berita berfungsi penuh
+
+// 🔥 PERBAIKAN: Menyatukan nama variabel impor tanpa spasi agar tidak crash saat di-build Vercel
+import ControlCenterSystem from './admin-rahasia-99/index.astro';
+---
+
+<!-- 🔥 PERBAIKAN: Memanggil tag komponen dengan penamaan variabel yang sudah diselaraskan -->
+<ControlCenterSystem />

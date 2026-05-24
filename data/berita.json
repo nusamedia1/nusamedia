@@ -1,0 +1,32 @@
+[
+  {
+    "id": 4,
+    "slug": "nusa-media-sukses-meluncurkan-portal-berita-hybrid-modern",
+    "judul": "Nusa-Media Sukses Meluncurkan Portal Berita Hybrid Berkecepatan Tinggi",
+    "konten": "Portal berita Nusa-Media resmi mengudara menggunakan arsitektur modern Jamstack. Sistem ini menggabungkan database live Supabase dan cadangan otomatis berbasis repositori GitHub. Penerapan teknologi ini memastikan situs tetap dapat diakses 100% tanpa gangguan meskipun database utama mengalami lonjakan lalu lintas atau kehabisan batas kuota.",
+    "kategori": "Fokus",
+    "image_url": "https://unsplash.com",
+    "penulis": "Redaksi",
+    "created_at": "2026-05-21T11:00:00Z"
+  },
+  {
+    "id": 6,
+    "slug": "penerapan-teknologi-cloud-saver-pada-media-lokal",
+    "judul": "Penerapan Teknologi Cloud Saver Diklaim Mampu Hemat Anggaran Media Lokal",
+    "konten": "Penggunaan arsitektur de-coupled dengan pemuatan konten di sisi klien (client-side fetch) terbukti memotong biaya infrastruktur hingga nol rupiah pada skala awal. Nusa-Media menjadi salah satu pelopor portal daerah yang memanfaatkan ekosistem Astro, Vercel, Netlify, dan Supabase secara bersamaan untuk efisiensi performa maksimal.",
+    "kategori": "Ekonomi",
+    "image_url": "https://unsplash.com",
+    "penulis": "Ikhwan Permana",
+    "created_at": "2026-05-21T10:30:00Z"
+  },
+  {
+    "id": 7,
+    "slug": "perkembangan-literasi-digital-di-regional-nusantara",
+    "judul": "Perkembangan Literasi Digital di Regional Nusantara Mengalami Lonjakan",
+    "konten": "Kebutuhan masyarakat akan informasi yang cepat, bersih, dan bebas iklan pop-up mengganggu mendorong pengembang lokal menciptakan wadah informasi yang ramah pembaca. Dengan optimasi skrip pemetaan CSS, kedipan layar saat memuat halaman kini dapat dieliminasi sepenuhnya menggunakan standar kode terbaru.",
+    "kategori": "Politik",
+    "image_url": "https://unsplash.com",
+    "penulis": "Admin",
+    "created_at": "2026-05-21T09:15:00Z"
+  }
+]

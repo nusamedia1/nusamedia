@@ -1,0 +1,6 @@
+/* Mengaktifkan komponen dasar Tailwind v3 secara aman */
+/* stylelint-disable at-rule-no-unknown */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+/* stylelint-enable at-rule-no-unknown */

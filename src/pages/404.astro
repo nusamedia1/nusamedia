@@ -1,0 +1,31 @@
+---
+// src/pages/404.astro
+export const prerender = true; // Mengaktifkan mode statis murni untuk performa maksimal
+
+// 🔥 OPTIMASI: Mengimpor gaya desain terpadu agar font Roboto ikut aktif di halaman ini
+import '../styles/global.css';
+---
+<html lang="id">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Halaman Tidak Ditemukan | Nusa-Media</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://w3.org viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📰</text></svg>">
+    
+    <!-- 🔥 PERBAIKAN 1: Menggunakan tautan CDN resmi Tailwind agar desain kotak aktif sempurna -->
+    <script src="https://tailwindcss.com"></script>
+    <style>body { font-family: 'Roboto', sans-serif; }</style>
+  </head>
+  <body class="bg-gray-100 flex items-center justify-center min-h-screen text-center p-4 antialiased">
+    
+    <div class="max-w-md w-full bg-white p-8 rounded-2xl shadow-sm border border-gray-200">
+      <h1 class="text-6xl font-black text-red-600 mb-2 tracking-tighter">404</h1>
+      <h2 class="text-xl font-bold text-slate-900 mb-3">Halaman Tidak Ditemukan</h2>
+      <p class="text-gray-500 text-sm mb-6 leading-relaxed">Tautan yang Anda tuju mungkin salah ketik, tidak valid, atau telah dinonaktifkan oleh administrator Nusa-Media.</p>
+      <a href="/" class="inline-block bg-slate-900 text-white font-bold px-6 py-2.5 rounded-xl text-xs hover:bg-black shadow-xs transition duration-200">
+        ← Kembali ke Beranda Utama
+      </a>
+    </div>
+
+  </body>
+</html>

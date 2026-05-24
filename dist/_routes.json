@@ -1,0 +1,10 @@
+{
+  "version": 1,
+  "include": [
+    "/",
+    "/_image",
+    "/berita/*",
+    "/pendukung"
+  ],
+  "exclude": []
+}

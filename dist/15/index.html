@@ -1,0 +1,76 @@
+<!DOCTYPE html><html lang="id" data-astro-cid-yvbahnfj> <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Nusa Media - Baca Berita</title><!-- PERBAIKAN 1: Menggunakan CDN resmi Tailwind CSS agar styling terbaca --><!-- PERBAIKAN 2: Mengoreksi tautan Google Fonts yang rusak agar tidak memicu error build 404 --><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://gstatic.com" crossorigin><link href="https://googleapis.com" rel="stylesheet"><style>body{font-family:Roboto,sans-serif}
+</style><script type="module" src="/_astro/hoisted.DjksiXzr.js"></script></head> <body class="bg-gray-100 text-gray-900 antialiased min-h-screen" data-astro-cid-yvbahnfj> <div class="max-w-5xl mx-auto px-4 pt-8" data-astro-cid-yvbahnfj> <a href="/" class="text-sm font-bold text-red-600 hover:text-red-700 transition" data-astro-cid-yvbahnfj>← Kembali ke Beranda</a> </div> <!-- TATA LETAK PORTAL BERITA MULTI-SLOT --> <main class="max-w-5xl mx-auto px-4 py-6 grid grid-cols-1 lg:grid-cols-3 gap-6" data-astro-cid-yvbahnfj> <!-- KOLOM UTAMA BERITA (KIRI) --> <div class="lg:col-span-2 space-y-6" data-astro-cid-yvbahnfj> <!-- 📢 SLOT 1: IKLAN ATAS ARTIKEL --> <div id="slot-iklan-atas" class="w-full hidden" data-astro-cid-yvbahnfj></div> <article id="kontenArtikel" class="bg-white rounded-xl border border-gray-200 p-6 sm:p-8 shadow-sm space-y-6" data-astro-cid-yvbahnfj> <div class="space-y-4 animate-pulse" data-astro-cid-yvbahnfj> <div class="h-4 bg-gray-200 rounded w-1/4" data-astro-cid-yvbahnfj></div> <div class="h-8 bg-gray-200 rounded w-3/4" data-astro-cid-yvbahnfj></div> <div class="h-64 bg-gray-200 rounded-xl w-full" data-astro-cid-yvbahnfj></div> </div> </article> <!-- 📢 SLOT 2: IKLAN BAWAH ARTIKEL --> <div id="slot-iklan-bawah" class="w-full hidden" data-astro-cid-yvbahnfj></div> </div> <!-- SIDEBAR KANAN --> <div class="space-y-6" data-astro-cid-yvbahnfj> <!-- 📢 SLOT 3: IKLAN ATAS SIDEBAR --> <div id="slot-iklan-sidebar" class="w-full hidden" data-astro-cid-yvbahnfj></div> <div class="bg-slate-900 text-white p-4 rounded-xl shadow-xs" data-astro-cid-yvbahnfj> <h3 class="text-xs font-bold uppercase tracking-wider text-red-500 mb-2" data-astro-cid-yvbahnfj># Info Nusa Media</h3> <p class="text-xs text-gray-400 leading-relaxed" data-astro-cid-yvbahnfj>Membaca informasi aktual langsung terhubung ke jaringan cloud database proksi kilat.</p> </div> </div> </main> <script>(function(){const slug = "15";
+
+      const SUPABASE_PROJECT_ID = "zmvlvzspjohrewjbtfxc";
+      const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inptdmx2enNwam9ocmV3amJ0ZnhjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkwMTM0MTAsImV4cCI6MjA5NDU4OTQxMH0.PtTVq_b4gLonRpNSbPYKncoXlGVS1lKaADy74dbhuSI";
+      const BASE_URL = `https://${SUPABASE_PROJECT_ID}.supabase.co/rest/v1`;
+
+      // Fungsi cerdas merender jenis materi iklan (Gambar/PDF/HTML)
+      function renderMateriIklan(iklan) {
+        if (!iklan) return '';
+        const format = iklan.status; 
+        const data = iklan.gambar_url; 
+
+        if (format === 'Gambar') {
+          return `<a href="${iklan.link_tujuan || '#'}" target="_blank" class="block w-full overflow-hidden rounded-xl shadow-xs hover:opacity-95 transition">
+                    <img src="${data}" alt="Sponsor" class="w-full h-auto object-cover" />
+                  </a>`;
+        } else if (format === 'PDF') {
+          return `<div class="bg-white p-2 rounded-xl border border-gray-200 shadow-xs">
+                    <iframe src="${data}" class="w-full h-64 rounded-lg" border="0"></iframe>
+                    <a href="${data}" target="_blank" class="block text-center text-[11px] font-bold text-red-600 mt-1 hover:underline">Buka PDF di Tab Baru ↗</a>
+                  </div>`;
+        } else if (format === 'HTML') {
+          return `<div class="w-full overflow-hidden rounded-xl bg-white p-4 border shadow-xs">${data}</div>`;
+        }
+        return '';
+      }
+
+      async function muatHalamanDanIklan() {
+        try {
+          const isNumeric = /^\d+$/.test(slug);
+          const queryParam = isNumeric ? `id=eq.${slug}` : `slug=eq.${slug}`;
+
+          // 1. Tarik Data Berita
+          const resBerita = await fetch(`${BASE_URL}/berita?${queryParam}&select=*`, {
+            headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}` }
+          });
+          const dataBerita = await resBerita.json();
+          const berita = dataBerita && dataBerita.length > 0 ? dataBerita[0] : null;
+
+          if (!berita) {
+            document.getElementById('kontenArtikel').innerHTML = `<p class="text-center text-gray-500">Artikel tidak ditemukan.</p>`;
+            return;
+          }
+
+          document.getElementById('kontenArtikel').innerHTML = `
+            <div class="space-y-4">
+              <span class="bg-red-600 text-white text-[10px] font-bold px-2.5 py-1 rounded uppercase tracking-wider inline-block">${berita.kategori || 'Fokus'}</span>
+              <h1 class="text-2xl sm:text-3xl font-black text-gray-900 leading-tight">${berita.judul}</h1>
+              <p class="text-xs text-gray-400 border-b pb-2">Penulis: <strong class="text-gray-700">${berita.penulis || 'Redaksi'}</strong></p>
+              <img src="${berita.gambar_url}" class="w-full h-auto max-h-[400px] object-cover rounded-xl shadow-xs" />
+              <p class="text-gray-800 text-base leading-relaxed whitespace-pre-line pt-4 font-serif">${berita.isi_konten}</p>
+            </div>
+          `;
+
+          // 2. Tarik Semua Iklan Aktif
+          const resIklan = await fetch(`${BASE_URL}/iklan?select=*`, {
+            headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}` }
+          });
+          const listIklan = await resIklan.json();
+
+          if (Array.isArray(listIklan)) {
+            // PERBAIKAN 3: Menyelaraskan selektor nama string agar sesuai dengan pilihan opsi di halaman admin kustom Anda
+            const adAtas = listIklan.find(ad => ad.posisi === 'Header Utama');
+            const adBawah = listIklan.find(ad => ad.posisi === 'Tengah Artikel');
+            const adSidebar = listIklan.find(ad => ad.posisi === 'Sidebar Kanan');
+
+            if (adAtas) { const el = document.getElementById('slot-iklan-atas'); el.innerHTML = renderMateriIklan(adAtas); el.classList.remove('hidden'); }
+            if (adBawah) { const el = document.getElementById('slot-iklan-bawah'); el.innerHTML = renderMateriIklan(adBawah); el.classList.remove('hidden'); }
+            if (adSidebar) { const el = document.getElementById('slot-iklan-sidebar'); el.innerHTML = renderMateriIklan(adSidebar); el.classList.remove('hidden'); }
+          }
+        } catch (e) { console.error(e); }
+      }
+
+      muatHalamanDanIklan();
+    })();</script> </body> </html>
