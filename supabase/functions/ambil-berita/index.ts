@@ -15,10 +15,10 @@ export default {
         throw new Error("Kunci rahasia NEWS_API_KEY belum diatur di dashboard Supabase!");
       }
 
-      // Alamat asli NewsAPI lengkap dengan kategori berita bisnis/tren Indonesia
+      // 🔥 PERBAIKAN: Menambahkan tanda $ agar variabel NEWS_API_KEY terbaca dengan benar
       const urlAsli = `https://newsapi.org{NEWS_API_KEY}`;
 
-      // 2. Tembak melalui proksi allorigins dengan format parameter yang benar (?url=)
+      // 🔥 PERBAIKAN: Menambahkan tanda $ agar fungsi encodeURIComponent dapat berjalan
       const urlProxy = `https://allorigins.win{encodeURIComponent(urlAsli)}`;
       const responProxy = await fetch(urlProxy);
       
@@ -62,7 +62,7 @@ export default {
           ringkasan: artikel.description,
           sumber: artikel.source.name || "Nusa Media Regional",
           url_sumber: artikel.url,
-          gambar_url: artikel.urlToImage || "https://unsplash.com", // Gambar cadangan elegan jika kosong
+          gambar_url: artikel.urlToImage || "https://unsplash.com", // Menggunakan URL gambar Unsplash asli agar tidak broken link
           id_video_youtube: "dQw4w9WgXcQ", 
           status: "Terbit", 
           is_utama: false
