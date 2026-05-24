@@ -2,7 +2,7 @@
 node_modules/
 jspm_packages/
 
-# Environments (Posisikan sejajar di baris baru)
+# Environments
 .env
 .env.local
 .env.development.local
@@ -11,6 +11,10 @@ jspm_packages/
 logs
 *.log
 .vercel
+
+# Astro Internal & Cache (Tambahan Wajib)
+.astro/
+dist/
 
 # Folder Cadangan Astro
 cadangan-astro/

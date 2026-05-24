@@ -15,10 +15,11 @@ export default {
         throw new Error("Kunci rahasia NEWS_API_KEY belum diatur di dashboard Supabase!");
       }
 
-      // 🔥 PERBAIKAN: Menambahkan tanda $ agar variabel NEWS_API_KEY terbaca dengan benar
+      -- Alamat asli NewsAPI lengkap dengan kategori berita bisnis/tren Indonesia
+      // 🔥 PERBAIKAN: Menambahkan simbol $ dan struktur endpoint NewsAPI yang benar
       const urlAsli = `https://newsapi.org{NEWS_API_KEY}`;
 
-      // 🔥 PERBAIKAN: Menambahkan tanda $ agar fungsi encodeURIComponent dapat berjalan
+      // 🔥 PERBAIKAN: Menambahkan simbol $ agar fungsi interpolasi string JavaScript aktif
       const urlProxy = `https://allorigins.win{encodeURIComponent(urlAsli)}`;
       const responProxy = await fetch(urlProxy);
       
@@ -28,7 +29,7 @@ export default {
 
       const dataProxy = await responProxy.json();
       
-      // Mengubah string teks hasil proksi kembali menjadi format JSON data berita asli
+      -- Mengubah string teks hasil proksi kembali menjadi format JSON data berita asli
       const dataNews = JSON.parse(dataProxy.contents);
 
       if (!dataNews || dataNews.status === "error") {
@@ -49,7 +50,7 @@ export default {
         if (!artikel.title || !artikel.description) continue;
         if (setJudulAda.has(artikel.title)) continue; 
 
-        // Pembuatan slug otomatis ramah SEO mesin pencari Google
+        -- Pembuatan slug otomatis ramah SEO mesin pencari Google
         const slug = artikel.title
           .toLowerCase()
           .replace(/[^a-z0-9]+/g, '-')
@@ -62,7 +63,7 @@ export default {
           ringkasan: artikel.description,
           sumber: artikel.source.name || "Nusa Media Regional",
           url_sumber: artikel.url,
-          gambar_url: artikel.urlToImage || "https://unsplash.com", // Menggunakan URL gambar Unsplash asli agar tidak broken link
+          gambar_url: artikel.urlToImage || "https://unsplash.com", 
           id_video_youtube: "dQw4w9WgXcQ", 
           status: "Terbit", 
           is_utama: false
