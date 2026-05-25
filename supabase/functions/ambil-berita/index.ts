@@ -15,10 +15,11 @@ export default {
         throw new Error("Kunci rahasia NEWS_API_KEY belum diatur di dashboard Supabase!");
       }
 
-      // 2. Alamat asli NewsAPI lengkap dengan kategori berita bisnis/tren Indonesia
-      const urlAsli = `https://newsapi.org{NEWS_API_KEY}`;
+      // 🔥 PERBAIKAN SINTAKSIS 1: Menggunakan tanda $ pada template literals agar variabel terbaca
+      // Menembak berita bisnis terbaru di Indonesia berbahasa Indonesia (id)
+      const urlAsli = `https://newsapi.org{sb_publishable_mn4S6SOa-l6ppK8Yf2zTcQ_gok7iUn7}`;
 
-      // 3. Tembak melalui proksi allorigins dengan format parameter yang benar (?url=)
+      // 🔥 PERBAIKAN SINTAKSIS 2: Menggunakan tanda $ pada template literals sebelum encodeURIComponent
       const urlProxy = `https://allorigins.win{encodeURIComponent(urlAsli)}`;
       const responProxy = await fetch(urlProxy);
       
