@@ -3,11 +3,11 @@ import tailwind from '@astrojs/tailwind';
 import cloudflare from '@astrojs/cloudflare';
 
 export default defineConfig({
-  output: 'hybrid', 
-  adapter: cloudflare(), // Biarkan kosong atau default jika tidak ada opsi rute khusus
+  output: 'server', // 💡 Ubah ke server agar Astro membangun file _worker.js tunggal
+  adapter: cloudflare(),
   image: {
     service: {
-      entrypoint: 'astro/assets/services/noop' // Pasang di sini untuk mematikan Sharp secara global
+      entrypoint: 'astro/assets/services/noop'
     }
   },
   integrations: [tailwind({
