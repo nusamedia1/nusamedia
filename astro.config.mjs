@@ -2,16 +2,15 @@ import { defineConfig } from 'astro/config';
 import tailwind from '@astrojs/tailwind';
 import cloudflare from '@astrojs/cloudflare';
 
-// Konfigurasi Terkunci Nusa Media - Migrasi Cloudflare Runtime 2026
 export default defineConfig({
   output: 'hybrid', 
-  adapter: cloudflare({
-    // Menggunakan pemrosesan gambar internal Cloudflare agar tidak bentrok dengan Sharp
-    imageService: 'compile' 
-  }),
+  adapter: cloudflare(), // Biarkan kosong atau default jika tidak ada opsi rute khusus
+  image: {
+    service: {
+      entrypoint: 'astro/assets/services/noop' // Pasang di sini untuk mematikan Sharp secara global
+    }
+  },
   integrations: [tailwind({
-    // 🔥 PERBAIKAN MUTLAK: Memberitahu Astro agar tidak menyuntikkan gaya Tailwind bawaan kosong, 
-    // melainkan dipaksa menggunakan aturan dari file global.css milik Anda.
     applyBaseStyles: false 
   })],
 });
