@@ -7,7 +7,7 @@
     "start": "astro dev",
     "build": "astro build",
     "preview": "wrangler pages dev ./dist",
-    "deploy": "npm run build && wrangler deploy --non-interactive",
+    "deploy": "npm run build && wrangler pages deploy ./dist --project-name=nusamedia --branch=main",
     "cf-typegen": "wrangler types"
   },
   "dependencies": {
