@@ -1,5 +1,5 @@
 {
-  "name": "nusa-media",
+  "name": "nu",
   "version": "1.0.0",
   "type": "module",
   "scripts": {
@@ -7,7 +7,7 @@
     "start": "astro dev",
     "build": "astro build",
     "preview": "wrangler pages dev ./dist",
-    "deploy": "npm run build && wrangler pages deploy ./dist --project-name=nusamedia --branch=main",
+    "deploy": "npm run build && wrangler pages deploy ./dist --project-name=numed --branch=main",
     "cf-typegen": "wrangler types"
   },
   "dependencies": {

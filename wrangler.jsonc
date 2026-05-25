@@ -1,6 +1,6 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
-  "name": "nusamedia", // 💡 Pastikan ini sama dengan nama baru di dasbor Cloudflare Anda
+  "name": "numed", // 💡 Pastikan ini sama dengan nama baru di dasbor Cloudflare Anda
   "compatibility_date": "2026-05-25",
   "observability": {
     "enabled": true
