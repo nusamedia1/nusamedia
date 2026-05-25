@@ -2,7 +2,6 @@
 // src/pages/index.astro
 export const prerender = false; // Menerapkan SSR agar halaman beranda selalu memuat berita paling baru secara real-time
 
-// 🔥 PERBAIKAN MUTLAK: Hapus baris impor Fragment manual karena sudah otomatis ada di Astro
 import { supabase } from '../lib/supabase'; 
 import '../styles/global.css';
 
@@ -21,7 +20,7 @@ const { data: daftarIklan } = await supabase
 const beritaSedia = daftarBerita || [];
 const iklanSedia = daftarIklan || [];
 
-// 🔥 PENYARING PENGAMAN: Fungsi pembantu penangkap data iklan zona kustom
+// Fungsi pembantu penangkap data iklan zona kustom
 const ambilIklanZona = (zona) => {
   if (!iklanSedia || iklanSedia.length === 0) return null;
   return iklanSedia.find(ad => ad && ad.zona_penempatan === zona) || null;
@@ -47,7 +46,7 @@ const deskripsiSEO = "Platform media digital modern yang menyajikan informasi va
     <title>{judulSEO}</title>
     <meta name="description" content={deskripsiSEO} />
   </head>
-  <body class="bg-gray-100 text-gray-900 min-h-screen antialiased pb-24">
+  <body class="bg-gray-100 text-gray-900 min-h-screen antialiased pb-32 relative">
     
     <!-- ── 📦 SLOT 1: HEADER TOP AD ── -->
     {iklanHeader && iklanHeader.url_banner_kreatif && (
@@ -92,7 +91,7 @@ const deskripsiSEO = "Platform media digital modern yang menyajikan informasi va
           </div>
         )}
 
-        <!-- 🔥 PERBAIKAN TOTAL SINTAKSIS: Menggunakan struktur asli bawaan loop Astro yang super kencang & 100% lolos kompilasi esbuild -->
+        <!-- LOOP BERITA -->
         {beritaSedia.map((item: any, index: number) => (
           <Fragment>
             <article class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden flex flex-col hover:shadow-md transition">
@@ -163,27 +162,27 @@ const deskripsiSEO = "Platform media digital modern yang menyajikan informasi va
       </div>
     </main>
 
-    <!-- ── 📦 SLOT 6: FOOTER WIDE BANNER ── -->
+    <!-- ── 📦 SLOT 6: FOOTER BANNER ── -->
     {iklanFooter && iklanFooter.url_banner_kreatif && (
-      <footer class="mt-12 bg-white border-t border-gray-200 py-6">
+      <div class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 py-2 z-40 shadow-lg">
         <div class="max-w-5xl mx-auto px-4 flex flex-col items-center">
-          <span class="text-[8px] font-bold text-gray-400 tracking-widest mb-2">COMMERCIAL BANNER</span>
-          <a href={iklanFooter.url_tujuan || '#'} target="_blank" rel="noopener noreferrer" class="w-full max-w-3xl block transition hover:opacity-95">
-            <img src={iklanFooter.url_banner_kreatif} alt={iklanFooter.nama_sponsor} class="w-full h-auto rounded border border-gray-200" />
+          <span class="text-[8px] font-bold text-gray-400 uppercase tracking-widest mb-0.5">EXCLUSIVE AD</span>
+          <a href={iklanFooter.url_tujuan || '#'} target="_blank" rel="noopener noreferrer" class="block">
+            <img src={iklanFooter.url_banner_kreatif} alt={iklanFooter.nama_sponsor} class="max-h-[60px] w-auto object-contain" />
           </a>
         </div>
-      </footer>
+      </div>
     )}
 
-    <!-- ── 📦 SLOT 7: POPUP FLOAT AD ── -->
+    <!-- ── 📦 SLOT 7: POPUP FLOAT ── -->
     {iklanPopup && iklanPopup.url_banner_kreatif && (
-      <div class="fixed bottom-4 right-4 z-50 max-w-[260px] bg-white border border-gray-300 p-2 rounded-xl shadow-2xl hidden sm:block">
-        <div class="flex justify-between items-center mb-1 px-1">
-          <span class="text-[8px] font-black text-red-500 uppercase tracking-widest">Sponsored</span>
-          <button onclick="this.parentElement.parentElement.remove()" class="text-xs font-bold text-gray-400 hover:text-black cursor-pointer px-1">✕</button>
+      <div id="popup-float" class="fixed bottom-24 right-4 z-50 max-w-[200px] bg-white p-2 rounded-xl shadow-xl border border-gray-200 hidden sm:block">
+        <div class="flex justify-between items-center mb-1">
+          <span class="text-[8px] font-bold text-gray-400 uppercase tracking-widest">PROMO</span>
+          <button onclick="document.getElementById('popup-float').remove()" class="text-gray-400 hover:text-gray-600 text-xs font-bold px-1">✕</button>
         </div>
         <a href={iklanPopup.url_tujuan || '#'} target="_blank" rel="noopener noreferrer" class="block">
-          <img src={iklanPopup.url_banner_kreatif} alt={iklanPopup.nama_sponsor} class="w-full h-auto rounded" />
+          <img src={iklanPopup.url_banner_kreatif} alt={iklanPopup.nama_sponsor} class="w-full h-auto rounded-lg" />
         </a>
       </div>
     )}
