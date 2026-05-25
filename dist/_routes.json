@@ -3,6 +3,8 @@
   "include": [
     "/",
     "/_image",
+    "/kontak",
+    "/privasi",
     "/berita/*",
     "/pendukung"
   ],
