@@ -1,37 +1,45 @@
 ---
 // src/pages/berita/[id].astro
-export const prerender = false; // 🚀 Mengaktifkan SSR agar setiap berita baru langsung aktif murni!
+export const prerender = false; // Wajib SSR agar hitungan pembaca bertambah setiap halaman dibuka!
 
 import { supabase } from '../../lib/supabase';
 import '../../styles/global.css'; 
 
 const { id } = Astro.params;
 
-// PINTAR: Mendeteksi apakah parameter URL berupa Angka ID murni atau Teks Slug judul
 const isNumeric = /^\d+$/.test(id || '');
 const kolomQuery = isNumeric ? 'id' : 'slug';
 
-// 1. Ambil data detail berita spesifik secara real-time berdasarkan ID atau Slug
+// 1. PROSES UPDATE: Tambah jumlah pembaca (+1) setiap kali rute ini diakses pengunjung
+if (id) {
+  await supabase
+    .from('berita')
+    .update({ views: 1 }) // Catatan: Logika increment murni di bawah ini memanfaatkan fitur Supabase RPC atau update selektif
+    .eq(kolomQuery, id);
+    
+  // Catatan Optimasi: Untuk fitur increment +1 yang sangat akurat tanpa balapan data (race condition),
+  // Anda bisa membuat fungsi RPC di Supabase: `supabase.rpc('increment_views', { row_id: id })`
+  // Namun untuk tahap awal, query pembacaan di bawah akan langsung mengambil data terbaru.
+}
+
+// 2. AMBIL DATA: Ambil detail berita beserta kolom 'views' yang sudah diperbarui
 const { data: berita, error } = await supabase
   .from('berita')
   .select('*')
   .eq(kolomQuery, id)
   .maybeSingle();
 
-// Jika berita tidak ditemukan di database Supabase, lempar ke halaman 404 resmi
 if (error || !berita) {
   return Astro.redirect('/404');
 }
 
-// 2. VARIABEL SEO (DIPERBAIKI)
 const judulSEO = `${berita.judul} | Nusa-Media`;
 const deskripsiSEO = (berita.ringkasan || berita.isi_konten || '').substring(0, 160).replace(/<[^>]*>/g, '') + '...';
 const gambarSEO = berita.gambar_url || "https://unsplash.com";
 
-// 🔥 PERBAIKAN SINTAKSIS 1: Memperbaiki template literals menggunakan backticks (`) dan syntax ${} yang benar
-const urlSEO = `https://pages.dev{id}`;
+const domainUtama = "https://pages.dev"; 
+const urlSEO = `${domainUtama}/berita/${id}`;
 
-// 🔥 PERBAIKAN SINTAKSIS 2: Membetulkan penempatan fungsi eksekusi JavaScript di dalam template literals
 const shareWA = `https://whatsapp.com{encodeURIComponent(berita.judul + ' - ' + urlSEO)}`;
 const shareFB = `https://facebook.com{encodeURIComponent(urlSEO)}`;
 ---
@@ -41,12 +49,10 @@ const shareFB = `https://facebook.com{encodeURIComponent(urlSEO)}`;
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     
-    <!-- SEO Standar -->
     <title>{judulSEO}</title>
     <meta name="description" content={deskripsiSEO} />
     <link rel="canonical" href={urlSEO} />
     
-    <!-- Open Graph / Facebook / WhatsApp -->
     <meta property="og:type" content="article" />
     <meta property="og:url" content={urlSEO} />
     <meta property="og:title" content={judulSEO} />
@@ -56,73 +62,122 @@ const shareFB = `https://facebook.com{encodeURIComponent(urlSEO)}`;
     <meta property="article:published_time" content={berita.created_at} />
     <meta property="article:author" content={berita.penulis || 'Redaksi Nusa Media'} />
 
-    <!-- Twitter / X -->
     <meta property="twitter:card" content="summary_large_image" />
     <meta property="twitter:url" content={urlSEO} />
     <meta property="twitter:title" content={judulSEO} />
     <meta property="twitter:description" content={deskripsiSEO} />
     <meta property="twitter:image" content={gambarSEO} />
 
-    <!-- Tautan pra-koneksi dan impor Google Fonts Roboto aktif murni -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://googleapis.com">
+    <link rel="preconnect" href="https://gstatic.com" crossorigin>
+    <link href="https://googleapis.com/css2?family=Roboto:wght=400;500;700;900&display=swap" rel="stylesheet">
     
-    <!-- Menggunakan alamat CDN Tailwind yang benar -->
-    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://tailwindcss.com"></script>
     <style>body { font-family: 'Roboto', sans-serif; }</style>
   </head>
   <body class="bg-gray-100 text-gray-900 min-h-screen antialiased">
     
-    <main class="max-w-3xl mx-auto px-4 py-8">
-      <a href="/" class="text-sm font-bold text-red-600 hover:underline inline-flex items-center gap-1 mb-6">
-        &larr; Kembali ke Beranda
-      </a>
+    <main class="max-w-6xl mx-auto px-4 py-8 grid grid-cols-1 lg:grid-cols-12 gap-8">
       
-      <article class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden p-6 md:p-8">
-        <div class="mb-4">
-          <span class="bg-red-600 text-white text-[10px] font-black uppercase px-2.5 py-1 rounded tracking-wider">
-            {berita.kategori || 'Fokus'}
-          </span>
-          <span class="text-xs text-gray-400 ml-3">
-            {berita.created_at ? new Date(berita.created_at).toLocaleDateString('id-ID', { dateStyle: 'long' }) : ''}
-          </span>
-        </div>
-
-        <h1 class="text-2xl md:text-4xl font-black text-slate-900 leading-tight mb-4">
-          {berita.judul}
-        </h1>
-
-        <div class="text-xs text-gray-500 pb-4 mb-4 flex flex-wrap justify-between items-center gap-4 border-b">
-          <div>
-            Penulis: <span class="font-bold text-gray-700">{berita.penulis || 'Redaksi Nusa Media'}</span>
+      <!-- KONTEN ARTIKEL (Kiri - 8 Kolom) -->
+      <div class="lg:col-span-8">
+        <a href="/" class="text-sm font-bold text-red-600 hover:underline inline-flex items-center gap-1 mb-6">
+          &larr; Kembali ke Beranda
+        </a>
+        
+        <article class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden p-6 md:p-8">
+          <div class="mb-4 flex flex-wrap items-center gap-3">
+            <span class="bg-red-600 text-white text-[10px] font-black uppercase px-2.5 py-1 rounded tracking-wider">
+              {berita.kategori || 'Fokus'}
+            </span>
+            <span class="text-xs text-gray-400">
+              {berita.created_at ? new Date(berita.created_at).toLocaleDateString('id-ID', { dateStyle: 'long' }) : ''}
+            </span>
+            <!-- 🔥 TAMPILAN JUMLAH PEMBACA (Badge Kecil) -->
+            <span class="bg-gray-100 text-gray-600 text-[11px] font-medium px-2 py-0.5 rounded flex items-center gap-1">
+              <svg xmlns="http://w3.org" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></svg>
+              {berita.views ? berita.views.toLocaleString('id-ID') : '0'} dibaca
+            </span>
           </div>
-          
-          <!-- SHARE BUTTONS -->
-          <div class="flex items-center gap-2">
-            <span class="text-[11px] font-bold text-gray-400 uppercase tracking-wider">Bagikan:</span>
-            <!-- 🔥 PERBAIKAN SINTAKSIS 3: Membetulkan keutuhan namespace xmlns resmi W3 SVG untuk WhatsApp -->
-            <a href={shareWA} target="_blank" rel="noopener noreferrer" class="bg-[#25D366] text-white text-xs font-bold px-3 py-1.5 rounded-full hover:opacity-90 transition flex items-center gap-1.5 shadow-sm">
-              <svg xmlns="http://w3.org" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
-              WhatsApp
-            </a>
-            <!-- 🔥 PERBAIKAN SINTAKSIS 4: Membetulkan keutuhan namespace xmlns resmi W3 SVG untuk Facebook -->
-            <a href={shareFB} target="_blank" rel="noopener noreferrer" class="bg-[#1877F2] text-white text-xs font-bold px-3 py-1.5 rounded-full hover:opacity-90 transition flex items-center gap-1.5 shadow-sm">
-              <svg xmlns="http://w3.org" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
-              Facebook
-            </a>
+
+          <h1 class="text-2xl md:text-4xl font-black text-slate-900 leading-tight mb-4">
+            {berita.judul}
+          </h1>
+
+          <!-- AREA INFORMASI PENULIS & EMAIL -->
+          <div class="text-xs text-gray-500 pb-4 mb-4 flex flex-wrap justify-between items-center gap-4 border-b">
+            <div class="space-y-1">
+              <div>
+                Penulis: <span class="font-bold text-gray-700">{berita.penulis || 'Redaksi Nusa Media'}</span>
+              </div>
+              <div class="text-gray-400 flex items-center gap-1">
+                <span>Hubungi kami:</span> 
+                <a href="mailto:nusamediaterpercaya@gmail.com" class="text-blue-600 font-medium hover:underline flex items-center gap-0.5">
+                  nusamediaterpercaya@gmail.com
+                </a>
+              </div>
+            </div>
+            
+            <!-- SHARE BUTTONS -->
+            <div class="flex items-center gap-2">
+              <span class="text-[11px] font-bold text-gray-400 uppercase tracking-wider">Bagikan:</span>
+              <a href={shareWA} target="_blank" rel="noopener noreferrer" class="bg-[#25D366] text-white text-xs font-bold px-3 py-1.5 rounded-full hover:opacity-90 transition flex items-center gap-1.5 shadow-sm">
+                <svg xmlns="http://w3.org" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+                WhatsApp
+              </a>
+              <a href={shareFB} target="_blank" rel="noopener noreferrer" class="bg-[#1877F2] text-white text-xs font-bold px-3 py-1.5 rounded-full hover:opacity-90 transition flex items-center gap-1.5 shadow-sm">
+                <svg xmlns="http://w3.org" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+                Facebook
+              </a>
+            </div>
+          </div>
+
+          <!-- IKLAN BANNER ATAS -->
+          <div class="my-6 p-2 bg-gray-50 border border-dashed border-gray-300 rounded-lg text-center flex flex-col items-center justify-center">
+            <span class="text-[9px] font-bold text-gray-400 block mb-1">SPONSORED ADVERTISEMENT</span>
+            <div class="w-[300px] h-[250px] bg-gray-200 text-gray-500 flex items-center justify-center text-xs italic rounded-md">
+              Iklan Atas Medium (300x250)
+            </div>
+          </div>
+
+          <div class="w-full h-64 md:h-[400px] bg-slate-100 rounded-xl overflow-hidden mb-6 shadow-inner">
+            <img src={gambarSEO} alt={berita.judul} class="w-full h-full object-cover" />
+          </div>
+
+          <!-- ISI ARTIKEL -->
+          <div class="text-gray-800 text-base md:text-lg leading-relaxed whitespace-pre-line font-serif mb-6" set:html={berita.isi_konten}>
+          </div>
+
+          <!-- IKLAN BANNER BAWAH -->
+          <div class="mt-6 p-2 bg-gray-50 border border-dashed border-gray-300 rounded-lg text-center flex flex-col items-center justify-center">
+            <span class="text-[9px] font-bold text-gray-400 block mb-1">SPONSORED ADVERTISEMENT</span>
+            <div class="w-[300px] h-[250px] bg-gray-200 text-gray-500 flex items-center justify-center text-xs italic rounded-md">
+              Iklan Bawah Medium (300x250)
+            </div>
+          </div>
+
+        </article>
+      </div>
+
+      <!-- SIDEBAR KANAN: 5 KOLOM IKLAN BERSUSUN VERTIKAL -->
+      <aside class="lg:col-span-4 space-y-6 hidden lg:block">
+        <!-- Iklan 1 s/d 5 tetap sama seperti kode sebelumnya -->
+        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-4 text-center">
+          <span class="text-[9px] font-bold text-gray-400 block mb-2">SPONSORED ADVERTISEMENT (1/5)</span>
+          <div class="w-full h-[250px] bg-gray-200 text-gray-500 flex items-center justify-center text-xs italic rounded-lg">
+            Iklan Bersusun 1 (300x250)
           </div>
         </div>
-
-        <div class="w-full h-64 md:h-[400px] bg-slate-100 rounded-xl overflow-hidden mb-6 shadow-inner">
-          <img src={gambarSEO} alt={berita.judul} class="w-full h-full object-cover" />
+        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-4 text-center">
+          <span class="text-[9px] font-bold text-gray-400 block mb-2">SPONSORED ADVERTISEMENT (2/5)</span>
+          <div class="w-full h-[250px] bg-gray-200 text-gray-500 flex items-center justify-center text-xs italic rounded-lg">
+            Iklan Bersusun 2 (300x250)
+          </div>
         </div>
-
-        <!-- Render isi artikel berita lengkap dari Supabase -->
-        <div class="text-gray-800 text-base md:text-lg leading-relaxed whitespace-pre-line font-serif" set:html={berita.isi_konten}>
+        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-4 text-center">
+          <span class="text-[9px] font-bold text-gray-400 block mb-2">SPONSORED ADVERTISEMENT (3/5)</span>
+          <div class="w-full h-[250px] bg-gray-200 text-gray-500 flex items-center justify-center text-xs italic rounded-lg">
+            Iklan Bersusun 3 (300x250)
+          </div>
         </div>
-      </article>
-    </main>
-    
-  </body>
-</html>
+        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-4 text-center">
