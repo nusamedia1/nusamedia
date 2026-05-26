@@ -27,26 +27,102 @@ const errorBerita = resBerita.error;
 const beritaPopuler = resPopuler.data || [];
 const daftarIklan = resIklan.data || [];
 
-// 🔥 EKSTRAKSI REGEX KE FRONTMATTER
-const listBerita = dataBeritaMentah.map((berita) => {
-  const teksMentah = berita.ringkasan || berita.isi_konten || '';
-  const teksBersih = teksMentah.replace(/<[^>]*>/g, ''); 
-  return {
-    ...berita,
-    ringkasanBersih: teksBersih
-  };
-});
-
 // 2. FILTER DATA IKLAN BANNER UTAMA
 const iklanAtas = daftarIklan.find(ad => ad.zona_penempatan === 'artikel' && ad.posisi === 'banner_atas');
 const iklanBawah = daftarIklan.find(ad => ad.zona_penempatan === 'artikel' && ad.posisi === 'banner_bawah');
 
-// 3. GENERASI STRUKTUR 5 SUSUN IKLAN SIDEBAR
+
+// ==========================================
+// 🔥 STRATEGI PENYELAMATAN: RAKIT SEMUA HTML DI SINI (FRONTMATTER)
+// ==========================================
+
+// A. RAKIT HTML DAFTAR BERITA UTAMA
+let htmlListBerita = '';
+if (errorBerita || dataBeritaMentah.length === 0) {
+  htmlListBerita = `<div class="bg-white p-8 rounded-xl text-center text-gray-500 border">Belum ada berita yang diterbitkan.</div>`;
+} else {
+  htmlListBerita = `<div class="grid grid-cols-1 md:grid-cols-2 gap-6">`;
+  dataBeritaMentah.forEach((berita) => {
+    const teksMentah = berita.ringkasan || berita.isi_konten || '';
+    const ringkasanBersih = teksMentah.replace(/<[^>]*>/g, ''); 
+    const tanggal = berita.created_at ? new Date(berita.created_at).toLocaleDateString('id-ID', { dateStyle: 'short' }) : '';
+    const gambar = berita.gambar_url || "https://unsplash.com";
+    const kategori = berita.kategori || 'Fokus';
+    const views = berita.views || 0;
+    const penulis = berita.penulis || 'Redaksi';
+
+    htmlListBerita += `
+      <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden flex flex-col hover:shadow-md transition">
+        <div class="h-48 bg-slate-200 overflow-hidden">
+          <img src="${gambar}" alt="${berita.judul}" class="w-full h-full object-cover hover:scale-105 transition duration-300" />
+        </div>
+        <div class="p-4 flex-1 flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between gap-2 mb-2">
+              <span class="text-[10px] font-black uppercase text-red-600 tracking-wider">${kategori}</span>
+              <span class="text-[11px] text-gray-400 flex items-center gap-0.5">👁️ ${views}</span>
+            </div>
+            <a href="/berita/${berita.id}" class="block text-base font-bold text-slate-900 hover:text-red-600 leading-snug mb-2 transition">
+              ${berita.judul}
+            </a>
+            <p class="text-xs text-gray-500 line-clamp-3 mb-4">
+              ${ringkasanBersih}
+            </p>
+          </div>
+          <div class="text-[11px] text-gray-400 border-t pt-2 flex justify-between items-center">
+            <span>Oleh: ${penulis}</span>
+            <span>${tanggal}</span>
+          </div>
+        </div>
+      </div>
+    `;
+  });
+  htmlListBerita += `</div>`;
+}
+
+// B. RAKIT HTML WIDGET BERITA POPULER
+let htmlBeritaPopuler = '';
+beritaPopuler.forEach((pop, index) => {
+  htmlBeritaPopuler += `
+    <a href="/berita/${pop.id}" class="flex items-start gap-3 group border-b border-gray-100 pb-2 last:border-0 last:pb-0">
+      <span class="text-lg font-black text-gray-300 group-hover:text-red-600 transition min-w-[20px]">0${index + 1}</span>
+      <div>
+        <h4 class="text-xs font-bold text-slate-800 group-hover:text-blue-600 transition line-clamp-2 leading-tight mb-1">${pop.judul}</h4>
+        <span class="text-[10px] text-gray-400">👁️ ${pop.views || 0} pembaca</span>
+      </div>
+    </a>
+  `;
+});
+
+// C. RAKIT HTML 5 SUSUN IKLAN SIDEBAR
+let htmlSidebarIklan = '';
 const listSidebar = ['sidebar_1', 'sidebar_2', 'sidebar_3', 'sidebar_4', 'sidebar_5'];
-const susunanSidebar = listSidebar.map((posisiNama, indeks) => {
+listSidebar.forEach((posisiNama, indeks) => {
   const ad = daftarIklan.find(a => a.zona_penempatan === 'sidebar' && a.posisi === posisiNama);
   const isSticky = posisiNama === 'sidebar_5' ? 'sticky top-20' : '';
-  return { ad, posisiNama, indeks, isSticky };
+
+  if (ad) {
+    const kontenIklan = ad.tipe === 'script' 
+      ? `<div>${ad.kode_html}</div>` 
+      : `<a href="${ad.url_tujuan}" target="_blank" rel="noopener noreferrer"><img src="${ad.url_gambar}" class="w-full object-cover rounded-lg shadow-sm" /></a>`;
+
+    htmlSidebarIklan += `
+      <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-4 text-center ${isSticky}">
+        <span class="text-[9px] font-bold text-gray-400 block mb-2">SPONSORED BY: ${ad.nama_sponsor} (${indeks + 1}/5)</span>
+        ${kontenIklan}
+      </div>
+    `;
+  } else {
+    htmlSidebarIklan += `
+      <div class="w-full h-48 bg-gray-50 rounded-xl border border-dashed border-gray-300 flex flex-col items-center justify-center text-center p-4 ${isSticky}">
+        <span class="text-xs font-black text-gray-400 uppercase tracking-wider">Space Iklan Tersedia</span>
+        <span class="text-[10px] text-gray-400 mt-1">Slot Sidebar ${indeks + 1}/5</span>
+        <a href="mailto:nusamediaterpercaya@://gmail.com{indeks + 1}" class="text-[10px] text-blue-600 font-medium mt-3 hover:underline break-all px-2">
+          Hubungi: nusamediaterpercaya@gmail.com
+        </a>
+      </div>
+    `;
+  }
 });
 ---
 
@@ -59,7 +135,7 @@ const susunanSidebar = listSidebar.map((posisiNama, indeks) => {
     
     <link rel="preconnect" href="https://googleapis.com">
     <link rel="preconnect" href="https://gstatic.com" crossorigin>
-    <link href="https://googleapis.com" rel="stylesheet">
+    <link href="https://googleapis.com/css2?family=Roboto:wght=400;500;700;900&display=swap" rel="stylesheet">
     
     <script src="https://tailwindcss.com"></script>
     <style>body { font-family: 'Roboto', sans-serif; }</style>
@@ -100,37 +176,8 @@ const susunanSidebar = listSidebar.map((posisiNama, indeks) => {
           Berita Terbaru
         </h2>
 
-        {errorBerita || listBerita.length === 0 ? (
-          <div class="bg-white p-8 rounded-xl text-center text-gray-500 border">Belum ada berita yang diterbitkan.</div>
-        ) : (
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {listBerita.map((berita) => (
-              <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden flex flex-col hover:shadow-md transition">
-                <div class="h-48 bg-slate-200 overflow-hidden">
-                  <img src={berita.gambar_url || "https://unsplash.com"} alt={berita.judul} class="w-full h-full object-cover hover:scale-105 transition duration-300" />
-                </div>
-                <div class="p-4 flex-1 flex flex-col justify-between">
-                  <div>
-                    <div class="flex items-center justify-between gap-2 mb-2">
-                      <span class="text-[10px] font-black uppercase text-red-600 tracking-wider">{berita.kategori || 'Fokus'}</span>
-                      <span class="text-[11px] text-gray-400 flex items-center gap-0.5">👁️ {berita.views || 0}</span>
-                    </div>
-                    <a href={`/berita/${berita.id}`} class="block text-base font-bold text-slate-900 hover:text-red-600 leading-snug mb-2 transition">
-                      {berita.judul}
-                    </a>
-                    <p class="text-xs text-gray-500 line-clamp-3 mb-4">
-                      {berita.ringkasanBersih}
-                    </p>
-                  </div>
-                  <div class="text-[11px] text-gray-400 border-t pt-2 flex justify-between items-center">
-                    <span>Oleh: {berita.penulis || 'Redaksi'}</span>
-                    <span>{berita.created_at ? new Date(berita.created_at).toLocaleDateString('id-ID', { dateStyle: 'short' }) : ''}</span>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
+        <!-- STERIL: Memanggil HTML hasil rakitan Javascript murni -->
+        <div set:html={htmlListBerita} />
 
         <!-- 🔥 IKLAN BANNER BAWAH BERANDA -->
         {iklanBawah ? (
@@ -150,39 +197,3 @@ const susunanSidebar = listSidebar.map((posisiNama, indeks) => {
 
       </section>
 
-      <!-- SISI KANAN: SIDEBAR IKLAN 5 SUSUN & BERITA POPULER -->
-      <aside class="lg:col-span-4 space-y-6 hidden lg:block">
-        
-        <!-- WIDGET BERITA POPULER -->
-        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
-          <h3 class="text-sm font-black text-slate-900 uppercase border-b-2 border-red-600 pb-1 mb-4 tracking-wide">
-            Berita Populer
-          </h3>
-          <div class="space-y-3">
-            {beritaPopuler.map((pop, index) => (
-              <a href={`/berita/${pop.id}`} class="flex items-start gap-3 group border-b border-gray-100 pb-2 last:border-0 last:pb-0">
-                <span class="text-lg font-black text-gray-300 group-hover:text-red-600 transition min-w-[20px]">0{index + 1}</span>
-                <div>
-                  <h4 class="text-xs font-bold text-slate-800 group-hover:text-blue-600 transition line-clamp-2 leading-tight mb-1">{pop.judul}</h4>
-                  <span class="text-[10px] text-gray-400">👁️ {pop.views || 0} pembaca</span>
-                </div>
-              </a>
-            ))}
-          </div>
-        </div>
-
-        <!-- 🔥 5 SUSUN IKLAN SIDEBAR (DIPERBAIKI) -->
-        {
-          susunanSidebar.map((item) => (
-            item.ad ? (
-              <div class={`bg-white rounded-xl shadow-sm border border-gray-200 p-4 text-center ${item.isSticky}`}>
-                <span class="text-[9px] font-bold text-gray-400 block mb-2">SPONSORED BY: {item.ad.nama_sponsor} ({item.indeks + 1}/5)</span>
-                {item.ad.tipe === 'script' ? (
-                  <div set:html={item.ad.kode_html} />
-                ) : (
-                  <a href={item.ad.url_tujuan} target="_blank" rel="noopener noreferrer">
-                    <img src={item.ad.url_gambar} class="w-full object-cover rounded-lg shadow-sm" />
-                  </a>
-                )}
-              </div>
-            ) : (
