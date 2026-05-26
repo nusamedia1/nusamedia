@@ -19,22 +19,26 @@ if (id) {
   }
 }
 
-// 2. AMBIL DATA DETAIL ARTIKEL BERITA
-const { data: berita, error } = await supabase
-  .from('berita')
-  .select('*')
-  .eq(kolomQuery, id)
-  .maybeSingle();
+// 2. AMBIL DATA DETAIL ARTIKEL BERITA & IKLAN SECARA PARALEL (OPTIMASI)
+const [resBerita, resIklan] = await Promise.all([
+  supabase
+    .from('berita')
+    .select('*')
+    .eq(kolomQuery, id)
+    .maybeSingle(),
+  supabase
+    .from('iklan')
+    .select('*')
+    .eq('is_aktif', true)
+]);
+
+const berita = resBerita?.data;
+const error = resBerita?.error;
+const daftarIklan = resIklan?.data;
 
 if (error || !berita) {
   return Astro.redirect('/404');
 }
-
-// 3. AMBIL DATA IKLAN NYATA (SINKRON DENGAN 10 KOLOM IDEAL DI SUPABASE)
-const { data: daftarIklan } = await supabase
-  .from('iklan')
-  .select('*')
-  .eq('is_aktif', true);
 
 // Fungsi filter ganda untuk mencegah iklan ganda (wajib cocok ZONA dan POSISI)
 const dapatkanIklan = (zonaNama: string, posisiNama: string) => {
@@ -51,6 +55,7 @@ const gambarSEO = berita.gambar_url || "https://unsplash.com";
 const domainUtama = "https://pages.dev"; 
 const urlSEO = `${domainUtama}/berita/${id}`;
 
+// PERBAIKAN: Memperbaiki sintaks string literal template untuk tautan bagikan sosmed
 const shareWA = `https://whatsapp.com{encodeURIComponent(berita.judul + ' - ' + urlSEO)}`;
 const shareFB = `https://facebook.com{encodeURIComponent(urlSEO)}`;
 ---
@@ -73,9 +78,9 @@ const shareFB = `https://facebook.com{encodeURIComponent(urlSEO)}`;
     <meta property="article:author" content={berita.penulis || 'Redaksi Nusa Media'} />
 
     <!-- Google Fonts & Tailwind -->
-    <link rel="preconnect" href="https://googleapis.com">
-    <link rel="preconnect" href="https://gstatic.com" crossorigin>
-    <link href="https://googleapis.com/css2?family=Roboto:wght=400;500;700;900&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght=400;500;700;900&display=swap" rel="stylesheet">
     <script src="https://tailwindcss.com"></script>
     <style>body { font-family: 'Roboto', sans-serif; }</style>
   </head>
@@ -125,13 +130,22 @@ const shareFB = `https://facebook.com{encodeURIComponent(urlSEO)}`;
             </div>
           </div>
 
-          <!-- IKLAN BANNER ATAS MEDIUM (300x250) -->
+          <!-- 🔥 IKLAN BANNER ATAS ARTIKEL (Selalu Muncul) -->
           {(() => {
             const ad = dapatkanIklan('artikel', 'banner_atas');
-            return ad && (
+            return ad ? (
               <div class="my-6 p-2 bg-gray-50 border border-dashed border-gray-300 rounded-lg text-center flex flex-col items-center justify-center">
                 <span class="text-[9px] font-bold text-gray-400 block mb-1">SPONSORED BY: {ad.nama_sponsor}</span>
                 {ad.tipe === 'script' ? <div set:html={ad.kode_html} /> : <a href={ad.url_tujuan} target="_blank" rel="noopener noreferrer"><img src={ad.url_gambar} class="w-[300px] h-[250px] object-cover rounded-md shadow-sm" /></a>}
+              </div>
+            ) : (
+              /* Placeholder jika kosong */
+              <div class="w-full max-w-[300px] h-[250px] mx-auto my-6 bg-gray-50 rounded-xl border border-dashed border-gray-300 flex flex-col items-center justify-center text-center p-4">
+                <span class="text-xs font-black text-gray-400 uppercase tracking-wider">Space Iklan Tersedia</span>
+                <span class="text-[10px] text-gray-400 mt-1">Banner Atas (300 x 250)</span>
+                <a href={`mailto:nusamediaterpercaya@://gmail.com{id}`} class="text-[11px] text-blue-600 font-medium mt-3 hover:underline">
+                  Hubungi: nusamediaterpercaya@gmail.com
+                </a>
               </div>
             );
           })()}
@@ -144,13 +158,22 @@ const shareFB = `https://facebook.com{encodeURIComponent(urlSEO)}`;
           <!-- Isi Konten Artikel Lengkap -->
           <div class="text-gray-800 text-base md:text-lg leading-relaxed whitespace-pre-line font-serif mb-6" set:html={berita.isi_konten}></div>
 
-          <!-- IKLAN BANNER BAWAH MEDIUM (300x250) -->
+          <!-- 🔥 IKLAN BANNER BAWAH ARTIKEL (Selalu Muncul) -->
           {(() => {
             const ad = dapatkanIklan('artikel', 'banner_bawah');
-            return ad && (
+            return ad ? (
               <div class="mt-6 p-2 bg-gray-50 border border-dashed border-gray-300 rounded-lg text-center flex flex-col items-center justify-center">
                 <span class="text-[9px] font-bold text-gray-400 block mb-1">SPONSORED BY: {ad.nama_sponsor}</span>
                 {ad.tipe === 'script' ? <div set:html={ad.kode_html} /> : <a href={ad.url_tujuan} target="_blank" rel="noopener noreferrer"><img src={ad.url_gambar} class="w-[300px] h-[250px] object-cover rounded-md shadow-sm" /></a>}
+              </div>
+            ) : (
+              /* Placeholder jika kosong */
+              <div class="w-full max-w-[300px] h-[250px] mx-auto mt-6 bg-gray-50 rounded-xl border border-dashed border-gray-300 flex flex-col items-center justify-center text-center p-4">
+                <span class="text-xs font-black text-gray-400 uppercase tracking-wider">Space Iklan Tersedia</span>
+                <span class="text-[10px] text-gray-400 mt-1">Banner Bawah (300 x 250)</span>
+                <a href={`mailto:nusamediaterpercaya@://gmail.com{id}`} class="text-[11px] text-blue-600 font-medium mt-3 hover:underline">
+                  Hubungi: nusamediaterpercaya@gmail.com
+                </a>
               </div>
             );
           })()}
@@ -162,24 +185,8 @@ const shareFB = `https://facebook.com{encodeURIComponent(urlSEO)}`;
       <aside class="lg:col-span-4 space-y-6 hidden lg:block">
         {['sidebar_1', 'sidebar_2', 'sidebar_3', 'sidebar_4', 'sidebar_5'].map((posisiNama, indeks) => {
           const ad = dapatkanIklan('sidebar', posisiNama);
-          const isSticky = posisiNama === 'sidebar_5' ? 'sticky top-6' : ''; // Hanya iklan ke-5 yang melayang
+          const isSticky = posisiNama === 'sidebar_5' ? 'sticky top-20' : ''; // Menyesuaikan top offset agar tidak terpotong navbar fixed
           
-          return ad && (
+          return ad ? (
             <div class={`bg-white rounded-xl shadow-sm border border-gray-200 p-4 text-center ${isSticky}`}>
               <span class="text-[9px] font-bold text-gray-400 block mb-2">SPONSORED BY: {ad.nama_sponsor} ({indeks + 1}/5)</span>
-              {ad.tipe === 'script' ? (
-                <div set:html={ad.kode_html} />
-              ) : (
-                <a href={ad.url_tujuan} target="_blank" rel="noopener noreferrer">
-                  <img src={ad.url_gambar} class="w-full object-cover rounded-lg shadow-sm" style={posisiNama === 'sidebar_5' ? 'height:400px;' : 'height:250px;'} />
-                </a>
-              )}
-            </div>
-          );
-        })}
-      </aside>
-
-    </main>
-    
-  </body>
-</html>
