@@ -22,17 +22,28 @@ const [resBerita, resPopuler, resIklan] = await Promise.all([
     .eq('is_aktif', true)
 ]);
 
-const listBerita = resBerita.data || [];
+const dataBeritaMentah = resBerita.data || [];
 const errorBerita = resBerita.error;
 const beritaPopuler = resPopuler.data || [];
 const daftarIklan = resIklan.data || [];
 
-// 2. FILTER DATA IKLAN DI FRONTMATTER (STERIL DARI ERROR HTML)
+// 🔥 EKSTRAKSI REGEX KE FRONTMATTER
+const listBerita = dataBeritaMentah.map((berita) => {
+  const teksMentah = berita.ringkasan || berita.isi_konten || '';
+  const teksBersih = teksMentah.replace(/<[^>]*>/g, ''); 
+  return {
+    ...berita,
+    ringkasanBersih: teksBersih
+  };
+});
+
+// 2. FILTER DATA IKLAN BANNER UTAMA
 const iklanAtas = daftarIklan.find(ad => ad.zona_penempatan === 'artikel' && ad.posisi === 'banner_atas');
 const iklanBawah = daftarIklan.find(ad => ad.zona_penempatan === 'artikel' && ad.posisi === 'banner_bawah');
 
-// Ambil data 5 susun iklan sidebar langsung ke dalam objek array siap pakai
-const susunanSidebar = ['sidebar_1', 'sidebar_2', 'sidebar_3', 'sidebar_4', 'sidebar_5'].map((posisiNama, indeks) => {
+// 3. GENERASI STRUKTUR 5 SUSUN IKLAN SIDEBAR
+const listSidebar = ['sidebar_1', 'sidebar_2', 'sidebar_3', 'sidebar_4', 'sidebar_5'];
+const susunanSidebar = listSidebar.map((posisiNama, indeks) => {
   const ad = daftarIklan.find(a => a.zona_penempatan === 'sidebar' && a.posisi === posisiNama);
   const isSticky = posisiNama === 'sidebar_5' ? 'sticky top-20' : '';
   return { ad, posisiNama, indeks, isSticky };
@@ -44,11 +55,11 @@ const susunanSidebar = ['sidebar_1', 'sidebar_2', 'sidebar_3', 'sidebar_4', 'sid
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Nusa-Media | Portal Berita Terpercaya & Aktual</title>
-    <meta name="description" content="Nusa-Media menyajikan berita terkini, viral, politik, gaya hidup, dan informasi teknologi terupdate secara real-time." />
+    <meta name="description" content="Nusa-Media menyajikan berita terkini, viral, politik, gaya lifestyle, dan informasi teknologi terupdate secara real-time." />
     
     <link rel="preconnect" href="https://googleapis.com">
     <link rel="preconnect" href="https://gstatic.com" crossorigin>
-    <link href="https://googleapis.com" rel="stylesheet">
+    <link href="https://googleapis.com/css2?family=Roboto:wght=400;500;700;900&display=swap" rel="stylesheet">
     
     <script src="https://tailwindcss.com"></script>
     <style>body { font-family: 'Roboto', sans-serif; }</style>
@@ -108,7 +119,7 @@ const susunanSidebar = ['sidebar_1', 'sidebar_2', 'sidebar_3', 'sidebar_4', 'sid
                       {berita.judul}
                     </a>
                     <p class="text-xs text-gray-500 line-clamp-3 mb-4">
-                      {(berita.ringkasan || berita.isi_konten || '').replace(/<[^>]*>/g, '')}
+                      {berita.ringkasanBersih}
                     </p>
                   </div>
                   <div class="text-[11px] text-gray-400 border-t pt-2 flex justify-between items-center">
@@ -160,8 +171,8 @@ const susunanSidebar = ['sidebar_1', 'sidebar_2', 'sidebar_3', 'sidebar_4', 'sid
           </div>
         </div>
 
-        <!-- 🔥 5 SUSUN IKLAN SIDEBAR (MENGGUNAKAN STRUKTUR BENAR TANPA LOGIKA JS RUMIT) -->
-        {susunanSidebar.map((item) => (
+        <!-- 🔥 5 SUSUN IKLAN SIDEBAR (DIPERBAIKI PENUTUPNYA) -->
+        {susunanSidebar.map((item) => 
           item.ad ? (
             <div class={`bg-white rounded-xl shadow-sm border border-gray-200 p-4 text-center ${item.isSticky}`}>
               <span class="text-[9px] font-bold text-gray-400 block mb-2">SPONSORED BY: {item.ad.nama_sponsor} ({item.indeks + 1}/5)</span>
@@ -174,5 +185,3 @@ const susunanSidebar = ['sidebar_1', 'sidebar_2', 'sidebar_3', 'sidebar_4', 'sid
               )}
             </div>
           ) : (
-            <div class={`w-full h-48 bg-gray-50 rounded-xl border border-dashed border-gray-300 flex flex-col items-center justify-center text-center p-4 ${item.isSticky}`}>
-              <span class="text-xs font-black text-gray-400 uppercase tracking-wider">Space Iklan Tersedia</span>
