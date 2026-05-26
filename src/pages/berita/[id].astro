@@ -33,6 +33,10 @@ const dapatkanIklan = (zonaNama: string, posisiNama: string) => {
     ad => ad.zona_penempatan === zonaNama && ad.posisi === posisiNama
   );
 };
+
+// Siapkan data iklan di awal untuk mempermudah render HTML Astro
+const iklanAtas = dapatkanIklan('artikel', 'banner_atas');
+const iklanBawah = dapatkanIklan('artikel', 'banner_bawah');
 ---
 
 <html lang="id">
@@ -66,23 +70,20 @@ const dapatkanIklan = (zonaNama: string, posisiNama: string) => {
       <section class="lg:col-span-8 space-y-6">
         
         <!-- 🔥 IKLAN BANNER ATAS BERANDA -->
-        {(() => {
-          const ad = dapatkanIklan('artikel', 'banner_atas');
-          return ad ? (
-            <div class="p-2 bg-white rounded-xl shadow-sm border border-gray-200 text-center flex flex-col items-center justify-center">
-              <span class="text-[9px] font-bold text-gray-400 block mb-1">SPONSORED BY: {ad.nama_sponsor}</span>
-              {ad.tipe === 'script' ? <div set:html={ad.kode_html} /> : <a href={ad.url_tujuan} target="_blank" rel="noopener noreferrer"><img src={ad.url_gambar} class="w-[300px] h-[250px] object-cover rounded-md" /></a>}
-            </div>
-          ) : (
-            <div class="w-full max-w-[300px] h-[250px] mx-auto bg-gray-50 rounded-xl border border-dashed border-gray-300 flex flex-col items-center justify-center text-center p-4">
-              <span class="text-xs font-black text-gray-400 uppercase tracking-wider">Space Iklan Tersedia</span>
-              <span class="text-[10px] text-gray-400 mt-1">Banner Atas (300 x 250)</span>
-              <a href="mailto:nusamediaterpercaya@://gmail.com" class="text-[11px] text-blue-600 font-medium mt-3 hover:underline">
-                Hubungi: nusamediaterpercaya@gmail.com
-              </a>
-            </div>
-          );
-        })()}
+        {iklanAtas ? (
+          <div class="p-2 bg-white rounded-xl shadow-sm border border-gray-200 text-center flex flex-col items-center justify-center">
+            <span class="text-[9px] font-bold text-gray-400 block mb-1">SPONSORED BY: {iklanAtas.nama_sponsor}</span>
+            {iklanAtas.tipe === 'script' ? <div set:html={iklanAtas.kode_html} /> : <a href={iklanAtas.url_tujuan} target="_blank" rel="noopener noreferrer"><img src={iklanAtas.url_gambar} class="w-[300px] h-[250px] object-cover rounded-md" /></a>}
+          </div>
+        ) : (
+          <div class="w-full max-w-[300px] h-[250px] mx-auto bg-gray-50 rounded-xl border border-dashed border-gray-300 flex flex-col items-center justify-center text-center p-4">
+            <span class="text-xs font-black text-gray-400 uppercase tracking-wider">Space Iklan Tersedia</span>
+            <span class="text-[10px] text-gray-400 mt-1">Banner Atas (300 x 250)</span>
+            <a href="mailto:nusamediaterpercaya@://gmail.com" class="text-[11px] text-blue-600 font-medium mt-3 hover:underline">
+              Hubungi: nusamediaterpercaya@gmail.com
+            </a>
+          </div>
+        )}
 
         <h2 class="text-xl font-black text-slate-900 uppercase border-b-2 border-red-600 pb-1 inline-block tracking-wide">
           Berita Terbaru
@@ -121,23 +122,20 @@ const dapatkanIklan = (zonaNama: string, posisiNama: string) => {
         )}
 
         <!-- 🔥 IKLAN BANNER BAWAH BERANDA -->
-        {(() => {
-          const ad = dapatkanIklan('artikel', 'banner_bawah');
-          return ad ? (
-            <div class="p-2 bg-white rounded-xl shadow-sm border border-gray-200 text-center flex flex-col items-center justify-center mt-6">
-              <span class="text-[9px] font-bold text-gray-400 block mb-1">SPONSORED BY: {ad.nama_sponsor}</span>
-              {ad.tipe === 'script' ? <div set:html={ad.kode_html} /> : <a href={ad.url_tujuan} target="_blank" rel="noopener noreferrer"><img src={ad.url_gambar} class="w-[300px] h-[250px] object-cover rounded-md" /></a>}
-            </div>
-          ) : (
-            <div class="w-full max-w-[300px] h-[250px] mx-auto bg-gray-50 rounded-xl border border-dashed border-gray-300 flex flex-col items-center justify-center text-center p-4 mt-6">
-              <span class="text-xs font-black text-gray-400 uppercase tracking-wider">Space Iklan Tersedia</span>
-              <span class="text-[10px] text-gray-400 mt-1">Banner Bawah (300 x 250)</span>
-              <a href="mailto:nusamediaterpercaya@://gmail.com" class="text-[11px] text-blue-600 font-medium mt-3 hover:underline">
-                Hubungi: nusamediaterpercaya@gmail.com
-              </a>
-            </div>
-          );
-        })()}
+        {iklanBawah ? (
+          <div class="p-2 bg-white rounded-xl shadow-sm border border-gray-200 text-center flex flex-col items-center justify-center mt-6">
+            <span class="text-[9px] font-bold text-gray-400 block mb-1">SPONSORED BY: {iklanBawah.nama_sponsor}</span>
+            {iklanBawah.tipe === 'script' ? <div set:html={iklanBawah.kode_html} /> : <a href={iklanBawah.url_tujuan} target="_blank" rel="noopener noreferrer"><img src={iklanBawah.url_gambar} class="w-[300px] h-[250px] object-cover rounded-md" /></a>}
+          </div>
+        ) : (
+          <div class="w-full max-w-[300px] h-[250px] mx-auto bg-gray-50 rounded-xl border border-dashed border-gray-300 flex flex-col items-center justify-center text-center p-4 mt-6">
+            <span class="text-xs font-black text-gray-400 uppercase tracking-wider">Space Iklan Tersedia</span>
+            <span class="text-[10px] text-gray-400 mt-1">Banner Bawah (300 x 250)</span>
+            <a href="mailto:nusamediaterpercaya@://gmail.com" class="text-[11px] text-blue-600 font-medium mt-3 hover:underline">
+              Hubungi: nusamediaterpercaya@gmail.com
+            </a>
+          </div>
+        )}
 
       </section>
 
