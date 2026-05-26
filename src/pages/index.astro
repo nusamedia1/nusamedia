@@ -55,11 +55,11 @@ const susunanSidebar = listSidebar.map((posisiNama, indeks) => {
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Nusa-Media | Portal Berita Terpercaya & Aktual</title>
-    <meta name="description" content="Nusa-Media menyajikan berita terkini, viral, politik, gaya lifestyle, dan informasi teknologi terupdate secara real-time." />
+    <meta name="description" content="Nusa-Media menyajikan berita terkini, viral, politik, gaya hidup, dan informasi teknologi terupdate secara real-time." />
     
     <link rel="preconnect" href="https://googleapis.com">
     <link rel="preconnect" href="https://gstatic.com" crossorigin>
-    <link href="https://googleapis.com/css2?family=Roboto:wght=400;500;700;900&display=swap" rel="stylesheet">
+    <link href="https://googleapis.com" rel="stylesheet">
     
     <script src="https://tailwindcss.com"></script>
     <style>body { font-family: 'Roboto', sans-serif; }</style>
@@ -171,17 +171,18 @@ const susunanSidebar = listSidebar.map((posisiNama, indeks) => {
           </div>
         </div>
 
-        <!-- 🔥 5 SUSUN IKLAN SIDEBAR (DIPERBAIKI PENUTUPNYA) -->
-        {susunanSidebar.map((item) => 
-          item.ad ? (
-            <div class={`bg-white rounded-xl shadow-sm border border-gray-200 p-4 text-center ${item.isSticky}`}>
-              <span class="text-[9px] font-bold text-gray-400 block mb-2">SPONSORED BY: {item.ad.nama_sponsor} ({item.indeks + 1}/5)</span>
-              {item.ad.tipe === 'script' ? (
-                <div set:html={item.ad.kode_html} />
-              ) : (
-                <a href={item.ad.url_tujuan} target="_blank" rel="noopener noreferrer">
-                  <img src={item.ad.url_gambar} class="w-full object-cover rounded-lg shadow-sm" />
-                </a>
-              )}
-            </div>
-          ) : (
+        <!-- 🔥 5 SUSUN IKLAN SIDEBAR (DIPERBAIKI) -->
+        {
+          susunanSidebar.map((item) => (
+            item.ad ? (
+              <div class={`bg-white rounded-xl shadow-sm border border-gray-200 p-4 text-center ${item.isSticky}`}>
+                <span class="text-[9px] font-bold text-gray-400 block mb-2">SPONSORED BY: {item.ad.nama_sponsor} ({item.indeks + 1}/5)</span>
+                {item.ad.tipe === 'script' ? (
+                  <div set:html={item.ad.kode_html} />
+                ) : (
+                  <a href={item.ad.url_tujuan} target="_blank" rel="noopener noreferrer">
+                    <img src={item.ad.url_gambar} class="w-full object-cover rounded-lg shadow-sm" />
+                  </a>
+                )}
+              </div>
+            ) : (
