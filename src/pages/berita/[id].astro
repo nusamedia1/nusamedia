@@ -57,7 +57,7 @@ const shareFB = `https://facebook.com{encodeURIComponent(urlSEO)}`;
 
 
 // ==========================================
-// 🔥 STRATEGI PENYELAMATAN ARSITEKTUR RENDER (ANTI-CRASH)
+// 🔥 AMAN: STABILISASI RENDER STRUKTUR (ANTI-CRASH)
 // ==========================================
 
 // RAKIT HTML 5 SUSUN IKLAN SIDEBAR DI SINI (FRONTMATTER)
@@ -70,8 +70,8 @@ listSidebar.forEach((posisiNama, indeks) => {
 
   if (ad) {
     const kontenIklan = ad.tipe === 'script' 
-      ? `<div>${ad.kode_html}</div>` 
-      : `<a href="${ad.url_tujuan}" target="_blank" rel="noopener noreferrer"><img src="${ad.url_gambar}" class="w-full object-cover rounded-lg shadow-sm" /></a>`;
+      ? '<div>' + ad.kode_html + '</div>' 
+      : '<a href="' + ad.url_tujuan + '" target="_blank" rel="noopener noreferrer"><img src="' + ad.url_gambar + '" class="w-full object-cover rounded-lg shadow-sm" /></a>';
 
     htmlSidebarIklanDetail += `
       <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-4 text-center ${isSticky}">
@@ -80,11 +80,12 @@ listSidebar.forEach((posisiNama, indeks) => {
       </div>
     `;
   } else {
+    // 🔥 PERBAIKAN UTAMA: Menggunakan penggabungan string tradisional (+) untuk menghindari simbol ${} yang merusak compiler Astro
     htmlSidebarIklanDetail += `
-      <div class="w-full h-48 bg-gray-50 rounded-xl border border-dashed border-gray-300 flex flex-col items-center justify-center text-center p-4 ${isSticky}">
+      <div class="w-full h-48 bg-gray-50 rounded-xl border border-dashed border-gray-300 flex flex-col items-center justify-center text-center p-4 ` + isSticky + `">
         <span class="text-xs font-black text-gray-400 uppercase tracking-wider">Space Iklan Tersedia</span>
-        <span class="text-[10px] text-gray-400 mt-1">Slot Sidebar ${indeks + 1}/5</span>
-        <a href="mailto:nusamediaterpercaya@://gmail.com{indeks + 1}%20Artikel%20ID%20${id}" class="text-[10px] text-blue-600 font-medium mt-3 hover:underline break-all px-2">
+        <span class="text-[10px] text-gray-400 mt-1">Slot Sidebar ` + (indeks + 1) + `/5</span>
+        <a href="mailto:nusamediaterpercaya@://gmail.com" class="text-[10px] text-blue-600 font-medium mt-3 hover:underline break-all px-2">
           Hubungi: nusamediaterpercaya@gmail.com
         </a>
       </div>
@@ -181,7 +182,7 @@ listSidebar.forEach((posisiNama, indeks) => {
             <div class="w-full max-w-[300px] h-[250px] mx-auto my-6 bg-gray-50 rounded-xl border border-dashed border-gray-300 flex flex-col items-center justify-center text-center p-4">
               <span class="text-xs font-black text-gray-400 uppercase tracking-wider">Space Iklan Tersedia</span>
               <span class="text-[10px] text-gray-400 mt-1">Banner Atas (300 x 250)</span>
-              <a href={`mailto:nusamediaterpercaya@://gmail.com{id}`} class="text-[11px] text-blue-600 font-medium mt-3 hover:underline">
+              <a href="mailto:nusamediaterpercaya@://gmail.com" class="text-[11px] text-blue-600 font-medium mt-3 hover:underline">
                 Hubungi: nusamediaterpercaya@gmail.com
               </a>
             </div>
@@ -196,4 +197,3 @@ listSidebar.forEach((posisiNama, indeks) => {
           <div class="text-gray-800 text-base md:text-lg leading-relaxed whitespace-pre-line font-serif mb-6" set:html={berita.isi_konten}></div>
 
           <!-- 🔥 IKLAN BANNER BAWAH ARTIKEL -->
-          {iklanBawah ? (
