@@ -1,10 +1,11 @@
 ---
 // src/pages/berita/[slug].astro
-export const prerender = true; // Mempertahankan arsitektur Static Shell pilihan Anda
+export const prerender = true; 
 
 export async function getStaticPaths() {
-  const SUPABASE_PROJECT_ID = "zmvlvzspjohrewjbtfxc";
-  const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inptdmx2enNwam9ocmV3amJ0ZnhjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkwMTM0MTAsImV4cCI6MjA5NDU4OTQxMH0.PtTVq_b4gLonRpNSbPYKncoXlGVS1lKaADy74dbhuSI";
+  // Mengambil kredensial dari file .env demi keamanan
+  const SUPABASE_PROJECT_ID = import.meta.env.PUBLIC_SUPABASE_PROJECT_ID || "gnuxrjwiyiikkyjxgzff";
+  const SUPABASE_ANON_KEY = import.meta.env.PUBLIC_SUPABASE_ANON_KEY || "yJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdudXhyandpeWlpa2t5anhnemZmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk2MTQyOTQsImV4cCI6MjA5NTE5MDI5NH0.OFjoavfuIebaPiSLSgDyf-rUbfyzfvf9dibRgkmoNDg";
   
   try {
     const response = await fetch(`https://${SUPABASE_PROJECT_ID}.supabase.co/rest/v1/berita?select=id,slug`, {
@@ -27,17 +28,21 @@ export async function getStaticPaths() {
 }
 
 const { slug } = Astro.params;
----
+
+// Meneruskan variabel lingkungan ke sisi klien secara aman
+const PUBLIC_PROJECT_ID = import.meta.env.PUBLIC_SUPABASE_PROJECT_ID || "gnuxrjwiyiikkyjxgzff";
+const PUBLIC_ANON_KEY = import.meta.env.PUBLIC_SUPABASE_ANON_KEY || "yJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdudXhyandpeWlpa2t5anhnemZmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk2MTQyOTQsImV4cCI6MjA5NTE5MDI5NH0.OFjoavfuIebaPiSLSgDyf-rUbfyzfvf9dibRgkmoNDg"
 
 <html lang="id">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Nusa Media - Baca Berita</title>
-    <!-- PERBAIKAN 1: Menggunakan CDN resmi Tailwind CSS agar styling terbaca -->
-    <script src="https://cdn.tailwindcss.com"></script>
     
-    <!-- PERBAIKAN 2: Mengoreksi tautan Google Fonts yang rusak agar tidak memicu error build 404 -->
+    <!-- Tailwind CSS Terintegrasi secara lokal (Atau gunakan Script CDN v3 jika dev lokal) -->
+    <script src="https://tailwindcss.com"></script>
+    
+    <!-- PERBAIKAN: Mengoreksi tautan Google Fonts agar tidak memicu error build 404 -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://gstatic.com" crossorigin>
     <link href="https://googleapis.com" rel="stylesheet">
@@ -52,7 +57,7 @@ const { slug } = Astro.params;
     <!-- TATA LETAK PORTAL BERITA MULTI-SLOT -->
     <main class="max-w-5xl mx-auto px-4 py-6 grid grid-cols-1 lg:grid-cols-3 gap-6">
       
-      <!-- KOLOM UTAMA BERITA (KIRI) -->
+      <!-- KOLOM UTAMA BERITA -->
       <div class="lg:col-span-2 space-y-6">
         <!-- 📢 SLOT 1: IKLAN ATAS ARTIKEL -->
         <div id="slot-iklan-atas" class="w-full hidden"></div>
@@ -74,35 +79,32 @@ const { slug } = Astro.params;
         <!-- 📢 SLOT 3: IKLAN ATAS SIDEBAR -->
         <div id="slot-iklan-sidebar" class="w-full hidden"></div>
         
-        <div class="bg-slate-900 text-white p-4 rounded-xl shadow-xs">
+        <div class="bg-slate-900 text-white p-4 rounded-xl shadow-sm">
           <h3 class="text-xs font-bold uppercase tracking-wider text-red-500 mb-2"># Info Nusa Media</h3>
           <p class="text-xs text-gray-400 leading-relaxed">Membaca informasi aktual langsung terhubung ke jaringan cloud database proksi kilat.</p>
         </div>
       </div>
     </main>
 
-    <script is:inline define:vars={{ slug }}>
-      const SUPABASE_PROJECT_ID = "zmvlvzspjohrewjbtfxc";
-      const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inptdmx2enNwam9ocmV3amJ0ZnhjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzkwMTM0MTAsImV4cCI6MjA5NDU4OTQxMH0.PtTVq_b4gLonRpNSbPYKncoXlGVS1lKaADy74dbhuSI";
-      const BASE_URL = `https://${SUPABASE_PROJECT_ID}.supabase.co/rest/v1`;
+    <script is:inline define:vars={{ slug, PUBLIC_PROJECT_ID, PUBLIC_ANON_KEY }}>
+      const BASE_URL = `https://${PUBLIC_PROJECT_ID}.supabase.co/rest/v1`;
 
-      // Fungsi cerdas merender jenis materi iklan (Gambar/PDF/HTML)
       function renderMateriIklan(iklan) {
         if (!iklan) return '';
         const format = iklan.status; 
         const data = iklan.gambar_url; 
 
         if (format === 'Gambar') {
-          return `<a href="${iklan.link_tujuan || '#'}" target="_blank" class="block w-full overflow-hidden rounded-xl shadow-xs hover:opacity-95 transition">
+          return `<a href="${iklan.link_tujuan || '#'}" target="_blank" class="block w-full overflow-hidden rounded-xl shadow-sm hover:opacity-95 transition">
                     <img src="${data}" alt="Sponsor" class="w-full h-auto object-cover" />
                   </a>`;
         } else if (format === 'PDF') {
-          return `<div class="bg-white p-2 rounded-xl border border-gray-200 shadow-xs">
-                    <iframe src="${data}" class="w-full h-64 rounded-lg" border="0"></iframe>
+          return `<div class="bg-white p-2 rounded-xl border border-gray-200 shadow-sm">
+                    <iframe src="${data}" class="w-full h-64 rounded-lg" frameborder="0"></iframe>
                     <a href="${data}" target="_blank" class="block text-center text-[11px] font-bold text-red-600 mt-1 hover:underline">Buka PDF di Tab Baru ↗</a>
                   </div>`;
         } else if (format === 'HTML') {
-          return `<div class="w-full overflow-hidden rounded-xl bg-white p-4 border shadow-xs">${data}</div>`;
+          return `<div class="w-full overflow-hidden rounded-xl bg-white p-4 border shadow-sm">${data}</div>`;
         }
         return '';
       }
@@ -112,9 +114,9 @@ const { slug } = Astro.params;
           const isNumeric = /^\d+$/.test(slug);
           const queryParam = isNumeric ? `id=eq.${slug}` : `slug=eq.${slug}`;
 
-          // 1. Tarik Data Berita
+          // 1. Ambil Data Berita
           const resBerita = await fetch(`${BASE_URL}/berita?${queryParam}&select=*`, {
-            headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}` }
+            headers: { 'apikey': PUBLIC_ANON_KEY, 'Authorization': `Bearer ${PUBLIC_ANON_KEY}` }
           });
           const dataBerita = await resBerita.json();
           const berita = dataBerita && dataBerita.length > 0 ? dataBerita[0] : null;
@@ -129,19 +131,18 @@ const { slug } = Astro.params;
               <span class="bg-red-600 text-white text-[10px] font-bold px-2.5 py-1 rounded uppercase tracking-wider inline-block">${berita.kategori || 'Fokus'}</span>
               <h1 class="text-2xl sm:text-3xl font-black text-gray-900 leading-tight">${berita.judul}</h1>
               <p class="text-xs text-gray-400 border-b pb-2">Penulis: <strong class="text-gray-700">${berita.penulis || 'Redaksi'}</strong></p>
-              <img src="${berita.gambar_url}" class="w-full h-auto max-h-[400px] object-cover rounded-xl shadow-xs" />
+              ${berita.gambar_url ? `<img src="${berita.gambar_url}" class="w-full h-auto max-h-[400px] object-cover rounded-xl shadow-sm" />` : ''}
               <p class="text-gray-800 text-base leading-relaxed whitespace-pre-line pt-4 font-serif">${berita.isi_konten}</p>
             </div>
           `;
 
-          // 2. Tarik Semua Iklan Aktif
+          // 2. Ambil Semua Iklan Aktif
           const resIklan = await fetch(`${BASE_URL}/iklan?select=*`, {
-            headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}` }
+            headers: { 'apikey': PUBLIC_ANON_KEY, 'Authorization': `Bearer ${PUBLIC_ANON_KEY}` }
           });
           const listIklan = await resIklan.json();
 
           if (Array.isArray(listIklan)) {
-            // PERBAIKAN 3: Menyelaraskan selektor nama string agar sesuai dengan pilihan opsi di halaman admin kustom Anda
             const adAtas = listIklan.find(ad => ad.posisi === 'Header Utama');
             const adBawah = listIklan.find(ad => ad.posisi === 'Tengah Artikel');
             const adSidebar = listIklan.find(ad => ad.posisi === 'Sidebar Kanan');
