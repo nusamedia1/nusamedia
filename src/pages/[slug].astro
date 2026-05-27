@@ -1,37 +1,17 @@
 ---
 // src/pages/berita/[slug].astro
-export const prerender = true; 
-
-export async function getStaticPaths() {
-  // Mengambil kredensial dari file .env demi keamanan
-  const SUPABASE_PROJECT_ID = import.meta.env.PUBLIC_SUPABASE_PROJECT_ID || "gnuxrjwiyiikkyjxgzff";
-  const SUPABASE_ANON_KEY = import.meta.env.PUBLIC_SUPABASE_ANON_KEY || "yJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdudXhyandpeWlpa2t5anhnemZmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk2MTQyOTQsImV4cCI6MjA5NTE5MDI5NH0.OFjoavfuIebaPiSLSgDyf-rUbfyzfvf9dibRgkmoNDg";
-  
-  try {
-    const response = await fetch(`https://${SUPABASE_PROJECT_ID}.supabase.co/rest/v1/berita?select=id,slug`, {
-      headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}` }
-    });
-    const daftarBerita = await response.json();
-    if (!Array.isArray(daftarBerita)) return [];
-
-    const paths = [];
-    daftarBerita.forEach(item => {
-      if (item.id) paths.push({ params: { slug: item.id.toString() } });
-      if (item.slug && item.slug.trim().toLowerCase() !== 'admin' && item.slug !== 'admin-rahasia-99') {
-        paths.push({ params: { slug: item.slug.toString() } });
-      }
-    });
-    return paths;
-  } catch (error) {
-    return [];
-  }
-}
+// Mode SSR Murni: Data diambil secara real-time di sisi server Cloudflare Workers
 
 const { slug } = Astro.params;
 
+if (!slug) {
+  return Astro.redirect('/');
+}
+
 // Meneruskan variabel lingkungan ke sisi klien secara aman
 const PUBLIC_PROJECT_ID = import.meta.env.PUBLIC_SUPABASE_PROJECT_ID || "gnuxrjwiyiikkyjxgzff";
-const PUBLIC_ANON_KEY = import.meta.env.PUBLIC_SUPABASE_ANON_KEY || "yJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdudXhyandpeWlpa2t5anhnemZmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk2MTQyOTQsImV4cCI6MjA5NTE5MDI5NH0.OFjoavfuIebaPiSLSgDyf-rUbfyzfvf9dibRgkmoNDg"
+const PUBLIC_ANON_KEY = import.meta.env.PUBLIC_SUPABASE_ANON_KEY || "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdudXhyandpeWlpa2t5anhnemZmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk2MTQyOTQsImV4cCI6MjA5NTE5MDI5NH0.OFjoavfuIebaPiSLSgDyf-rUbfyzfvf9dibRgkmoNDg";
+---
 
 <html lang="id">
   <head>
@@ -39,13 +19,13 @@ const PUBLIC_ANON_KEY = import.meta.env.PUBLIC_SUPABASE_ANON_KEY || "yJhbGciOiJI
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Nusa Media - Baca Berita</title>
     
-    <!-- Tailwind CSS Terintegrasi secara lokal (Atau gunakan Script CDN v3 jika dev lokal) -->
+    <!-- Tailwind CSS Terintegrasi via Skrip Resmi -->
     <script src="https://tailwindcss.com"></script>
     
-    <!-- PERBAIKAN: Mengoreksi tautan Google Fonts agar tidak memicu error build 404 -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <!-- Tautan Google Fonts Resmi -->
+    <link rel="preconnect" href="https://googleapis.com">
     <link rel="preconnect" href="https://gstatic.com" crossorigin>
-    <link href="https://googleapis.com" rel="stylesheet">
+    <link href="https://googleapis.com/css2?family=Roboto:wght@400;700;900&display=swap" rel="stylesheet">
     <style>body { font-family: 'Roboto', sans-serif; }</style>
   </head>
   <body class="bg-gray-100 text-gray-900 antialiased min-h-screen">
@@ -114,7 +94,7 @@ const PUBLIC_ANON_KEY = import.meta.env.PUBLIC_SUPABASE_ANON_KEY || "yJhbGciOiJI
           const isNumeric = /^\d+$/.test(slug);
           const queryParam = isNumeric ? `id=eq.${slug}` : `slug=eq.${slug}`;
 
-          // 1. Ambil Data Berita
+          // 1. Ambil Data Berita secara Real-time
           const resBerita = await fetch(`${BASE_URL}/berita?${queryParam}&select=*`, {
             headers: { 'apikey': PUBLIC_ANON_KEY, 'Authorization': `Bearer ${PUBLIC_ANON_KEY}` }
           });
@@ -136,7 +116,7 @@ const PUBLIC_ANON_KEY = import.meta.env.PUBLIC_SUPABASE_ANON_KEY || "yJhbGciOiJI
             </div>
           `;
 
-          // 2. Ambil Semua Iklan Aktif
+          // 2. Ambil Semua Iklan Aktif secara Real-time
           const resIklan = await fetch(`${BASE_URL}/iklan?select=*`, {
             headers: { 'apikey': PUBLIC_ANON_KEY, 'Authorization': `Bearer ${PUBLIC_ANON_KEY}` }
           });
