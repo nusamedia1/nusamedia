@@ -1,0 +1,16 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "nusaonline",
+  "compatibility_date": "2026-05-25",
+  "pages_build_output_dir": "./dist",
+  "compatibility_flags": [
+    "nodejs_compat"
+  ],
+  "observability": {
+    "enabled": true
+  },
+  "vars": {
+    "PUBLIC_SUPABASE_PROJECT_ID": "gnuxrjwiyiikkyjxgzff",
+    "PUBLIC_SUPABASE_PUBLISHABLE_KEY": "sb_publishable_mn4S6SOa-l6ppK8Yf2zTcQ_gok7iUn7"
+  }
+}
