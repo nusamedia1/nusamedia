@@ -44,17 +44,16 @@ if (error || !berita) {
 const iklanAtas = daftarIklan.find(ad => ad.zona_penempatan === 'artikel' && ad.posisi === 'banner_atas');
 const iklanBawah = daftarIklan.find(ad => ad.zona_penempatan === 'artikel' && ad.posisi === 'banner_bawah');
 
-// 4. VARIABEL SEO & SOSIAL MEDIA
+// 4. VARIABEL SEO & SOSIAL MEDIA (Perbaikan interpolasi tanda $)
 const judulSEO = `${berita.judul} | Nusa-Media`;
 const deskripsiSEO = (berita.ringkasan || berita.isi_konten || '').substring(0, 160).replace(/<[^>]*>/g, '') + '...';
 const gambarSEO = berita.gambar_url || "https://unsplash.com";
 
-const domainUtama = "https://pages.dev"; 
+const domainUtama = "https://c674cdfe.nusaonline.pages.dev"; 
 const urlSEO = `${domainUtama}/berita/${id}`;
 
 const shareWA = `https://whatsapp.com{encodeURIComponent(berita.judul + ' - ' + urlSEO)}`;
 const shareFB = `https://facebook.com{encodeURIComponent(urlSEO)}`;
-
 
 // ==========================================
 // 🔥 AMAN: STABILISASI RENDER STRUKTUR (ANTI-CRASH)
@@ -80,12 +79,11 @@ listSidebar.forEach((posisiNama, indeks) => {
       </div>
     `;
   } else {
-    // 🔥 PERBAIKAN UTAMA: Menggunakan penggabungan string tradisional (+) untuk menghindari simbol ${} yang merusak compiler Astro
     htmlSidebarIklanDetail += `
       <div class="w-full h-48 bg-gray-50 rounded-xl border border-dashed border-gray-300 flex flex-col items-center justify-center text-center p-4 ` + isSticky + `">
         <span class="text-xs font-black text-gray-400 uppercase tracking-wider">Space Iklan Tersedia</span>
         <span class="text-[10px] text-gray-400 mt-1">Slot Sidebar ` + (indeks + 1) + `/5</span>
-        <a href="mailto:nusamediaterpercaya@://gmail.com" class="text-[10px] text-blue-600 font-medium mt-3 hover:underline break-all px-2">
+        <a href="mailto:nusamediaterpercaya@gmail.com" class="text-[10px] text-blue-600 font-medium mt-3 hover:underline break-all px-2">
           Hubungi: nusamediaterpercaya@gmail.com
         </a>
       </div>
@@ -112,10 +110,10 @@ listSidebar.forEach((posisiNama, indeks) => {
     <meta property="article:author" content={berita.penulis || 'Redaksi Nusa Media'} />
 
     <!-- Google Fonts & Tailwind -->
-    <link rel="preconnect" href="https://googleapis.com">
-    <link rel="preconnect" href="https://gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://googleapis.com" rel="stylesheet">
-    <script src="https://tailwindcss.com"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
     <style>body { font-family: 'Roboto', sans-serif; }</style>
   </head>
   <body class="bg-gray-100 text-gray-900 min-h-screen antialiased">
@@ -173,27 +171,45 @@ listSidebar.forEach((posisiNama, indeks) => {
           </div>
 
           <!-- 🔥 IKLAN BANNER ATAS ARTIKEL -->
-          {iklanAtas ? (
-            <div class="my-6 p-2 bg-gray-50 border border-dashed border-gray-300 rounded-lg text-center flex flex-col items-center justify-center">
-              <span class="text-[9px] font-bold text-gray-400 block mb-1">SPONSORED BY: {iklanAtas.nama_sponsor}</span>
-              {iklanAtas.tipe === 'script' ? <div set:html={iklanAtas.kode_html} /> : <a href={iklanAtas.url_tujuan} target="_blank" rel="noopener noreferrer"><img src={iklanAtas.url_gambar} class="w-[300px] h-[250px] object-cover rounded-md shadow-sm" /></a>}
-            </div>
-          ) : (
-            <div class="w-full max-w-[300px] h-[250px] mx-auto my-6 bg-gray-50 rounded-xl border border-dashed border-gray-300 flex flex-col items-center justify-center text-center p-4">
-              <span class="text-xs font-black text-gray-400 uppercase tracking-wider">Space Iklan Tersedia</span>
-              <span class="text-[10px] text-gray-400 mt-1">Banner Atas (300 x 250)</span>
-              <a href="mailto:nusamediaterpercaya@://gmail.com" class="text-[11px] text-blue-600 font-medium mt-3 hover:underline">
-                Hubungi: nusamediaterpercaya@gmail.com
-              </a>
+          {iklanAtas && (
+            <div class="my-6 p-2 bg-gray-50 border border-dashed border-gray-300 rounded-lg text-center">
+              <span class="text-[9px] font-bold text-gray-400 block mb-1">SPONSORED AD</span>
+              {iklanAtas.tipe === 'script' ? (
+                <div set:html={iklanAtas.kode_html} />
+              ) : (
+                <a href={iklanAtas.url_tujuan} target="_blank" rel="noopener noreferrer">
+                  <img src={iklanAtas.url_gambar} class="w-full max-h-28 object-cover rounded shadow-sm" />
+                </a>
+              )}
             </div>
           )}
 
-          <!-- Gambar Utama Artikel -->
-          <div class="w-full h-64 md:h-[400px] bg-slate-100 rounded-xl overflow-hidden mb-6 shadow-inner">
-            <img src={gambarSEO} alt={berita.judul} class="w-full h-full object-cover" />
-          </div>
+          <!-- GAMBAR UTAMA BERITA -->
+          {berita.gambar_url && (
+            <div class="my-6 rounded-xl overflow-hidden shadow-sm">
+              <img src={berita.gambar_url} alt={berita.judul} class="w-full h-auto max-h-[450px] object-cover" />
+            </div>
+          )}
 
-          <!-- Isi Konten Artikel Lengkap -->
-          <div class="text-gray-800 text-base md:text-lg leading-relaxed whitespace-pre-line font-serif mb-6" set:html={berita.isi_konten}></div>
+          <!-- ISI KONTEN UTAMA BERITA -->
+          <div class="prose max-w-none text-slate-800 leading-relaxed text-base md:text-lg space-y-6" set:html={berita.isi_konten} />
 
           <!-- 🔥 IKLAN BANNER BAWAH ARTIKEL -->
+          {iklanBawah && (
+            <div class="mt-8 p-2 bg-gray-50 border border-dashed border-gray-300 rounded-lg text-center">
+              <span class="text-[9px] font-bold text-gray-400 block mb-1">SPONSORED AD</span>
+              {iklanBawah.tipe === 'script' ? (
+                <div set:html={iklanBawah.kode_html} />
+              ) : (
+                <a href={iklanBawah.url_tujuan} target="_blank" rel="noopener noreferrer">
+                  <img src={iklanBawah.url_gambar} class="w-full max-h-28 object-cover rounded shadow-sm" />
+                </a>
+              )}
+            </div>
+          )}
+
+        </article>
+      </div>
+
+      <!-- SISI KANAN: SIDEBAR IKLAN 5 SUSUN -->
+      <aside class="lg:col-span-4 space-y-6">

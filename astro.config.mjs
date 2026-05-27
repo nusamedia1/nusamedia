@@ -1,17 +1,13 @@
+// astro.config.mjs
 import { defineConfig } from 'astro/config';
-import tailwind from '@astrojs/tailwind';
 import cloudflare from '@astrojs/cloudflare';
 
 export default defineConfig({
-  // 💡 SOLUSI FINAL: Mengubah ke static agar Vite sukses membuat folder dist
-  output: 'static', 
-  adapter: cloudflare(),
-  image: {
-    service: {
-      entrypoint: 'astro/assets/services/noop'
-    }
-  },
-  integrations: [tailwind({
-    applyBaseStyles: false 
-  })],
+  // 1. Ubah output ke "server" agar fitur hitungan pembaca (views) & SSR berjalan real-time
+  output: 'server',
+  
+  // 2. Pasang adapter resmi Cloudflare agar Astro mengenali runtime Cloudflare Pages
+  adapter: cloudflare({
+    imageService: 'cloudflare'
+  })
 });
