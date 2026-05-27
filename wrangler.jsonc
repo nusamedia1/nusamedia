@@ -1,6 +1,6 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
-  "name": "numed",
+  "name": "nusaonline",
   "compatibility_date": "2026-05-25",
   "pages_build_output_dir": "./dist",
   "compatibility_flags": [
