@@ -3,7 +3,7 @@ import tailwind from '@astrojs/tailwind';
 import cloudflare from '@astrojs/cloudflare';
 
 export default defineConfig({
-  output: 'hybrid', // 💡 Diubah ke hybrid untuk membongkar bug compiler Vite
+  output: 'server', // 💡 PASTIKAN INI TERTULIS 'server' UTUH
   adapter: cloudflare(),
   image: {
     service: {
