@@ -13,7 +13,7 @@ const [resDetail, resPopuler, resIklan] = await Promise.all([
   supabase
     .from('berita')
     .select('*')
-    .eq('id', id)
+    .eq('slug', id)
     .single(), // Hanya mengambil satu baris data berita sesuai ID
   supabase
     .from('berita')
