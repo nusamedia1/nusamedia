@@ -27,7 +27,7 @@ const [resDetail, resPopuler, resIklan] = await Promise.all([
     .eq('is_aktif', true)
 ]); 
 
-const beritaRaw = resDetail.data;
+const berita = resDetail.data;
 const errorDetail = resDetail.error;
 const beritaPopuler = resPopuler.data || [];
 const daftarIklan = resIklan.data || [];
