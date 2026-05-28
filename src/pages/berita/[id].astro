@@ -32,10 +32,10 @@ const errorDetail = resDetail.error;
 const beritaPopuler = resPopuler.data || [];
 const daftarIklan = resIklan.data || [];
 
-// LANGSUNG AMBIL DATA APA ADANYA DARI KOLOM SUPABASE
-const berita = resDetail.data; 
-const beritaPopuler = resPopuler.data || [];
-const daftarIklan = resIklan.data || [];
+// Jika berita tidak ditemukan atau ID salah, redirect langsung ke halaman utama agar aman dan tidak crash
+if (errorDetail || !berita) {
+  return Astro.redirect('/'); 
+}
 
 // 3. FILTER DATA IKLAN BANNER UTAMA
 const iklanAtas = daftarIklan.find(ad => ad.zona_penempatan === 'artikel' && ad.posisi === 'banner_atas');
