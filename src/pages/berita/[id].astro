@@ -2,6 +2,7 @@
 // src/pages/berita/[id].astro
 export const prerender = false; // Memaksa halaman detail berita ini di-render di server (SSR) secara dinamis!
 
+import Layout from '../../layouts/Layout.astro';
 import { supabase } from '../../lib/supabase'; // Sesuaikan jalur folder keluar dua tingkat (../../)
 import '../../styles/global.css';
 
@@ -14,17 +15,17 @@ const [resDetail, resPopuler, resIklan] = await Promise.all([
     .from('berita')
     .select('*')
     .eq('slug', id)
-    .single(), // Hanya mengambil satu baris data berita sesuai ID
+    .single(), 
   supabase
     .from('berita')
     .select('*')
     .order('views', { ascending: false })
-    .limit(5),
+    .limit(5), //
   supabase
     .from('iklan')
     .select('*')
     .eq('is_aktif', true)
-]);
+]); //
 
 const berita = resDetail.data;
 const errorDetail = resDetail.error;
@@ -35,7 +36,7 @@ const daftarIklan = resIklan.data || [];
 if (errorDetail || !berita) {
   return Astro.redirect('/404'); 
 }
-
+---
 // 3. FILTER DATA IKLAN BANNER UTAMA
 const iklanAtas = daftarIklan.find(ad => ad.zona_penempatan === 'artikel' && ad.posisi === 'banner_atas');
 const iklanBawah = daftarIklan.find(ad => ad.zona_penempatan === 'artikel' && ad.posisi === 'banner_bawah');
