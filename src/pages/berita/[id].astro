@@ -27,15 +27,20 @@ const [resDetail, resPopuler, resIklan] = await Promise.all([
     .eq('is_aktif', true)
 ]); 
 
-const berita = resDetail.data;
+const beritaRaw = resDetail.data;
 const errorDetail = resDetail.error;
 const beritaPopuler = resPopuler.data || [];
 const daftarIklan = resIklan.data || [];
 
-// Jika berita tidak ditemukan atau ID salah, redirect atau tampilkan pesan error
-if (errorDetail || !berita) {
-  return Astro.redirect('/404'); 
-}
+// STRATEGI AMAN: Gabungkan logika fallback di sini agar variabel 'berita' tidak pernah bernilai NULL
+const berita = beritaRaw || {
+  judul: 'Berita Tidak Ditemukan',
+  kategori: 'Informasi',
+  isi_konten: '<p class="text-gray-500 italic text-center py-8">Maaf, artikel yang Anda cari tidak dapat ditemukan, telah dihapus, atau tautan yang Anda ikuti salah.</p>',
+  penulis: 'Sistem',
+  gambar_url: null,
+  created_at: null
+};
 
 // 3. FILTER DATA IKLAN BANNER UTAMA
 const iklanAtas = daftarIklan.find(ad => ad.zona_penempatan === 'artikel' && ad.posisi === 'banner_atas');
