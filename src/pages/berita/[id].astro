@@ -101,6 +101,25 @@ const tanggalFormat = berita.created_at ? new Date(berita.created_at).toLocaleDa
 <Layout title={`${berita.judul} | Nusa-Media`}>
   <main class="max-w-6xl mx-auto px-4 py-8 grid grid-cols-1 lg:grid-cols-12 gap-8">
     
+    <!-- 🔝 BARIS NAVIGASI PALING ATAS -->
+    <div class="flex items-center justify-between border-b border-gray-200 pb-4 mb-6">
+      <!-- SISI KIRI: TEKS NUSA MEDIA -->
+      <a href="/" class="text-lg font-black tracking-wider text-slate-900 hover:text-blue-600 transition-colors">
+        NUSA MEDIA
+      </a>
+      
+      <!-- SISI KANAN: TOMBOL KEMBALI KE BERANDA -->
+      <a href="/" class="inline-flex items-center gap-1.5 text-xs font-bold text-gray-500 hover:text-blue-600 transition-colors group">
+        <svg xmlns="http://w3.org" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-3.5 h-3.5 transform group-hover:-translate-x-0.5 transition-transform">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" />
+        </svg>
+        Kembali ke Beranda
+      </a>
+    </div>
+
+    <!-- STRUKTUR GRID KONTEN UTAMA -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+    
     <!-- SISI KIRI: ISI BERITA LENGKAP & BANNER IKLAN -->
     <section class="lg:col-span-8 space-y-6">
       
