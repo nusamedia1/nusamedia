@@ -1,16 +1,16 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
-  "name": "nusaonline",
+  "name": "nusamedia",
   "compatibility_date": "2026-05-25",
   "pages_build_output_dir": "./dist",
   "compatibility_flags": [
     "nodejs_compat"
-  },
+  ],
   "observability": {
     "enabled": true
   },
   "vars": {
-    "PUBLIC_SUPABASE_PROJECT_ID": "gnuxrjwiyiikkyjxgzff",
-    "PUBLIC_SUPABASE_PUBLISHABLE_KEY": "sb_publishable_mn4S6SOa-l6ppK8Yf2zTcQ_gok7iUn7"
+    "PUBLIC_SUPABASE_URL": "https://gnuxrjwiyiikkyjxgzff.supabase.co",
+    "PUBLIC_SUPABASE_ANON_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdudXhyandpeWlpa2t5anhnemZmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk2MTQyOTQsImV4cCI6MjA5NTE5MDI5NH0.OFjoavfuIebaPiSLSgDyf-rUbfyzfvf9dibRgkmoNDg"
   }
 }
