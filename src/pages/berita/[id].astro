@@ -14,7 +14,7 @@ const [resDetail, resPopuler, resIklan] = await Promise.all([
   supabase
     .from('berita')
     .select('*')
-    .eq('slug', id)
+    .eq('id', id)
     .single(), 
   supabase
     .from('berita')
@@ -32,15 +32,10 @@ const errorDetail = resDetail.error;
 const beritaPopuler = resPopuler.data || [];
 const daftarIklan = resIklan.data || [];
 
-// STRATEGI AMAN: Gabungkan logika fallback di sini agar variabel 'berita' tidak pernah bernilai NULL
-const berita = beritaRaw || {
-  judul: 'Berita Tidak Ditemukan',
-  kategori: 'Informasi',
-  isi_konten: '<p class="text-gray-500 italic text-center py-8">Maaf, artikel yang Anda cari tidak dapat ditemukan, telah dihapus, atau tautan yang Anda ikuti salah.</p>',
-  penulis: 'Sistem',
-  gambar_url: null,
-  created_at: null
-};
+// 🔥 KUNCI UTAMA: Jika berita null, kosong, atau eror, langsung tendang ke beranda tanpa ampun!
+if (errorDetail || !berita) {
+  return Astro.redirect('/'); 
+}
 
 // 3. FILTER DATA IKLAN BANNER UTAMA
 const iklanAtas = daftarIklan.find(ad => ad.zona_penempatan === 'artikel' && ad.posisi === 'banner_atas');
