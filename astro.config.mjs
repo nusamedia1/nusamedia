@@ -3,7 +3,7 @@ import cloudflare from '@astrojs/cloudflare';
 import tailwind from '@astrojs/tailwind';
 
 export default defineConfig({
-  output: 'server',
+  output: 'hybrid',
   adapter: cloudflare(),
   integrations: [tailwind()],
   // Tambahkan baris di bawah ini untuk memperbaiki error biner Node.js fs
