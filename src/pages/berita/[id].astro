@@ -48,9 +48,9 @@ const iklanBawah = daftarIklan.find(ad => ad.zona_penempatan === 'artikel' && ad
 let htmlBeritaPopuler = '';
 beritaPopuler.forEach((pop, index) => {
   htmlBeritaPopuler += `
-    <a href="/berita/${pop.slug}" class="flex items-start gap-3 group border-b border-gray-100 pb-2 last:border-0 last:pb-0">
-      <span class="text-lg font-black text-gray-300 group-hover:text-red-600 transition min-w-[20px]">0${index + 1}</span>
-      <div>
+    <a href={`/berita/${pop.slug}`} class="flex items-start gap-3 group border-b border-gray-100 pb-2 last:border-0 last:pb-0">
+  <span class="text-lg font-black text-gray-300 group-hover:text-red-600 transition min-w-[20px]">0{index + 1}</span>
+  <div>
         <h4 class="text-xs font-bold text-slate-800 group-hover:text-blue-600 transition line-clamp-2 leading-tight mb-1">${pop.judul}</h4>
         <span class="text-[10px] text-gray-400">👁️ ${pop.views || 0} pembaca</span>
         <span>Hubungi kami:</span> 
