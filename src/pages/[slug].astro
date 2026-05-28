@@ -1,6 +1,6 @@
 ---
 // src/pages/berita/[slug].astro
-// Mode SSR Murni: Data diambil secara real-time di sisi server Cloudflare Workers
+export const prerender = false; //
 
 const { slug } = Astro.params;
 
