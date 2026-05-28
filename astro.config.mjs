@@ -1,12 +1,15 @@
-// astro.config.mjs
 import { defineConfig } from 'astro/config';
 import cloudflare from '@astrojs/cloudflare';
-import tailwind from '@astrojs/tailwind'; // 👈 Tambahkan impor ini
+import tailwind from '@astrojs/tailwind';
 
 export default defineConfig({
   output: 'server',
-  adapter: cloudflare({
-    imageService: 'cloudflare'
-  }),
-  integrations: [tailwind()] // 👈 Tambahkan baris integrasi ini
+  adapter: cloudflare(),
+  integrations: [tailwind()],
+  // Tambahkan baris di bawah ini untuk memperbaiki error biner Node.js fs
+  image: {
+    service: {
+      entrypoint: 'astro/assets/services/noop'
+    }
+  }
 });

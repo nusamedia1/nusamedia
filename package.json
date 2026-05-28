@@ -8,8 +8,7 @@
     "build": "astro build",
     "preview": "astro preview",
     "astro": "astro",
-    "db:init": "supabase init",
-    "db:start": "supabase start"
+   "deploy": "astro build && node node_modules/wrangler/bin/wrangler.js deploy"
   },
   "dependencies": {
     "@astrojs/cloudflare": "^12.6.13",
