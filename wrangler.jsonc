@@ -1,13 +1,10 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "nusaonline",
-  "main": "dist/_worker.js/index.js",
   "compatibility_date": "2026-05-25",
+  "pages_build_output_dir": "./dist",
   "compatibility_flags": [
     "nodejs_compat"
-  ],
-  "site": {
-    "bucket": "./dist"
   },
   "observability": {
     "enabled": true
