@@ -11,7 +11,7 @@
    "deploy": "astro build && node node_modules/wrangler/bin/wrangler.js deploy"
   },
   "dependencies": {
-    "@astrojs/cloudflare": "^12.6.13",
+    "@astrojs/cloudflare": "^11.2.0",
     "@astrojs/tailwind": "^6.0.2",
     "@supabase/supabase-js": "^2.43.0",
     "astro": "^4.10.0",
