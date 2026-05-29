@@ -43,6 +43,9 @@ if (errorBerita || dataBeritaMentah.length === 0) {
 } else {
   htmlListBerita = `<div class="grid grid-cols-1 md:grid-cols-2 gap-6">`;
   dataBeritaMentah.forEach((berita) => {
+    // 1. Deklarasikan variabel linkDetail di baris paling atas di dalam perulangan
+    const linkDetail = `/berita/${berita.slug || berita.id}`;
+
     const teksMentah = berita.ringkasan || berita.isi_konten || '';
     const ringkasanBersih = teksMentah.replace(/<[^>]*>/g, ''); 
     const tanggal = berita.created_at ? new Date(berita.created_at).toLocaleDateString('id-ID', { dateStyle: 'short' }) : '';
@@ -51,10 +54,13 @@ if (errorBerita || dataBeritaMentah.length === 0) {
     const views = berita.views || 0;
     const penulis = berita.penulis || 'Redaksi';
 
+    // 2. Sekarang variabel linkDetail aman dipanggil di bawah sini
     htmlListBerita += `
       <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden flex flex-col hover:shadow-md transition">
         <div class="h-48 bg-slate-200 overflow-hidden">
-          <img src="${gambar}" alt="${berita.judul}" class="w-full h-full object-cover hover:scale-105 transition duration-300" loading="lazy" />
+          <a href="${linkDetail}">
+            <img src="${gambar}" alt="${berita.judul}" class="w-full h-full object-cover hover:scale-105 transition duration-300" loading="lazy" />
+          </a>
         </div>
         <div class="p-4 flex-1 flex flex-col justify-between">
           <div>
@@ -62,7 +68,7 @@ if (errorBerita || dataBeritaMentah.length === 0) {
               <span class="text-[10px] font-black uppercase text-red-600 tracking-wider">${kategori}</span>
               <span class="text-[11px] text-gray-400 flex items-center gap-0.5">👁️ ${views}</span>
             </div>
-            <a href="/berita/${berita.id}" class="block text-base font-bold text-slate-900 hover:text-red-600 leading-snug mb-2 transition">
+            <a href="${linkDetail}" class="block text-base font-bold text-slate-900 hover:text-red-600 leading-snug mb-2 transition">
               ${berita.judul}
             </a>
             <p class="text-xs text-gray-500 line-clamp-3 mb-4">
@@ -77,6 +83,7 @@ if (errorBerita || dataBeritaMentah.length === 0) {
       </div>
     `;
   });
+
   htmlListBerita += `</div>`;
 }
 
@@ -86,8 +93,12 @@ if (beritaPopuler.length === 0) {
   htmlBeritaPopuler = `<p class="text-xs text-gray-400">Belum ada berita populer.</p>`;
 } else {
   beritaPopuler.forEach((pop, index) => {
+    // 1. Deklarasikan variabel linkPopuler di baris paling atas di dalam perulangan
+    const linkPopuler = `/berita/${pop.slug || pop.id}`;
+    
+    // 2. Sekarang variabel linkPopuler aman dipanggil di dalam tag <a href="...">
     htmlBeritaPopuler += `
-      <a href="/berita/${pop.id}" class="flex items-start gap-3 group border-b border-gray-100 pb-2 last:border-0 last:pb-0">
+      <a href="${linkPopuler}" class="flex items-start gap-3 group border-b border-gray-100 pb-2 last:border-0 last:pb-0">
         <span class="text-lg font-black text-gray-300 group-hover:text-red-600 transition min-w-[20px]">0${index + 1}</span>
         <div>
           <h4 class="text-xs font-bold text-slate-800 group-hover:text-blue-600 transition line-clamp-2 leading-tight mb-1">${pop.judul}</h4>

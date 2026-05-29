@@ -1,40 +1,50 @@
 ---
-// src/pages/berita/[id].astro
-export const prerender = false; // Memaksa halaman detail berita ini di-render di server (SSR) secara dinamais!
+// src/pages/berita/[slug].astro
+export const prerender = false; 
 
 import Layout from '../../layouts/Layout.astro';
-import { supabase } from '../../lib/supabase'; // Sesuaikan jalur folder keluar dua tingkat (../../)
+import { supabase } from '../../lib/supabase'; 
 import '../../styles/global.css';
 
-// 1. AMBIL ID BERITA DARI URL ROUTE ASTRO
 const { slug } = Astro.params;
 
-// 2. AMBIL DATA BERITA SPESIFIK & SEMUA IKLAN SECARA PARALEL
-const [resDetail, resPopuler, resIklan] = await Promise.all([
-  supabase
-    .from('berita')
-    .select('*')
-    .eq('slug', slug)
-    .maybeSingle(), 
-  supabase
-    .from('berita')
-    .select('*')
-    .order('views', { ascending: false })
-    .limit(5), 
-  supabase
-    .from('iklan')
-    .select('*')
-    .eq('is_aktif', true)
-]); 
+// Amankan jika slug kosong
+const slugAman = slug || "fitur-berita";
 
-const berita = resDetail.data;
-const errorDetail = resDetail.error;
-const beritaPopuler = resPopuler.data || [];
-const daftarIklan = resIklan.data || [];
+const PROJECT_ID = import.meta.env.SUPABASE_PROJECT_ID || "gnuxrjwiyiikkyjxgzff";
+const ANON_KEY = import.meta.env.SUPABASE_ANON_KEY || "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdudXhyandpeWlpa2t5anhnemZmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk2MTQyOTQsImV4cCI6MjA5NTE5MDI5NH0.OFjoavfuIebaPiSLSgDyf-rUbfyzfvf9dibRgkmoNDg";
+const BASE_URL = `https://${PROJECT_ID}.supabase.co/rest/v1`;
 
-// Jika terjadi error database atau artikel dengan slug tersebut tidak ditemukan, redirect aman ke beranda
-if (errorDetail || !berita) {
-  return Astro.redirect('/'); 
+let berita = null;
+let beritaPopuler = [];
+let daftarIklan = [];
+
+try {
+  // Ambil data dengan metode pengaman agar tidak memicu crash keras
+  const [resDetail, resPopuler, resIklan] = await Promise.all([
+    supabase.from('berita').select('*').eq('slug', slugAman).maybeSingle(),
+    supabase.from('berita').select('*').order('views', { ascending: false }).limit(5),
+    supabase.from('iklan').select('*').eq('is_aktif', true)
+  ]); 
+
+  berita = resDetail?.data || null;
+  beritaPopuler = resPopuler?.data || [];
+  daftarIklan = resIklan?.data || [];
+} catch (e) {
+  console.error("Gagal memuat data:", e);
+}
+
+// ─── KONDISI JIKA BERITA KOSONG / BELUM TERSEDIA ───
+// Alih-alih melempar redirect, kita siapkan data bayangan agar halaman TIDAK ERROR
+if (!berita) {
+  berita = {
+    judul: "Artikel Belum Tersedia atau Sedang Dalam Peninjauan",
+    kategori: "Info",
+    penulis: "Redaksi Nusa Media",
+    isi_konten: "Mohon maaf, artikel berita dengan alamat tautan tersebut tidak ditemukan atau telah diperbarui oleh redaksi kami. Silakan kembali ke halaman utama untuk membaca berita terhangat lainnya.",
+    gambar_url: null,
+    created_at: new Date().toISOString()
+  };
 }
 
 // 3. FILTER DATA IKLAN BANNER UTAMA
@@ -96,6 +106,15 @@ listSidebar.forEach((posisiNama, indeks) => {
 });
 
 const tanggalFormat = berita.created_at ? new Date(berita.created_at).toLocaleDateString('id-ID', { dateStyle: 'long' }) : '';
+
+// 🟢 WARNAI/TARUH KODE BARU DI SINI:
+const DOMAIN_UTAMA = "https://nusaonline.pages.dev"; 
+const urlArtikelPenuh = encodeURIComponent(`${DOMAIN_UTAMA}/berita/${slug}`);
+const judulArtikelPenuh = encodeURIComponent(berita.judul);
+
+const linkShareWhatsapp = `https://whatsapp.com{judulArtikelPenuh}%20${urlArtikelPenuh}`;
+const linkShareFacebook = `https://facebook.com{urlArtikelPenuh}`;
+const urlAsliUntukSalin = `${DOMAIN_UTAMA}/berita/${slug}`;
 ---
 
 <Layout title={`${berita.judul} | Nusa-Media`}>
@@ -146,6 +165,26 @@ const tanggalFormat = berita.created_at ? new Date(berita.created_at).toLocaleDa
         </div>
 
         <h1 class="text-2xl md:text-3xl font-black text-slate-900 leading-tight mb-6">{berita.judul}</h1>
+
+        <!-- 📢 BARIS TOMBOL BAGIKAN MEDIA SOSIAL & SALIN TAUTAN (TEMPEL DI SINI) -->
+          <div class="flex items-center gap-2.5 pt-3 pb-3 border-b border-t border-gray-100 flex-wrap my-4">
+            <span class="text-xs font-bold text-gray-400 uppercase tracking-wider mr-1">Bagikan:</span>
+            
+            <!-- WhatsApp -->
+            <a href={linkShareWhatsapp} target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1.5 bg-emerald-500 hover:bg-emerald-600 text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-sm transition-colors decoration-none">
+              WhatsApp
+            </a>
+
+            <!-- Facebook -->
+            <a href={linkShareFacebook} target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-sm transition-colors decoration-none">
+              Facebook
+            </a>
+
+            <!-- Salin Tautan -->
+            <button id="btnSalinTautan" data-url={urlAsliUntukSalin} class="inline-flex items-center gap-1.5 bg-gray-700 hover:bg-gray-800 text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-sm transition-colors cursor-pointer border-0">
+              <span id="teksTombolSalin">Salin Tautan</span>
+            </button>
+          </div>
 
         {berita.gambar_url && (
           <div class="rounded-xl overflow-hidden mb-6 bg-slate-100">
@@ -198,3 +237,8 @@ const tanggalFormat = berita.created_at ? new Date(berita.created_at).toLocaleDa
 
   </body>
 </html>
+
+<!-- 🟢 TARUH KODE TAG <script> INTERAKTIF DI SINI (BARIS PALING AKHIR FILE) -->
+<script>
+  const tombolSalin = document.getElementById('btnSalinTautan');
+  // ... dan seterusnya sampai tutup </script> ...

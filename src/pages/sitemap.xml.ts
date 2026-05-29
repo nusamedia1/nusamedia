@@ -14,7 +14,7 @@ export const GET: APIRoute = async () => {
     .order('created_at', { ascending: false });
 
   // Sesuaikan domain utama Anda (Ganti vercel.app ke pages.dev jika menggunakan Cloudflare)
-  const domainUtama = "https://nusa-media.vercel.app";
+  const domainUtama = "https://nusaonline.pages.dev";
 
   // 2. Susun dokumen XML
   const XMLMurni = `<?xml version="1.0" encoding="UTF-8"?>
