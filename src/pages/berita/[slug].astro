@@ -7,15 +7,15 @@ import { supabase } from '../../lib/supabase'; // Sesuaikan jalur folder keluar 
 import '../../styles/global.css';
 
 // 1. AMBIL ID BERITA DARI URL ROUTE ASTRO
-const { id } = Astro.params;
+const { slug } = Astro.params;
 
 // 2. AMBIL DATA BERITA SPESIFIK & SEMUA IKLAN SECARA PARALEL
 const [resDetail, resPopuler, resIklan] = await Promise.all([
   supabase
     .from('berita')
     .select('*')
-    .eq('id', id)
-    .single(), 
+    .eq('slug', slug)
+    .maybeSingle(), 
   supabase
     .from('berita')
     .select('*')
@@ -32,7 +32,7 @@ const errorDetail = resDetail.error;
 const beritaPopuler = resPopuler.data || [];
 const daftarIklan = resIklan.data || [];
 
-// Jika berita tidak ditemukan atau ID salah, redirect langsung ke halaman utama agar aman dan tidak crash
+// Jika terjadi error database atau artikel dengan slug tersebut tidak ditemukan, redirect aman ke beranda
 if (errorDetail || !berita) {
   return Astro.redirect('/'); 
 }

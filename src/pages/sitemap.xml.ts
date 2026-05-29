@@ -2,15 +2,18 @@
 import type { APIRoute } from 'astro';
 import { supabase } from '../lib/supabase';
 
-export const prerender = true;
+// PENTING: Karena kita menarik data dinamis dari Supabase setiap waktu, 
+// pastikan sitemap dirender di server secara real-time (prerender = false).
+export const prerender = false; 
 
 export const GET: APIRoute = async () => {
-  // 1. Ambil data dari database Supabase
+  // 1. PERBAIKAN: Ambil kolom 'slug' dari Supabase, bukan lagi 'id'
   const { data: listArtikel } = await supabase
     .from('berita')
-    .select('id, created_at')
+    .select('slug, created_at') // <-- Mengubah 'id' menjadi 'slug'
     .order('created_at', { ascending: false });
 
+  // Sesuaikan domain utama Anda (Ganti vercel.app ke pages.dev jika menggunakan Cloudflare)
   const domainUtama = "https://nusa-media.vercel.app";
 
   // 2. Susun dokumen XML
@@ -29,7 +32,7 @@ export const GET: APIRoute = async () => {
 
   <!-- Sinkronisasi Daftar Artikel Berita Otomatis -->
   ${listArtikel ? listArtikel.map((art) => `  <url>
-    <loc>${domainUtama}/berita/${art.id}</loc>
+    <loc>${domainUtama}/berita/${art.slug}</loc> <!-- 2. PERBAIKAN: Gunakan art.slug bukan art.id -->
     <lastmod>${art.created_at ? new Date(art.created_at).toISOString().split('T')[0] : new Date().toISOString().split('T')[0]}</lastmod>
     <priority>0.8</priority>
     <changefreq>daily</changefreq>
@@ -40,6 +43,7 @@ export const GET: APIRoute = async () => {
   return new Response(XMLMurni, {
     headers: {
       'Content-Type': 'application/xml; charset=utf-8',
+      'Cache-Control': 'public, max-age=3600' // Tambahan opsional: Cache sitemap selama 1 jam agar hemat kuota database
     },
   });
 };
