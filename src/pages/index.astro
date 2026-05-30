@@ -97,9 +97,10 @@ if (errorBerita || dataBeritaMentah.length === 0) {
         </div>
         <div class="p-4 flex-1 flex flex-col justify-between">
           <div>
-            <div class="flex items-center justify-between gap-2 mb-2">
-              <span class="text-[10px] font-black uppercase text-red-600 tracking-wider">${kategori}</span>
-              <span class="text-[11px] text-gray-400 flex items-center gap-0.5">👁️ ${views}</span>
+            <div class="link-berita cursor-pointer" data-slug="${slug}">
+                <div class="flex items-center justify-between gap-2 mb-2">
+                <span class="text-[10px] font-black uppercase text-red-600 tracking-wider">${kategori}</span>
+                <span class="text-[11px] text-gray-400 flex items-center gap-0.5">👁️ ${views}</span>
             </div>
             <a href="${linkDetail}" class="block text-base font-bold text-slate-900 hover:text-red-600 leading-snug mb-2 transition">
               ${berita.judul}
@@ -113,6 +114,36 @@ if (errorBerita || dataBeritaMentah.length === 0) {
             <span>${tanggal}</span>
           </div>
         </div>
+        <script>
+  import { supabase } from '../lib/supabaseClient'; 
+
+  document.addEventListener('click', async (event) => {
+    // Deteksi jika area kartu berita diklik
+    const kartuBerita = event.target.closest('.link-berita');
+    
+    if (kartuBerita) {
+      // Ambil nilai slug dari atribut HTML
+      const slugBerita = kartuBerita.getAttribute('data-slug');
+      
+      if (slugBerita) {
+        try {
+          // Panggil mesin otomatis Supabase berdasarkan slug
+          const { error } = await supabase
+            .rpc('increment_pembaca_by_slug', { berita_slug: slugBerita });
+
+          if (error) {
+            console.error('Gagal menambah pembaca:', error);
+          } else {
+            console.log('Mesin otomatis: Slug [' + slugBerita + '] diklik, pembaca +1');
+          }
+        } catch (err) {
+          console.error('Eror jaringan/database:', err);
+        }
+      }
+    }
+  });
+</script>
+
       </div>
     `;
   });
