@@ -5,6 +5,39 @@ export const prerender = false; // SSR Aktif murni!
 import Layout from '../layouts/Layout.astro';
 import { supabase } from '../lib/supabase';
 import '../styles/global.css';
+import { useEffect } from 'react';
+import { supabase } from '@/lib/supabaseClient'; // Sesuaikan jalur impor Supabase Anda
+
+export default function DetailBerita({ berita }) {
+  
+  useEffect(() => {
+    // 1. Buat fungsi asinkron di dalam useEffect
+    const hitungPembaca = async () => {
+      if (!berita?.id) return; // Pastikan ID berita sudah tersedia
+
+      const { error } = await supabase
+        .rpc('increment_pembaca', { berita_id: berita.id }); // Pastikan nama variabel ID sesuai
+
+      if (error) {
+        console.error('Gagal update pembaca:', error);
+      } else {
+        console.log('Jumlah pembaca berhasil ditambah (+1)');
+      }
+    };
+
+    // 2. Jalankan fungsinya langsung
+    hitungPembaca();
+  }, [berita?.id]); // Pemicu ulang jika ID berita berubah
+
+  return (
+    <div>
+      <h1>{berita?.judul}</h1>
+      <p>Dibaca: {berita?.jumlah_pembaca} kali</p>
+      {/* Isi konten berita Anda */}
+    </div>
+  );
+}
+
 
 // 1. AMBIL DATA DARI SUPABASE SECARA PARALEL
 const [resBerita, resPopuler, resIklan] = await Promise.all([
