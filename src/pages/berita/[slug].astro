@@ -112,9 +112,9 @@ const DOMAIN_UTAMA = "https://nusamedia-11t.pages.dev";
 const urlArtikelPenuh = encodeURIComponent(`${DOMAIN_UTAMA}/berita/${slug}`);
 const judulArtikelPenuh = encodeURIComponent(berita.judul);
 
-const linkShareWhatsapp = `https://whatsapp.com{encodeURIComponent(pageTitle + pageUrl)}`;
-const linkShareFacebook = `https://facebook.com{encodeURIComponent(pageUrl)}`;
-const urlAsliUntukSalin = `Astro.url.href`;
+const linkShareWhatsapp = `https://api.whatsapp.com/send/?text=`;
+const linkShareFacebook = `https://facebook.com/share/`;
+const urlAsliUntukSalin = `https://nusamedia-11t.pages.dev/berita/`;
 ---
 
 <Layout title={`${berita.judul} | Nusa Media`}>
