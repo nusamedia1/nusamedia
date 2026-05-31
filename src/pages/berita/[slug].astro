@@ -115,6 +115,11 @@ const judulArtikelPenuh = encodeURIComponent(berita.judul);
 const linkShareWhatsapp = `https://api.whatsapp.com/send/?text=nusamedia-11t.pages.dev`;
 const linkShareFacebook = `https://facebook.com/share/nusamedia-11t.pages.dev`;
 const urlAsliUntukSalin = `https://nusamedia-11t.pages.dev/berita/`;
+const kontenMentah = berita.isi_konten || berita.konten || "";
+const daftarParagraf = kontenMentah
+  .split(/\r?\n/)
+  .map(p => p.trim())
+  .filter(p => p.length > 0);
 ---
 
 <Layout title={`${berita.judul} | Nusa Media`}>
@@ -212,10 +217,11 @@ const urlAsliUntukSalin = `https://nusamedia-11t.pages.dev/berita/`;
           <!-- ISI KONTEN BERITA -->
           <div class="text-lg text-gray-800 leading-relaxed text-justify space-y-8">
     
-             <!-- Render konten dinamis dari database -->
-             <Fragment set:html={berita.isi_konten || berita.konten} />
-    
-             <!-- Konten statis tambahan -->
+             <!-- Memanggil variabel 'daftarParagraf' yang dibuat di atas -->
+             {daftarParagraf.map((paragraf) => (
+                <p>{paragraf}</p>
+             ))}
+
              <p>Ini adalah contoh paragraf pertama. Kalimatnya pendek dan langsung pada inti informasi berita.</p>
              <p>Ini adalah paragraf kedua. Jarak antar baris yang renggang membuat mata pembaca betah berlama-lama.</p>
              <p>Ini adalah paragraf ketiga untuk melihat konsistensi jarak vertikal yang rapi dan seimbang di seluruh artikel.</p>
