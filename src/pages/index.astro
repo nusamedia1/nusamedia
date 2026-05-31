@@ -172,8 +172,15 @@ listSidebar.forEach((posisiNama, indeks) => {
     <!-- HEADER / LOGO NAVBAR -->
     <header class="bg-white border-b border-gray-200 sticky top-0 z-50 shadow-sm">
       <div class="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
-        <a href="/" class="text-2xl font-black text-red-600 tracking-tighter">NUSA MEDIA</a>
-        <div class="text-xs text-gray-400 hidden sm:block">Kontak Redaksi: <span class="text-blue-600 font-medium">nusamediaterpercaya@gmail.com</span></div>
+        <a href="/" class="flex flex-col justify-center group">
+          <span class="text-2xl font-black text-red-600 tracking-tighter leading-none">NUSA MEDIA</span>
+          <span class="text-[10px] font-medium text-gray-500 uppercase tracking-widest mt-0.5 group-hover:text-slate-800 transition">Media Berita Terpercaya</span>
+        </a>
+       <div class="text-xs text-gray-400 hidden sm:block">
+  Kontak Redaksi: 
+  <a href="mailto:nusamediaterpercaya@gmail.com" class="text-blue-600 font-medium hover:underline transition">
+    nusamediaterpercaya@gmail.com
+  </a>
       </div>
     </header>
 
@@ -238,10 +245,9 @@ listSidebar.forEach((posisiNama, indeks) => {
       <p>© 2026 NUSA-MEDIA. All Rights Reserved. Portal Berita Terintegrasi Edge Network.</p>
     </footer>
 
-     <!-- ✨ PERBAIKAN MUTLAK: Penempatan Skrip Pelacak Klik Tunggal Tepat Sebelum Penutup Body -->
     <script>
-      import { supabase } from '../lib/supabase'; // Jalur impor klien tunggal
-
+      import { supabase } from '../lib/supabase'; // Langsung impor dari file valid Anda
+    
       document.addEventListener('DOMContentLoaded', () => {
         // Metode Event Delegation (Menghemat RAM browser karena hanya ada 1 listener aktif)
         document.body.addEventListener('click', async (event) => {
