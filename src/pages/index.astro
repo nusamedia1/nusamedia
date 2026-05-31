@@ -36,12 +36,14 @@ const iklanBawah = daftarIklan.find(ad => ad.zona_penempatan === 'artikel' && ad
 // 🔥 STRATEGI RAKIT HTML DI SINI (FRONTMATTER)
 // ==========================================
 
-// A. RAKIT HTML DAFTAR BERITA UTAMA
+// 🟢 GANTI BLOK KODE PERULANGAN BERITA ANDA DENGAN INI:
 let htmlListBerita = '';
 if (errorBerita || dataBeritaMentah.length === 0) {
   htmlListBerita = `<div class="bg-white p-8 rounded-xl text-center text-gray-500 border border-gray-200">Belum ada berita yang diterbitkan.</div>`;
 } else {
+  // 🌟 KUNCI 1: Tag pembuka Grid 2 Kolom ke Samping
   htmlListBerita = `<div class="grid grid-cols-1 md:grid-cols-2 gap-6">`;
+  
   dataBeritaMentah.forEach((berita) => {
     // 1. Deklarasikan variabel linkDetail di baris paling atas di dalam perulangan
     const linkDetail = `/berita/${berita.slug || berita.id}`;
@@ -188,17 +190,23 @@ listSidebar.forEach((posisiNama, indeks) => {
       </div>
     </header>
 
-    <!-- WRAPPER GRID UTAMA -->
+        <!-- WRAPPER GRID UTAMA -->
     <main class="max-w-6xl mx-auto px-4 py-8 grid grid-cols-1 lg:grid-cols-12 gap-8">
       
       <!-- SISI KIRI: DAFTAR BERITA UTAMA & BANNER -->
-      <section class="lg:col-span-8 space-y-6">
+      <div class="lg:col-span-8 space-y-6"> <!-- 🟢 PERBAIKAN: Gunakan div pembuka yang menampung semua konten kiri -->
         
         <!-- 🔥 IKLAN BANNER ATAS BERANDA -->
         {iklanAtas ? (
           <div class="p-2 bg-white rounded-xl shadow-sm border border-gray-200 text-center flex flex-col items-center justify-center">
             <span class="text-[9px] font-bold text-gray-400 block mb-1">SPONSORED BY: {iklanAtas.nama_sponsor}</span>
-            {iklanAtas.tipe === 'script' ? <div set:html={iklanAtas.kode_html} /> : <a href={iklanAtas.url_tujuan} target="_blank" rel="noopener noreferrer"><img src={iklanAtas.url_gambar} class="w-full h-auto object-cover rounded-md" /></a>}
+            {iklanAtas.tipe === 'script' ? (
+              <div set:html={iklanAtas.kode_html} />
+            ) : (
+              <a href={iklanAtas.url_tujuan} target="_blank" rel="noopener noreferrer">
+                <img src={iklanAtas.url_gambar} class="w-full h-auto object-cover rounded-md" />
+              </a>
+            )}
           </div>
         ) : (
           <div class="w-full h-32 bg-gray-50 rounded-xl border border-dashed border-gray-300 flex flex-col items-center justify-center text-center p-4">
@@ -207,14 +215,20 @@ listSidebar.forEach((posisiNama, indeks) => {
           </div>
         )}
 
-        <!-- 📰 DAFTAR LIST BERITA (Hasil Rakitan Frontmatter) -->
+        <!-- 📰 DAFTAR LIST BERITA (🟢 DI SINI: Letak yang benar agar masuk ke dalam grid samping kiri) -->
         <div set:html={htmlListBerita} />
 
         <!-- 🔥 IKLAN BANNER BAWAH BERANDA -->
         {iklanBawah ? (
           <div class="p-2 bg-white rounded-xl shadow-sm border border-gray-200 text-center flex flex-col items-center justify-center">
             <span class="text-[9px] font-bold text-gray-400 block mb-1">SPONSORED BY: {iklanBawah.nama_sponsor}</span>
-            {iklanBawah.tipe === 'script' ? <div set:html={iklanBawah.kode_html} /> : <a href={iklanBawah.url_tujuan} target="_blank" rel="noopener noreferrer"><img src={iklanBawah.url_gambar} class="w-full h-auto object-cover rounded-md" /></a>}
+            {iklanBawah.tipe === 'script' ? (
+              <div set:html={iklanBawah.kode_html} />
+            ) : (
+              <a href={iklanBawah.url_tujuan} target="_blank" rel="noopener noreferrer">
+                <img src={iklanBawah.url_gambar} class="w-full h-auto object-cover rounded-md" />
+              </a>
+            )}
           </div>
         ) : (
           <div class="w-full h-32 bg-gray-50 rounded-xl border border-dashed border-gray-300 flex flex-col items-center justify-center text-center p-4">
@@ -223,7 +237,7 @@ listSidebar.forEach((posisiNama, indeks) => {
           </div>
         )}
 
-      </section>
+      </div> <!-- 🟢 PERBAIKAN: Penutup div konten kiri diletakkan setelah banner bawah selesai dirender -->
 
       <!-- SISI KANAN: SIDEBAR WIDGET & IKLAN SUSUN -->
       <aside class="lg:col-span-4 space-y-6">
@@ -236,7 +250,7 @@ listSidebar.forEach((posisiNama, indeks) => {
           </div>
         </div>
 
-        <!-- 5 SLOT IKLAN SIDEBAR (Hasil Rakitan Frontmatter) -->
+        <!-- 5 SLOT IKLAN SIDEBAR -->
         <div class="space-y-4">
           <div set:html={htmlSidebarIklan} />
         </div>

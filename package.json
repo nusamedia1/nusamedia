@@ -8,7 +8,9 @@
     "build": "astro build",
     "preview": "astro preview",
     "astro": "astro",
-    "deploy": "astro build && node node_modules/wrangler/bin/wrangler.js pages deploy ./dist --project-name=nusamedia"
+    "build": "astro build && node node_modules/wrangler/bin/wrangler.js pages deploy ./dist --project-name=nusamedia --branch=production",
+    "deploy": "astro build && node node_modules/wrangler/bin/wrangler.js pages deploy ./dist --project-name=nusamedia --branch=production"
+
   },
   "dependencies": {
     "@astrojs/cloudflare": "^11.2.0",
