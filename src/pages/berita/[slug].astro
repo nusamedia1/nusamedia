@@ -108,7 +108,7 @@ listSidebar.forEach((posisiNama, indeks) => {
 const tanggalFormat = berita.created_at ? new Date(berita.created_at).toLocaleDateString('id-ID', { dateStyle: 'long' }) : '';
 
 // 🟢 WARNAI/TARUH KODE BARU DI SINI:
-const DOMAIN_UTAMA = "https://nusaonline.pages.dev"; 
+const DOMAIN_UTAMA = "https://nusamedia-11t.pages.dev"; 
 const urlArtikelPenuh = encodeURIComponent(`${DOMAIN_UTAMA}/berita/${slug}`);
 const judulArtikelPenuh = encodeURIComponent(berita.judul);
 
@@ -174,12 +174,12 @@ const urlAsliUntukSalin = `Astro.url.href`;
             <span class="text-xs font-bold text-gray-400 uppercase tracking-wider mr-1">Bagikan:</span>
             
             <!-- WhatsApp -->
-            <a href={linkShareWhatsapp} target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1.5 bg-emerald-500 hover:bg-emerald-600 text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-sm transition-colors decoration-none">
+            <a id="btnShareWhatsapp" href={linkShareWhatsapp} target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1.5 bg-emerald-500 hover:bg-emerald-600 text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-sm transition-colors decoration-none">
               WhatsApp
             </a>
 
             <!-- Facebook -->
-            <a href={linkShareFacebook} target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-sm transition-colors decoration-none">
+            <a id="btnShareFacebook" href={linkShareFacebook} target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-sm transition-colors decoration-none">
               Facebook
             </a>
 
@@ -233,29 +233,31 @@ const urlAsliUntukSalin = `Astro.url.href`;
       
     </main>
 
-    <!-- FOOTER -->
-    <footer class="bg-white border-t border-gray-200 mt-12 py-6 text-center text-xs text-gray-400">
-      &copy; {new Date().getFullYear()} NUSA-MEDIA. All Rights Reserved.
+        <!-- FOOTER -->
+    <footer class="bg-white border-b border-t border-gray-200 mt-12 py-6 text-center text-xs text-gray-400">
+      &copy; {new Date().getFullYear()} NUSA MEDIA. All Rights Reserved.
     </footer>
 
   </body>
 </html>
 
 <script>
-  // Logika clipboard murni berjalan di browser pembaca
-  const jalankanCopy = () => {
-    const tombol = document.getElementById('copy-btn-nusa');
-    const teksTombol = document.getElementById('copy-text-nusa');
+  // 1. LOGIKA UNTUK TOMBOL SALIN TAUTAN
+  const inisialisasiSalinLink = () => {
+    // DISESUAIKAN: Menggunakan ID 'btnSalinTautan' dan 'teksTombolSalin' sesuai HTML Anda
+    const tombol = document.getElementById('btnSalinTautan');
+    const teksTombol = document.getElementById('teksTombolSalin');
 
     if (tombol && teksTombol) {
       tombol.addEventListener('click', async () => {
-        const linkBerita = tombol.getAttribute('data-link') || window.location.href;
+        // Mengambil URL asli dari browser saat ini jika atribut data-url kosong
+        const linkBerita = tombol.getAttribute('data-url') || window.location.href;
         try {
           await navigator.clipboard.writeText(linkBerita);
           teksTombol.textContent = "Link Berhasil Disalin! 👍";
           
           setTimeout(() => {
-            teksTombol.textContent = "Salin Link";
+            teksTombol.textContent = "Salin Tautan";
           }, 2000);
         } catch (err) {
           console.error('Gagal menyalin tautan:', err);
@@ -264,7 +266,27 @@ const urlAsliUntukSalin = `Astro.url.href`;
     }
   };
 
-  // Jalankan fungsi saat halaman dimuat
-  jalankanCopy();
+  // 2. LOGIKA UNTUK OTOMATISASI URL WHATSAPP & FACEBOOK
+  const inisialisasiTombolBagikan = () => {
+    const urlBeritaAktif = window.location.href;
+    const judulBeritaText = "Baca berita menarik ini di NUSA MEDIA: ";
+
+    // Mengisi tautan WhatsApp secara dinamis
+    const tombolWA = document.getElementById('share-wa-nusa');
+    if (tombolWA) {
+      tombolWA.setAttribute('href', `https://whatsapp.com{encodeURIComponent(judulBeritaText + urlBeritaAktif)}`);
+    }
+
+    // Mengisi tautan Facebook secara dinamis
+    const tombolFB = document.getElementById('share-fb-nusa');
+    if (tombolFB) {
+      tombolFB.setAttribute('href', `https://facebook.com{encodeURIComponent(urlBeritaAktif)}`);
+    }
+  };
+
+  // Jalankan semua fungsi saat halaman selesai dimuat di browser
+  inisialisasiSalinLink();
+  inisialisasiTombolBagikan();
 </script>
+
 
