@@ -59,8 +59,10 @@ if (errorBerita || dataBeritaMentah.length === 0) {
     const kategori = berita.kategori || 'Fokus';
     const views = berita.views || 0;
     const penulis = berita.penulis || 'Redaksi';
-
-    // 2. Sekarang variabel linkDetail aman dipanggil di bawah sini
+    
+    // ======================================================================
+    // 🌟 BARU/DIKOREKSI: Gabungkan kode HTML ke dalam variabel (Setiap Kartu Berita)
+    // ======================================================================
     htmlListBerita += `
       <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden flex flex-col hover:shadow-md transition">
         <div class="h-48 bg-slate-200 overflow-hidden">
@@ -174,7 +176,9 @@ listSidebar.forEach((posisiNama, indeks) => {
       <div class="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
         <a href="/" class="flex flex-col justify-center group">
           <span class="text-2xl font-black text-red-600 tracking-tighter leading-none">NUSA MEDIA</span>
-          <span class="text-[10px] font-medium text-gray-500 uppercase tracking-widest mt-0.5 group-hover:text-slate-800 transition">Media Berita Terpercaya</span>
+          <span class="text-xs font-medium text-gray-500 uppercase tracking-widest mt-0.5 group-hover:text-slate-800 transition" style="font-size: 10px;">
+            Media Berita Terpercaya
+          </span>
         </a>
        <div class="text-xs text-gray-400 hidden sm:block">
   Kontak Redaksi: 
