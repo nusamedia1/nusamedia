@@ -302,40 +302,53 @@ const urlAsliUntukSalin = `https://nusamedia-11t.pages.dev/berita/`;
   inisialisasiTombolBagikan();
 </script>
 
-  const setupFiturBerbagiNusa = () => {
-    const tombolShare = document.getElementById('btn-share-native');
-    
-    if (tombolShare) {
-      tombolShare.replaceWith(tombolShare.cloneNode(true));
-      const tombolShareBaru = document.getElementById('btn-share-native');
+<script>
+  // Logika ditaruh di dalam fungsi agar aman dieksekusi di browser pembaca
+  const jalankanSistemBerbagiNusa = () => {
+    const tombolShareBaru = document.getElementById('btn-share-native');
 
-      if (tombolShareBaru) {
-        tombolShareBaru.addEventListener('click', async (e) => {
-          e.preventDefault();
-          const judulBerita = tombolShareBaru.getAttribute('data-judul') || "NUSA MEDIA";
-          const urlBerita = window.location.href;
+    if (tombolShareBaru) {
+      tombolShareBaru.addEventListener('click', async (e) => {
+        e.preventDefault();
+        
+        // Browser mengambil URL dan judul asli secara real-time saat diklik
+        const judulBerita = tombolShareBaru.getAttribute('data-judul') || "NUSA MEDIA";
+        let urlBerita = window.location.href;
 
-          if (navigator.share) {
-            try {
-              await navigator.share({
-                title: judulBerita,
-                text: `${judulBerita}\n\n`,
-                url: urlBerita,
-              });
-            } catch (err) {
-              console.log('Batal share atau error:', err);
-            }
-          } else {
-            const linkBackupWA = `https://whatsapp.com{encodeURIComponent(judulBerita + " " + urlBerita)}`;
-            window.open(linkBackupWA, '_blank', 'noopener,noreferrer');
+        // Bersihkan parameter fbclid Facebook jika ada agar link rapi
+        if (urlBerita.includes('fbclid=')) {
+          try {
+            const objekURL = new URL(urlBerita);
+            objekURL.searchParams.delete('fbclid');
+            urlBerita = objekURL.toString();
+          } catch (err) {
+            console.error(err);
           }
-        });
-      }
+        }
+
+        // Eksekusi Fitur Bagikan Native HP
+        if (navigator.share) {
+          try {
+            await navigator.share({
+              title: judulBerita,
+              text: `${judulBerita}\n\n`,
+              url: urlBerita,
+            });
+          } catch (err) {
+            console.log('Batal berbagi:', err);
+          }
+        } else {
+          // Jalur cadangan jika dibuka lewat komputer/laptop (Membuka WA Web)
+          const linkBackupWA = `https://whatsapp.com{encodeURIComponent(judulBerita + " " + urlBerita)}`;
+          window.open(linkBackupWA, '_blank', 'noopener,noreferrer');
+        }
+      });
     }
   };
 
-  // Pastikan skrip terus hidup di setiap navigasi halaman Astro
-  document.addEventListener('astro:page-load', setupFiturBerbagiNusa);
-  setupFiturBerbagiNusa();
+  // Pastikan skrip dimuat ulang dengan aman oleh lifecycle Astro
+  document.addEventListener('astro:page-load', jalankanSistemBerbagiNusa);
+  jalankanSistemBerbagiNusa();
 </script>
+
 
