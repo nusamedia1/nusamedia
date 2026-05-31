@@ -241,7 +241,30 @@ const urlAsliUntukSalin = `Astro.url.href`;
   </body>
 </html>
 
-<!-- 🟢 TARUH KODE TAG <script> INTERAKTIF DI SINI (BARIS PALING AKHIR FILE) -->
 <script>
-  const tombolSalin = document.getElementById('btnSalinTautan');
-  // ... dan seterusnya sampai tutup </script> ...
+  // Logika clipboard murni berjalan di browser pembaca
+  const jalankanCopy = () => {
+    const tombol = document.getElementById('copy-btn-nusa');
+    const teksTombol = document.getElementById('copy-text-nusa');
+
+    if (tombol && teksTombol) {
+      tombol.addEventListener('click', async () => {
+        const linkBerita = tombol.getAttribute('data-link') || window.location.href;
+        try {
+          await navigator.clipboard.writeText(linkBerita);
+          teksTombol.textContent = "Link Berhasil Disalin! 👍";
+          
+          setTimeout(() => {
+            teksTombol.textContent = "Salin Link";
+          }, 2000);
+        } catch (err) {
+          console.error('Gagal menyalin tautan:', err);
+        }
+      });
+    }
+  };
+
+  // Jalankan fungsi saat halaman dimuat
+  jalankanCopy();
+</script>
+
