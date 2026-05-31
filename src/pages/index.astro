@@ -174,26 +174,27 @@ listSidebar.forEach((posisiNama, indeks) => {
   <body class="bg-gray-100 text-gray-900 min-h-screen antialiased">
 
     <!-- HEADER / LOGO NAVBAR -->
-    <header class="bg-white border-b border-gray-200 sticky top-0 z-50 shadow-sm">
-      <div class="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
-        <a href="/" class="flex flex-col justify-center group">
-          <span class="text-2xl font-black text-red-600 tracking-tighter leading-none">NUSA MEDIA</span>
-          <span class="text-xs font-medium text-gray-500 uppercase tracking-widest mt-0.5 group-hover:text-slate-800 transition" style="font-size: 10px;">
-            Media Berita Terpercaya
-          </span>
-          </div>
-        </a>
-      
-        <!-- Bagian Kanan: Kontak Redaksi (Selalu Muncul & Fleksibel) -->
-      <div class="text-[11px] sm:text-xs text-gray-500 text-right shrink-0">
-      <span class="block sm:inline text-gray-400">Kontak Redaksi:</span> 
-      <a href="mailto:nusamediaterpercaya@gmail.com" class="text-blue-600 font-medium hover:underline transition block sm:inline">
+<header class="bg-white border-b border-gray-200 sticky z-50 shadow-sm">
+  <div class="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between gap-4">
+    
+    <!-- Bagian Kiri: Logo -->
+    <a href="/" class="flex flex-col justify-center group shrink-0">
+      <span class="text-2xl font-black text-red-600 tracking-tighter leading-none">NUSA MEDIA</span>
+      <span class="text-xs font-medium text-gray-500 uppercase tracking-widest mt-1 group-hover:text-slate-800 transition" style="font-size: 10px; line-height: 1;">
+        Media Berita Terpercaya
+      </span>
+    </a>
+
+    <!-- Bagian Kanan: Kontak Redaksi (Sejajar Sempurna) -->
+    <div class="flex flex-col sm:flex-row sm:items-center gap-0 sm:gap-1 text-right sm:text-left shrink-0 text-xs leading-none">
+      <span class="text-gray-400 font-medium">Kontak Redaksi:</span> 
+      <a href="mailto:nusamediaterpercaya@gmail.com" class="text-blue-600 font-semibold hover:underline transition">
         nusamediaterpercaya@gmail.com
       </a>
     </div>
 
-     </div>
-    </header>
+  </div>
+</header>
 
         <!-- WRAPPER GRID UTAMA -->
     <main class="max-w-6xl mx-auto px-4 py-8 grid grid-cols-1 lg:grid-cols-12 gap-8">
