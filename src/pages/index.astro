@@ -199,32 +199,5 @@ listSidebar.forEach((posisiNama, indeks) => {
       <p>© 2026 NUSA-MEDIA. All Rights Reserved. Portal Berita Terintegrasi Edge Network.</p>
     </footer>
 
-    <script>
-      import { supabase } from '../lib/supabase'; // Langsung impor dari file valid Anda
-    
-      document.addEventListener('DOMContentLoaded', () => {
-        // Metode Event Delegation (Menghemat RAM browser karena hanya ada 1 listener aktif)
-        document.body.addEventListener('click', async (event) => {
-          const target = event.target as HTMLElement;
-          const kartuBerita = target.closest('.link-berita');
-          
-          if (kartuBerita) {
-            const slugBerita = kartuBerita.getAttribute('data-slug');
-            if (slugBerita) {
-              try {
-                // Memicu fungsi penambahan pembaca otomatis di database Supabase
-                const { error } = await supabase
-                  .rpc('increment_pembaca_by_slug', { berita_slug: slugBerita });
-
-                if (error) console.error('RPC Error:', error);
-                else console.log(`Views +1 untuk slug: ${slugBerita}`);
-              } catch (err) {
-                console.error('Network Error:', err);
-              }
-            }
-          }
-        });
-      });
-    </script>
   </body>
 </html>
