@@ -33,38 +33,27 @@ const iklanAtas = daftarIklan.find(ad => ad.zona_penempatan === 'artikel' && ad.
 const iklanBawah = daftarIklan.find(ad => ad.zona_penempatan === 'artikel' && ad.posisi === 'banner_bawah');
 
 // ==========================================
-// 🔥 STRATEGI RAKIT HTML DI SINI (FRONTMATTER)
+// 🔥 STRATEGI RAKIT HTML DI FRONTMATTER
 // ==========================================
 
-// 🟢 GANTI BLOK KODE PERULANGAN BERITA ANDA DENGAN INI:
+// A. RAKIT HTML DAFTAR BERITA
 let htmlListBerita = '';
 if (errorBerita || dataBeritaMentah.length === 0) {
   htmlListBerita = `<div class="bg-white p-8 rounded-xl text-center text-gray-500 border border-gray-200">Belum ada berita yang diterbitkan.</div>`;
 } else {
-  // 🌟 KUNCI 1: Tag pembuka Grid 2 Kolom ke Samping
   htmlListBerita = `<div class="grid grid-cols-1 md:grid-cols-2 gap-6">`;
   
   dataBeritaMentah.forEach((berita) => {
-    // 1. Deklarasikan variabel linkDetail di baris paling atas di dalam perulangan
     const linkDetail = `/berita/${berita.slug || berita.id}`;
-
-     // ======================================================================
-    // 🟢 TAMBAHKAN BARIS BARU INI (Tepat di bawah variabel linkDetail)
-    // ======================================================================
     const slugValid = berita.slug || berita.id; 
-    // ======================================================================
-    
     const teksMentah = berita.ringkasan || berita.isi_konten || '';
-    const ringkasanBersih = teksMentah.replace(/<[^>]*>/g, ''); 
+    const ringkasanBersih = teksMentah.replace(/<[^>]*>/g, '').substring(0, 150) + '...'; 
     const tanggal = berita.created_at ? new Date(berita.created_at).toLocaleDateString('id-ID', { dateStyle: 'short' }) : '';
     const gambar = berita.gambar_url || "https://unsplash.com";
     const kategori = berita.kategori || 'Fokus';
     const views = berita.views || 0;
     const penulis = berita.penulis || 'Redaksi';
     
-    // ======================================================================
-    // 🌟 BARU/DIKOREKSI: Gabungkan kode HTML ke dalam variabel (Setiap Kartu Berita)
-    // ======================================================================
     htmlListBerita += `
       <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden flex flex-col hover:shadow-md transition">
         <div class="h-48 bg-slate-200 overflow-hidden">
@@ -73,14 +62,8 @@ if (errorBerita || dataBeritaMentah.length === 0) {
           </a>
         </div>
         <div class="p-4 flex-1 flex flex-col justify-between">
-          <div>
-            
-             <!-- ========================================================== -->
-            <!-- ========================================================== -->
-            <div class="link-berita cursor-pointer" data-slug="${slugValid}">
-            <!-- ========================================================== -->
-
-                <div class="flex items-center justify-between gap-2 mb-2">
+          <div class="link-berita cursor-pointer" data-slug="${slugValid}">
+            <div class="flex items-center justify-between gap-2 mb-2">
                 <span class="text-[10px] font-black uppercase text-red-600 tracking-wider">${kategori}</span>
                 <span class="text-[11px] text-gray-400 flex items-center gap-0.5">👁️ ${views}</span>
             </div>
@@ -109,10 +92,7 @@ if (beritaPopuler.length === 0) {
   htmlBeritaPopuler = `<p class="text-xs text-gray-400">Belum ada berita populer.</p>`;
 } else {
   beritaPopuler.forEach((pop, index) => {
-    // 1. Deklarasikan variabel linkPopuler di baris paling atas di dalam perulangan
     const linkPopuler = `/berita/${pop.slug || pop.id}`;
-    
-    // 2. Sekarang variabel linkPopuler aman dipanggil di dalam tag <a href="...">
     htmlBeritaPopuler += `
       <a href="${linkPopuler}" class="flex items-start gap-3 group border-b border-gray-100 pb-2 last:border-0 last:pb-0">
         <span class="text-lg font-black text-gray-300 group-hover:text-red-600 transition min-w-[20px]">0${index + 1}</span>
@@ -125,10 +105,11 @@ if (beritaPopuler.length === 0) {
   });
 }
 
-// C. RAKIT HTML 5 SUSUN IKLAN SIDEBAR
+// C. RAKIT HTML 5 SUSUN IKLAN SIDEBAR (Diberikan inisialisasi awal agar tidak error)
+let htmlSidebarIklan = ''; 
 const listSidebar = ['sidebar_1', 'sidebar_2', 'sidebar_3', 'sidebar_4', 'sidebar_5'];
 listSidebar.forEach((posisiNama, indeks) => {
-  const ad = daftarIklan.find(a => a.zona_penempatan === 'sidebar' && a.posisi === posisiNama);
+  const ad = daftarIklan.find(a => a.zona_penempatan === 'sidebar' && ad.posisi === posisiNama);
   const isSticky = posisiNama === 'sidebar_5' ? 'sticky top-20' : '';
 
   if (ad) {
@@ -142,7 +123,6 @@ listSidebar.forEach((posisiNama, indeks) => {
         ${kontenIklan}
       </div>
     `;
-  
   } else {
     htmlSidebarIklan += `
       <div class="w-full h-48 bg-gray-50 rounded-xl border border-dashed border-gray-300 flex flex-col items-center justify-center text-center p-4 ${isSticky}">
@@ -174,94 +154,43 @@ listSidebar.forEach((posisiNama, indeks) => {
   </head>
   <body class="bg-gray-100 text-gray-900 min-h-screen antialiased">
 
-    <!-- HEADER / LOGO NAVBAR -->
-<header class="bg-white border-b border-gray-200 sticky z-50 shadow-sm">
-  <div class="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between gap-4">
-    
-    <!-- Bagian Kiri: Logo -->
-    <a href="/" class="flex flex-col justify-center group shrink-0">
-      <span class="text-2xl font-black text-red-600 tracking-tighter leading-none">NUSA MEDIA</span>
-      <span class="text-xs font-medium text-gray-500 uppercase tracking-widest mt-1 group-hover:text-slate-800 transition" style="font-size: 10px; line-height: 1;">
-        Media Berita Terpercaya
-      </span>
-    </a>
+    <!-- NAVBAR -->
+    <header class="bg-white border-b border-gray-200 sticky top-0 z-50 shadow-sm">
+      <div class="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
+        <a href="/" class="text-xl font-black tracking-tight text-red-600">NUSA<span class="text-slate-800">-MEDIA</span></a>
+      </div>
+    </header>
 
-    <!-- Bagian Kanan: Kontak Redaksi (Sejajar Sempurna) -->
-    <div class="flex flex-col sm:flex-row sm:items-center gap-0 sm:gap-1 text-right sm:text-left shrink-0 text-xs leading-none">
-      <span class="text-gray-400 font-medium">Kontak Redaksi:</span> 
-      <a href="mailto:nusamediaterpercaya@gmail.com" class="text-blue-600 font-semibold hover:underline transition">
-        nusamediaterpercaya@gmail.com
-      </a>
-    </div>
-
-  </div>
-</header>
-
-        <!-- WRAPPER GRID UTAMA -->
-    <main class="max-w-6xl mx-auto px-4 py-8 grid grid-cols-1 lg:grid-cols-12 gap-8">
-      
-      <!-- SISI KIRI: DAFTAR BERITA UTAMA & BANNER -->
-      <div class="lg:col-span-8 space-y-6"> <!-- 🟢 PERBAIKAN: Gunakan div pembuka yang menampung semua konten kiri -->
+    <!-- MAIN CONTENT CONTAINER -->
+    <main class="max-w-6xl mx-auto px-4 py-8">
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
         
-        <!-- 🔥 IKLAN BANNER ATAS BERANDA -->
-        {iklanAtas ? (
-          <div class="p-2 bg-white rounded-xl shadow-sm border border-gray-200 text-center flex flex-col items-center justify-center">
-            <span class="text-[9px] font-bold text-gray-400 block mb-1">SPONSORED BY: {iklanAtas.nama_sponsor}</span>
-            {iklanAtas.tipe === 'script' ? (
-              <div set:html={iklanAtas.kode_html} />
-            ) : (
+        <!-- KOLOM UTAMA (KIRI): DAFTAR BERITA -->
+        <section class="lg:col-span-2 space-y-6">
+          <!-- Iklan Banner Atas -->
+          {iklanAtas && (
+            <div class="mb-4 text-center">
+              <span class="text-[9px] text-gray-400 block mb-1">SPONSOR</span>
               <a href={iklanAtas.url_tujuan} target="_blank" rel="noopener noreferrer">
-                <img src={iklanAtas.url_gambar} class="w-full h-auto object-cover rounded-md" />
+                <img src={iklanAtas.url_url_gambar} class="w-full max-h-24 object-cover rounded-lg shadow-inner" />
               </a>
-            )}
+            </div>
+          )}
+
+          <!-- Daftar Berita Ter-render -->
+          <div set:html={htmlListBerita} />
+        </section>
+
+        <!-- KOLOM SIDEBAR (KANAN): BERITA POPULER & IKLAN 5 SUSUN -->
+        <aside class="space-y-6">
+          <!-- Widget Populer -->
+          <div class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm space-y-4">
+            <h3 class="text-sm font-bold text-slate-900 uppercase border-b-2 border-red-600 pb-1 inline-block">Terpopuler</h3>
+            <div class="space-y-3" set:html={htmlBeritaPopuler} />
           </div>
-        ) : (
-          <div class="w-full h-32 bg-gray-50 rounded-xl border border-dashed border-gray-300 flex flex-col items-center justify-center text-center p-4">
-            <span class="text-xs font-black text-gray-400 uppercase tracking-wider">Space Iklan Tersedia</span>
-            <span class="text-[10px] text-gray-400 mt-1">Banner Atas</span>
-          </div>
-        )}
 
-        <!-- 📰 DAFTAR LIST BERITA (🟢 DI SINI: Letak yang benar agar masuk ke dalam grid samping kiri) -->
-        <div set:html={htmlListBerita} />
-
-        <!-- 🔥 IKLAN BANNER BAWAH BERANDA -->
-        {iklanBawah ? (
-          <div class="p-2 bg-white rounded-xl shadow-sm border border-gray-200 text-center flex flex-col items-center justify-center">
-            <span class="text-[9px] font-bold text-gray-400 block mb-1">SPONSORED BY: {iklanBawah.nama_sponsor}</span>
-            {iklanBawah.tipe === 'script' ? (
-              <div set:html={iklanBawah.kode_html} />
-            ) : (
-              <a href={iklanBawah.url_tujuan} target="_blank" rel="noopener noreferrer">
-                <img src={iklanBawah.url_gambar} class="w-full h-auto object-cover rounded-md" />
-              </a>
-            )}
-          </div>
-        ) : (
-          <div class="w-full h-32 bg-gray-50 rounded-xl border border-dashed border-gray-300 flex flex-col items-center justify-center text-center p-4">
-            <span class="text-xs font-black text-gray-400 uppercase tracking-wider">Space Iklan Tersedia</span>
-            <span class="text-[10px] text-gray-400 mt-1">Banner Bawah</span>
-          </div>
-        )}
-
-      </div> <!-- 🟢 PERBAIKAN: Penutup div konten kiri diletakkan setelah banner bawah selesai dirender -->
-
-      <!-- SISI KANAN: SIDEBAR WIDGET & IKLAN SUSUN -->
-      <aside class="lg:col-span-4 space-y-6">
-        
-        <!-- WIDGET POPULER -->
-        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
-          <h3 class="text-xs font-black text-slate-900 uppercase tracking-wider border-b pb-2 mb-3">🔥 Berita Terpopuler</h3>
-          <div class="flex flex-col gap-3">
-            <div set:html={htmlBeritaPopuler} />
-          </div>
-        </div>
-
-        <!-- 5 SLOT IKLAN SIDEBAR -->
-        <div class="space-y-4">
-          <div set:html={htmlSidebarIklan} />
-        </div>
-
+          <!-- Iklan 5 Susun Dynamic -->
+          <div class="space-y-4" set:html={htmlSidebarIklan} />
       </aside>
       
     </main>
