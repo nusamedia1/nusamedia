@@ -202,6 +202,20 @@ listSidebar.forEach((posisiNama, indeks) => {
           <div set:html={htmlListBerita} />
         </section>
 
+       <!-- 🔥 IKLAN BANNER BAWAH ARTIKEL -->
+      {iklanBawah ? (
+        <div class="p-2 bg-white rounded-xl shadow-sm border border-gray-200 text-center flex flex-col items-center justify-center">
+          <span class="text-[9px] font-bold text-gray-400 block mb-1">SPONSORED BY: {iklanBawah.nama_sponsor}</span>
+          {iklanBawah.tipe === 'script' ? <div set:html={iklanBawah.kode_html} /> : <a href={iklanBawah.url_tujuan} target="_blank" rel="noopener noreferrer"><img src={iklanBawah.url_gambar} class="w-full h-auto object-cover rounded-md" /></a>}
+        </div>
+      ) : (
+        <div class="w-full h-32 bg-gray-50 rounded-xl border border-dashed border-gray-300 flex flex-col items-center justify-center text-center p-4">
+          <span class="text-xs font-black text-gray-400 uppercase tracking-wider">Space Iklan Tersedia</span>
+          <span class="text-[10px] text-gray-400 mt-1">Banner Bawah</span>
+        </div>
+      )}
+    </section>
+
         <!-- KOLOM SIDEBAR (KANAN): BERITA POPULER & IKLAN 5 SUSUN -->
         <aside class="space-y-6">
           <!-- Widget Populer -->
