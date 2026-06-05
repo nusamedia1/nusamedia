@@ -178,11 +178,9 @@ listSidebar.forEach((posisiNama, indeks) => {
 
   </div>
 </header>
-
     <!-- MAIN CONTENT CONTAINER -->
     <main class="max-w-6xl mx-auto px-4 py-8">
-      <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">  
         <!-- KOLOM UTAMA (KIRI): DAFTAR BERITA -->
         <section class="lg:col-span-2 space-y-6">
           <!-- 🔥 IKLAN BANNER ATAS ARTIKEL -->
@@ -197,7 +195,6 @@ listSidebar.forEach((posisiNama, indeks) => {
           <span class="text-[10px] text-gray-400 mt-1">Banner Atas</span>
         </div>
       )}
-
           <!-- Daftar Berita Ter-render -->
           <div set:html={htmlListBerita} />
         </section>
@@ -233,7 +230,6 @@ listSidebar.forEach((posisiNama, indeks) => {
             <div set:html={htmlSidebarIklan} />
           </div>
         </aside>
-
         <!-- FOOTER -->
 <footer class="bg-white border-b border-t border-gray-200 mt-12 py-6 text-center text-xs text-gray-400">
   <div class="max-w-6xl mx-auto px-4">
