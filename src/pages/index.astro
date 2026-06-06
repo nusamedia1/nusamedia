@@ -180,19 +180,13 @@ listSidebar.forEach((posisiNama, indeks) => {
 </header>
     <!-- 🔥 IKLAN BANNER ATAS ARTIKEL -->
 {iklanAtas ? (
-  <div class="p-2 bg-white rounded-xl shadow-sm border border-gray-200 text-center flex flex-col items-center justify-center min-h-[128px]">
-    <span class="text-[9px] font-bold text-gray-400 block mb-1 tracking-widest">SPONSORED BY: {iklanAtas.nama_sponsor}</span>
+  <div class="p-2 bg-white rounded-xl shadow-sm border border-gray-200 text-center flex flex-col items-center justify-center">
+    <span class="text-[9px] font-bold text-gray-400 block mb-1">SPONSORED BY: {iklanAtas.nama_sponsor}</span>
     {iklanAtas.tipe === 'script' ? (
-      <div set:html={iklanAtas.kode_html} class="w-full flex justify-center" />
+      <div set:html={iklanAtas.kode_html} />
     ) : (
-      <a href={iklanAtas.url_tujuan} target="_blank" rel="noopener noreferrer" class="w-full block line-clamp-1">
-        <img 
-          src={iklanAtas.url_gambar} 
-          alt={`Iklan oleh ${iklanAtas.nama_sponsor}`}
-          loading="lazy" 
-          decoding="async"
-          class="w-full h-auto max-h-[120px] md:max-h-[160px] object-contain rounded-md mx-auto" 
-        />
+      <a href={iklanAtas.url_tujuan} target="_blank" rel="noopener noreferrer">
+        <img src={iklanAtas.url_gambar} class="w-full h-auto object-cover rounded-md" alt={iklanAtas.nama_sponsor} />
       </a>
     )}
   </div>
@@ -203,25 +197,18 @@ listSidebar.forEach((posisiNama, indeks) => {
   </div>
 )}
 
-    <!-- Daftar Berita Ter-render -->
-    <div set:html={htmlListBerita} />
-  </section>
+<!-- Daftar Berita Ter-render -->
+<div set:html={htmlListBerita} />
 
- <!-- 🔥 IKLAN BANNER BAWAH ARTIKEL -->
+<!-- 🔥 IKLAN BANNER BAWAH ARTIKEL -->
 {iklanBawah ? (
-  <div class="p-2 bg-white rounded-xl shadow-sm border border-gray-200 text-center flex flex-col items-center justify-center min-h-[128px]">
-    <span class="text-[9px] font-bold text-gray-400 block mb-1 tracking-widest">SPONSORED BY: {iklanBawah.nama_sponsor}</span>
+  <div class="p-2 bg-white rounded-xl shadow-sm border border-gray-200 text-center flex flex-col items-center justify-center">
+    <span class="text-[9px] font-bold text-gray-400 block mb-1">SPONSORED BY: {iklanBawah.nama_sponsor}</span>
     {iklanBawah.tipe === 'script' ? (
-      <div set:html={iklanBawah.kode_html} class="w-full flex justify-center" />
+      <div set:html={iklanBawah.kode_html} />
     ) : (
-      <a href={iklanBawah.url_tujuan} target="_blank" rel="noopener noreferrer" class="w-full block line-clamp-1">
-        <img 
-          src={iklanBawah.url_gambar} 
-          alt={`Iklan oleh ${iklanBawah.nama_sponsor}`}
-          loading="lazy" 
-          decoding="async"
-          class="w-full h-auto max-h-[120px] md:max-h-[160px] object-contain rounded-md mx-auto" 
-        />
+      <a href={iklanBawah.url_tujuan} target="_blank" rel="noopener noreferrer">
+        <img src={iklanBawah.url_gambar} class="w-full h-auto object-cover rounded-md" alt={iklanBawah.nama_sponsor} />
       </a>
     )}
   </div>
@@ -231,7 +218,6 @@ listSidebar.forEach((posisiNama, indeks) => {
     <span class="text-[10px] text-gray-400 mt-1">Banner Bawah</span>
   </div>
 )}
-</section>
 
         <!-- KOLOM SIDEBAR (KANAN): BERITA POPULER & IKLAN 5 SUSUN -->
         <aside class="space-y-6">
