@@ -178,40 +178,60 @@ listSidebar.forEach((posisiNama, indeks) => {
 
   </div>
 </header>
-    <!-- MAIN CONTENT CONTAINER -->
-    <main class="max-w-6xl mx-auto px-4 py-8">
-      <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">  
-        <!-- KOLOM UTAMA (KIRI): DAFTAR BERITA -->
-        <section class="lg:col-span-2 space-y-6">
-          <!-- 🔥 IKLAN BANNER ATAS ARTIKEL -->
-      {iklanAtas ? (
-        <div class="p-2 bg-white rounded-xl shadow-sm border border-gray-200 text-center flex flex-col items-center justify-center">
-          <span class="text-[9px] font-bold text-gray-400 block mb-1">SPONSORED BY: {iklanAtas.nama_sponsor}</span>
-          {iklanAtas.tipe === 'script' ? <div set:html={iklanAtas.kode_html} /> : <a href={iklanAtas.url_tujuan} target="_blank" rel="noopener noreferrer"><img src={iklanAtas.url_gambar} class="w-full h-auto object-cover rounded-md" /></a>}
-        </div>
-      ) : (
-        <div class="w-full h-32 bg-gray-50 rounded-xl border border-dashed border-gray-300 flex flex-col items-center justify-center text-center p-4">
-          <span class="text-xs font-black text-gray-400 uppercase tracking-wider">Space Iklan Tersedia</span>
-          <span class="text-[10px] text-gray-400 mt-1">Banner Atas</span>
-        </div>
-      )}
-          <!-- Daftar Berita Ter-render -->
-          <div set:html={htmlListBerita} />
-        </section>
+    <!-- 🔥 IKLAN BANNER ATAS ARTIKEL -->
+{iklanAtas ? (
+  <div class="p-2 bg-white rounded-xl shadow-sm border border-gray-200 text-center flex flex-col items-center justify-center min-h-[128px]">
+    <span class="text-[9px] font-bold text-gray-400 block mb-1 tracking-widest">SPONSORED BY: {iklanAtas.nama_sponsor}</span>
+    {iklanAtas.tipe === 'script' ? (
+      <div set:html={iklanAtas.kode_html} class="w-full flex justify-center" />
+    ) : (
+      <a href={iklanAtas.url_tujuan} target="_blank" rel="noopener noreferrer" class="w-full block line-clamp-1">
+        <img 
+          src={iklanAtas.url_gambar} 
+          alt={`Iklan oleh ${iklanAtas.nama_sponsor}`}
+          loading="lazy" 
+          decoding="async"
+          class="w-full h-auto max-h-[120px] md:max-h-[160px] object-contain rounded-md mx-auto" 
+        />
+      </a>
+    )}
+  </div>
+) : (
+  <div class="w-full h-32 bg-gray-50 rounded-xl border border-dashed border-gray-300 flex flex-col items-center justify-center text-center p-4">
+    <span class="text-xs font-black text-gray-400 uppercase tracking-wider">Space Iklan Tersedia</span>
+    <span class="text-[10px] text-gray-400 mt-1">Banner Atas</span>
+  </div>
+)}
 
-       <!-- 🔥 IKLAN BANNER BAWAH ARTIKEL -->
-      {iklanBawah ? (
-        <div class="p-2 bg-white rounded-xl shadow-sm border border-gray-200 text-center flex flex-col items-center justify-center">
-          <span class="text-[9px] font-bold text-gray-400 block mb-1">SPONSORED BY: {iklanBawah.nama_sponsor}</span>
-          {iklanBawah.tipe === 'script' ? <div set:html={iklanBawah.kode_html} /> : <a href={iklanBawah.url_tujuan} target="_blank" rel="noopener noreferrer"><img src={iklanBawah.url_gambar} class="w-full h-auto object-cover rounded-md" /></a>}
-        </div>
-      ) : (
-        <div class="w-full h-32 bg-gray-50 rounded-xl border border-dashed border-gray-300 flex flex-col items-center justify-center text-center p-4">
-          <span class="text-xs font-black text-gray-400 uppercase tracking-wider">Space Iklan Tersedia</span>
-          <span class="text-[10px] text-gray-400 mt-1">Banner Bawah</span>
-        </div>
-      )}
-    </section>
+    <!-- Daftar Berita Ter-render -->
+    <div set:html={htmlListBerita} />
+  </section>
+
+ <!-- 🔥 IKLAN BANNER BAWAH ARTIKEL -->
+{iklanBawah ? (
+  <div class="p-2 bg-white rounded-xl shadow-sm border border-gray-200 text-center flex flex-col items-center justify-center min-h-[128px]">
+    <span class="text-[9px] font-bold text-gray-400 block mb-1 tracking-widest">SPONSORED BY: {iklanBawah.nama_sponsor}</span>
+    {iklanBawah.tipe === 'script' ? (
+      <div set:html={iklanBawah.kode_html} class="w-full flex justify-center" />
+    ) : (
+      <a href={iklanBawah.url_tujuan} target="_blank" rel="noopener noreferrer" class="w-full block line-clamp-1">
+        <img 
+          src={iklanBawah.url_gambar} 
+          alt={`Iklan oleh ${iklanBawah.nama_sponsor}`}
+          loading="lazy" 
+          decoding="async"
+          class="w-full h-auto max-h-[120px] md:max-h-[160px] object-contain rounded-md mx-auto" 
+        />
+      </a>
+    )}
+  </div>
+) : (
+  <div class="w-full h-32 bg-gray-50 rounded-xl border border-dashed border-gray-300 flex flex-col items-center justify-center text-center p-4">
+    <span class="text-xs font-black text-gray-400 uppercase tracking-wider">Space Iklan Tersedia</span>
+    <span class="text-[10px] text-gray-400 mt-1">Banner Bawah</span>
+  </div>
+)}
+</section>
 
         <!-- KOLOM SIDEBAR (KANAN): BERITA POPULER & IKLAN 5 SUSUN -->
         <aside class="space-y-6">
