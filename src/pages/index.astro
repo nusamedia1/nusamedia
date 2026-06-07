@@ -180,16 +180,16 @@ listSidebar.forEach((posisiNama, indeks) => {
 </header>
     <!-- 🔥 IKLAN BANNER ATAS ARTIKEL -->
 {iklanAtas ? (
-  <div class="p-2 bg-white rounded-xl shadow-sm border border-gray-200 text-center flex flex-col items-center justify-center max-w-4xl mx-auto w-full">
-    <span class="text-[9px] font-bold text-gray-400 block mb-1">SPONSORED BY: {iklanAtas.nama_sponsor}</span>
+  <div class="p-2 bg-white rounded-xl shadow-sm border border-gray-200 text-center flex flex-col items-center justify-center max-w-4xl mx-auto w-full min-h-[80px]">
     {iklanAtas.tipe === 'script' ? (
-      <div set:html={iklanAtas.kode_html} class="w-full justify-center flex" />
+      /* Tempat iklan dirender, string HTML dari Supabase disimpan di atribut data-raw */
+      <div class="ad-script-container w-full flex justify-center" data-raw={iklanAtas.kode_html}></div>
     ) : (
       <a href={iklanAtas.url_tujuan} target="_blank" rel="noopener noreferrer" class="w-full">
         <img 
           src={iklanAtas.url_gambar} 
           class="w-full h-auto max-h-60 object-contain rounded-md mx-auto" 
-          alt=""
+          alt="" 
           loading="lazy"
           decoding="async"
         />
@@ -208,16 +208,16 @@ listSidebar.forEach((posisiNama, indeks) => {
 
 <!-- 🔥 IKLAN BANNER BAWAH ARTIKEL -->
 {iklanBawah ? (
-  <div class="p-2 bg-white rounded-xl shadow-sm border border-gray-200 text-center flex flex-col items-center justify-center max-w-4xl mx-auto w-full">
-    <span class="text-[9px] font-bold text-gray-400 block mb-1">SPONSORED BY: {iklanBawah.nama_sponsor}</span>
+  <div class="p-2 bg-white rounded-xl shadow-sm border border-gray-200 text-center flex flex-col items-center justify-center max-w-4xl mx-auto w-full min-h-[80px]">
     {iklanBawah.tipe === 'script' ? (
-      <div set:html={iklanBawah.kode_html} class="w-full justify-center flex" />
+      /* Tempat iklan dirender, string HTML dari Supabase disimpan di atribut data-raw */
+      <div class="ad-script-container w-full flex justify-center" data-raw={iklanBawah.kode_html}></div>
     ) : (
       <a href={iklanBawah.url_tujuan} target="_blank" rel="noopener noreferrer" class="w-full">
         <img 
           src={iklanBawah.url_gambar} 
           class="w-full h-auto max-h-60 object-contain rounded-md mx-auto" 
-          alt=""
+          alt="" 
           loading="lazy"
           decoding="async"
         />
@@ -230,6 +230,31 @@ listSidebar.forEach((posisiNama, indeks) => {
     <span class="text-[10px] text-gray-400 mt-1">Banner Bawah</span>
   </div>
 )}
+
+<!-- 🛠️ SCRIPT KHUSUS UNTUK MENGEKSEKUSI ADSTERRA SCRIPT DARI SUPABASE -->
+<script is:inline>
+  // Fungsi untuk memaksa browser mengeksekusi tag <script> di dalam string HTML
+  function renderAndExecuteAdScripts() {
+    const containers = document.querySelectorAll('.ad-script-container');
+    
+    containers.forEach((container) => {
+      const rawHtml = container.getAttribute('data-raw');
+      if (!rawHtml || container.children.length > 0) return; // Lewati jika kosong atau sudah terisi
+
+      // Menggunakan createContextualFragment agar browser mengevaluasi & mengeksekusi tag <script>
+      const range = document.createRange();
+      range.selectNode(container);
+      const fragment = range.createContextualFragment(rawHtml);
+      
+      container.appendChild(fragment);
+    });
+  }
+
+  // Jalankan langsung saat halaman dimuat
+  document.addEventListener('DOMContentLoaded', renderAndExecuteAdScripts);
+  // Jalankan cadangan jika script termuat setelah DOMContentLoaded selesai
+  renderAndExecuteAdScripts();
+</script>
 
         <!-- KOLOM SIDEBAR (KANAN): BERITA POPULER & IKLAN 5 SUSUN -->
         <aside class="space-y-6">
