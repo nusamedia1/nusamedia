@@ -34,8 +34,22 @@ try {
   console.error("Gagal memuat data:", e);
 }
 if (berita && berita.id) {
-  await supabase.rpc('tambah_views_berita', { berita_id: berita.id });
-  berita.views = (berita.views || 0) + 1;
+  // Ambil nilai views saat ini, jika tidak ada set ke 0, lalu tambah 1
+  const viewsSaatIni = berita.views || 0;
+  const viewsBaru = viewsSaatIni + 1;
+
+  // Langsung update ke tabel 'berita' berdasarkan ID-nya
+  const { error: updateError } = await supabase
+    .from('berita')
+    .update({ views: viewsBaru })
+    .eq('id', berita.id); // Mencocokkan ID artikel
+
+  if (updateError) {
+    console.error("🔴 GAGAL UPDATE VIEWS:", updateError.message);
+  } else {
+    // Update data lokal agar langsung tampil di layar pembaca
+    berita.views = viewsBaru;
+  }
 }
 // ─── KONDISI JIKA BERITA KOSONG / BELUM TERSEDIA ───
 // Alih-alih melempar redirect, kita siapkan data bayangan agar halaman TIDAK ERROR
