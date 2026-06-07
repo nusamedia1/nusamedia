@@ -179,14 +179,12 @@ listSidebar.forEach((posisiNama, indeks) => {
   </div>
 </header>
     <!-- Bagian Atas Artikel & Daftar Berita -->
-<section class="space-y-4">
+<section class="space-y-4"> 
   <!-- 🔥 IKLAN BANNER ATAS ARTIKEL -->
   {iklanAtas ? (
     <div class="p-2 bg-white rounded-xl shadow-sm border border-gray-200 text-center flex flex-col items-center justify-center">
       <span class="text-[9px] font-bold text-gray-400 block mb-1">SPONSORED BY: {iklanAtas.nama_sponsor}</span>
-      
-      <!-- Kode Super Sederhana Sesuai Keinginan Anda -->
-      <div class="render-script-otomatis" set:html={isiIklanAtas} />
+      {iklanAtas.tipe === 'script' ? <div set:html={iklanAtas.kode_html} /> : <a href={iklanAtas.url_tujuan} target="_blank" rel="noopener noreferrer"><img src={iklanAtas.url_gambar} class="w-full h-auto object-cover rounded-md" /></a>}
     </div>
   ) : (
     <div class="w-full h-32 bg-gray-50 rounded-xl border border-dashed border-gray-300 flex flex-col items-center justify-center text-center p-4">
@@ -199,14 +197,13 @@ listSidebar.forEach((posisiNama, indeks) => {
   <div set:html={htmlListBerita} />
 </section>
 
-<!-- 🔥 IKLAN BANNER BAWAH ARTIKEL -->
+<!-- Bagian Bawah Artikel -->
 <section class="mt-4">
+  <!-- 🔥 IKLAN BANNER BAWAH ARTIKEL -->
   {iklanBawah ? (
     <div class="p-2 bg-white rounded-xl shadow-sm border border-gray-200 text-center flex flex-col items-center justify-center">
       <span class="text-[9px] font-bold text-gray-400 block mb-1">SPONSORED BY: {iklanBawah.nama_sponsor}</span>
-      
-      <!-- Kode Super Sederhana Sesuai Keinginan Anda -->
-      <div class="render-script-otomatis" set:html={isiIklanBawah} />
+      {iklanBawah.tipe === 'script' ? <div set:html={iklanBawah.kode_html} /> : <a href={iklanBawah.url_tujuan} target="_blank" rel="noopener noreferrer"><img src={iklanBawah.url_gambar} class="w-full h-auto object-cover rounded-md" /></a>}
     </div>
   ) : (
     <div class="w-full h-32 bg-gray-50 rounded-xl border border-dashed border-gray-300 flex flex-col items-center justify-center text-center p-4">
@@ -215,17 +212,6 @@ listSidebar.forEach((posisiNama, indeks) => {
     </div>
   )}
 </section>
-<!-- Eksekutor Skrip Global: Taruh sekali saja di bagian paling bawah file Anda -->
-<script is:inline>
-  document.querySelectorAll('.render-script-otomatis').forEach(box => {
-    box.querySelectorAll('script').forEach(oldScript => {
-      const newScript = document.createElement('script');
-      if (oldScript.src) newScript.src = oldScript.src;
-      else newScript.textContent = oldScript.textContent;
-      oldScript.parentNode.replaceChild(newScript, oldScript);
-    });
-  });
-</script>
 
         <!-- KOLOM SIDEBAR (KANAN): BERITA POPULER & IKLAN 5 SUSUN -->
         <aside class="space-y-6">
