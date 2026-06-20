@@ -180,10 +180,10 @@ const daftarParagraf = kontenMentah
     <script async custom-element="amp-ad" src="https://cdn.ampproject.org/v0/amp-ad-0.1.js"></script>
 
     <!-- STRUKTUR GRID KONTEN UTAMA -->
-    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start w-full">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start max-w-6xl mx-auto w-full flex flex-col items-center lg:block">
     
     <!-- SISI KIRI: ISI BERITA LENGKAP & BANNER IKLAN -->
-    <section class="sm:col-span-8 space-y-6 bg-white p-4 sm:p-6 rounded-2xl shadow-xs border border-gray-100">
+    <section class="lg:col-span-8 space-y-6 w-full max-w-md lg:max-w-none mx-auto">
       
       <!-- 🔥 IKLAN BANNER ATAS ARTIKEL -->
       {iklanAtas ? (
@@ -199,7 +199,7 @@ const daftarParagraf = kontenMentah
       )}
 
       <!-- 📰 KONTEN UTAMA BERITA -->
-      <article class="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6 md:p-8 content-area">
+      <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6 md:p-8 content-area w-full">
         <div class="flex items-center gap-3 text-xs mb-4">
           <span class="bg-red-100 text-red-700 font-bold px-2 py-0.5 rounded text-[10px] uppercase">{berita.kategori || 'Fokus'}</span>
           <span class="text-gray-400">{tanggalFormat}</span>
