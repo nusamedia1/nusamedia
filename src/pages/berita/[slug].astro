@@ -179,12 +179,12 @@ const daftarParagraf = kontenMentah
 
     <script async custom-element="amp-ad" src="https://cdn.ampproject.org/v0/amp-ad-0.1.js"></script>
 
-    <!-- STRUKTUR GRID KONTEN UTAMA -->
-    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start max-w-6xl mx-auto w-full flex flex-col items-center lg:block">
-    
-    <!-- SISI KIRI: ISI BERITA LENGKAP & BANNER IKLAN -->
-    <section class="lg:col-span-8 space-y-6 w-full max-w-md lg:max-w-none mx-auto">
-      
+    <!-- STRUKTUR GRID KONTEN UTAMA (KINI DUKUNG TABLET KE SAMPING) -->
+    <div class="grid grid-cols-1 md:grid-cols-12 gap-8 items-start max-w-6xl mx-auto w-full flex flex-col items-center md:block">
+
+    <!-- SISI KIRI: ISI BERITA LENGKAP & BANNER IKLAN (OPEN DI TABLET) -->
+    <section class="md:col-span-8 space-y-6 w-full max-w-md md:max-w-none mx-auto">
+
       <!-- 🔥 IKLAN BANNER ATAS ARTIKEL -->
       {iklanAtas ? (
         <div class="p-2 bg-white rounded-xl shadow-sm border border-gray-200 text-center flex flex-col items-center justify-center">
@@ -272,10 +272,9 @@ const daftarParagraf = kontenMentah
       )}
     </section>
 
-            <!-- SISI KANAN: SIDEBAR WIDGET & IKLAN SUSUN (TAHAP AKHIR: AMAN DI HP & TABLET) -->
-      <!-- Menggunakan w-full agar pas di HP, dan memastikan ruang tidak meluber ke samping -->
-      <aside class="lg:col-span-4 space-y-6 w-full overflow-hidden">
-        
+        <!-- SISI KANAN: SIDEBAR WIDGET & IKLAN SUSUN (PINDAH KANAN DI TABLET) -->
+        <aside class="md:col-span-4 space-y-6 w-full max-w-md md:max-w-none mx-auto flex flex-col items-center md:items-stretch overflow-hidden">
+
         <!-- WIDGET POPULER RESPONSIF -->
         <!-- p-5 memberikan ruang ketuk yang lebih lega bagi pembaca lewat HP -->
         <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-5 w-full">
