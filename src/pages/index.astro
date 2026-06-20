@@ -176,10 +176,17 @@ listSidebar.forEach((posisiNama, indeks) => {
   </a>
 </div>
 
-  </div>
+    </div>
 </header>
-    <!-- Bagian Atas Artikel & Daftar Berita -->
-<section class="space-y-4"> 
+
+<main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full flex flex-col items-center">
+  <!-- 🔥 STRUKTUR GRID UTAMA HOMEPAGE (HP SAMARATA, TABLET KE SAMPING) -->
+  <div class="grid grid-cols-1 md:grid-cols-12 gap-8 items-start max-w-6xl mx-auto w-full flex flex-col items-center md:items-stretch md:block">
+    
+    <!-- ======================================================== -->
+    <!-- SISI KIRI: DAFTAR FEED BERITA & BANNER UTAMA             -->
+    <!-- ======================================================== -->
+    <section class="md:col-span-8 space-y-6 w-full max-w-md md:max-w-none mx-auto">
   <!-- 🔥 IKLAN BANNER ATAS ARTIKEL -->
   {iklanAtas ? (
     <div class="p-2 bg-white rounded-xl shadow-sm border border-gray-200 text-center flex flex-col items-center justify-center">
