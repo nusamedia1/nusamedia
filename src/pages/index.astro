@@ -238,8 +238,10 @@ listSidebar.forEach((posisiNama, indeks) => {
   )}
 </section>
 
-        <!-- KOLOM SIDEBAR (KANAN): BERITA POPULER & IKLAN 5 SUSUN -->
-        <aside class="space-y-6">
+    <!-- ======================================================== -->
+    <!-- SISI KANAN: SIDEBAR HOMEPAGE (PINDAH KANAN DI TABLET)   -->
+    <!-- ======================================================== -->
+    <aside class="md:col-span-4 space-y-6 w-full max-w-md md:max-w-none mx-auto flex flex-col items-center md:items-stretch overflow-hidden">
           <!-- Widget Populer -->
           <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
             <h3 class="text-sm font-black text-slate-900 uppercase tracking-wider border-b pb-2 mb-4 border-red-500 inline-block">
@@ -254,23 +256,20 @@ listSidebar.forEach((posisiNama, indeks) => {
           <div class="space-y-4">
             <div set:html={htmlSidebarIklan} />
           </div>
-        </aside>
-        <!-- FOOTER -->
-<footer class="bg-white border-b border-t border-gray-200 mt-12 py-6 text-center text-xs text-gray-400">
+            </aside>
+
+  </div> <!-- Penutup DIV Grid Utama -->
+</main> <!-- Penutup MAIN Luar -->
+
+<!-- FOOTER FORMAL -->
+<footer class="bg-white border-t border-gray-200 mt-12 py-6 text-center text-xs text-gray-400 w-full">
   <div class="max-w-6xl mx-auto px-4">
-    <!-- Menu Tambahan Footer -->
     <div class="flex justify-center items-center gap-4 mb-3">
       <a href="mailto:nusamediaterpercaya@gmail.com" class="text-gray-500 hover:text-red-600 transition">
         Kontak Redaksi
       </a>
     </div>
-    
-    <!-- Hak Cipta -->
     <p>&copy; {new Date().getFullYear()} NUSA MEDIA. All Rights Reserved.</p>
   </div>
 </footer>
 
-      </div>
-    </main>
-  </body>
-</html>
