@@ -124,7 +124,7 @@ listSidebar.forEach((posisiNama, indeks) => {
 
 const tanggalFormat = berita.created_at ? new Date(berita.created_at).toLocaleDateString('id-ID', { dateStyle: 'long' }) : '';
 
-// 🟢 WARNAI/TARUH KODE BARU DI SINI:
+// 🟢 WARNAI/TARUH KODE BARU DI SINI: 
 const DOMAIN_UTAMA = "https://nusamedia-11t.pages.dev"; 
 const urlArtikelPenuh = encodeURIComponent(`${DOMAIN_UTAMA}/berita/${slug}`);
 const judulArtikelPenuh = encodeURIComponent(berita.judul);
@@ -179,8 +179,8 @@ const daftarParagraf = kontenMentah
 
     <script async custom-element="amp-ad" src="https://cdn.ampproject.org/v0/amp-ad-0.1.js"></script>
 
-    <!-- STRUKTUR GRID KONTEN UTAMA (KINI DUKUNG TABLET KE SAMPING) -->
-    <div class="grid grid-cols-1 md:grid-cols-12 gap-8 items-start max-w-6xl mx-auto w-full flex flex-col items-center md:block">
+    <!-- STRUKTUR GRID KONTEN UTAMA (FIXED: TABLET OTOMATIS KE SAMPING KANAN) -->
+    <div class="grid grid-cols-1 md:grid-cols-12 gap-8 items-start max-w-6xl mx-auto w-full flex flex-col items-center md:items-stretch md:block">
 
     <!-- SISI KIRI: ISI BERITA LENGKAP & BANNER IKLAN (OPEN DI TABLET) -->
     <section class="md:col-span-8 space-y-6 w-full max-w-md md:max-w-none mx-auto">
