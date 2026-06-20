@@ -272,30 +272,38 @@ const daftarParagraf = kontenMentah
       )}
     </section>
 
-      <!-- SISI KANAN: SIDEBAR WIDGET & IKLAN SUSUN -->
-      <aside class="lg:col-span-4 space-y-6">
+            <!-- SISI KANAN: SIDEBAR WIDGET & IKLAN SUSUN (TAHAP AKHIR: AMAN DI HP & TABLET) -->
+      <!-- Menggunakan w-full agar pas di HP, dan memastikan ruang tidak meluber ke samping -->
+      <aside class="lg:col-span-4 space-y-6 w-full overflow-hidden">
         
-        <!-- WIDGET POPULER -->
-        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
-          <h3 class="text-xs font-black text-slate-900 uppercase tracking-wider border-b pb-2 mb-3">🔥 Berita Terpopuler</h3>
-          <div class="flex flex-col gap-3">
-            <div set:html={htmlBeritaPopuler} />
+        <!-- WIDGET POPULER RESPONSIF -->
+        <!-- p-5 memberikan ruang ketuk yang lebih lega bagi pembaca lewat HP -->
+        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-5 w-full">
+          <h3 class="text-xs font-black text-slate-900 uppercase tracking-wider border-b border-gray-100 pb-2 mb-4 flex items-center gap-1.5">
+            🔥 Berita Terpopuler
+          </h3>
+          <div class="flex flex-col gap-4 w-full">
+            <div set:html={htmlBeritaPopuler} class="w-full space-y-3" />
           </div>
         </div>
 
-        <!-- 5 SLOT IKLAN SIDEBAR -->
-        <div class="space-y-4">
-          <div set:html={htmlSidebarIklan} />
+        <!-- 5 SLOT IKLAN SIDEBAR RESPONSIF -->
+        <!-- Menjamin gambar atau script iklan dari pihak ketiga tidak merusak lebar layout HP -->
+        <div class="space-y-4 w-full [&_img]:w-full [&_img]:h-auto [&_img]:object-cover [&_img]:rounded-lg">
+          <div set:html={htmlSidebarIklan} class="space-y-4 w-full" />
         </div>
 
-        <amp-ad width="100vw" height="320"
-     type="adsense"
-     data-ad-client="ca-pub-9117310114118325"
-     data-ad-slot="1346127443"
-     data-auto-format="rspv"
-     data-full-width="">
-  <div overflow=""></div>
-</amp-ad>
+        <!-- AREA AMP ADSENSE DENGAN PROTEKSI OVERFLOW -->
+        <div class="w-full overflow-hidden flex justify-center py-2">
+          <amp-ad width="100vw" height="320"
+                 type="adsense"
+                 data-ad-client="ca-pub-9117310114118325"
+                 data-ad-slot="1346127443"
+                 data-auto-format="rspv"
+                 data-full-width="">
+            <div overflow=""></div>
+          </amp-ad>
+        </div>
 
       </aside>
       
