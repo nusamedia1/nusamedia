@@ -249,15 +249,13 @@ const daftarParagraf = kontenMentah
         )}
 
         <article>
-          <!-- ISI KONTEN BERITA -->
-          <div class="text-lg text-gray-800 leading-relaxed text-justify space-y-8">
-    
-             <!-- Memanggil variabel 'daftarParagraf' yang dibuat di atas -->
-             {daftarParagraf.map((paragraf) => (
-                <p>{paragraf}</p>
-             ))}
-
-          </div>
+                  <!-- ISI KONTEN BERITA (TAHAP 3: NYAMAN DI HP & TABLET) -->
+        <!-- text-base di HP agar pas, sm:text-lg di tablet/PC. max-w-3xl mencegah teks melar di tablet landscape -->
+        <div class="text-base sm:text-lg text-gray-800 leading-relaxed text-justify space-y-6 max-w-3xl mx-auto w-full">
+           {daftarParagraf.map((paragraf) => (
+              <p>{paragraf}</p>
+           ))}
+        </div>
         </article>
 
       <!-- 🔥 IKLAN BANNER BAWAH ARTIKEL -->
