@@ -105,31 +105,31 @@ if (beritaPopuler.length === 0) {
   });
 }
 
-// C. RAKIT HTML 5 SUSUN IKLAN SIDEBAR (Murni 1 Kolom Berbaris ke Bawah)
+// C. RAKIT HTML 5 SUSUN IKLAN SIDEBAR (PERBAIKAN MUTLAK: PASTI KE SAMPING)
 let htmlSidebarIklan = ''; 
 const listSidebar = ['sidebar_1', 'sidebar_2', 'sidebar_3', 'sidebar_4', 'sidebar_5'];
 
-// 📍 MURNI 1 KOLOM: Kita kunci menggunakan grid-cols-1 agar iklan dipaksa lurus ke bawah
-htmlSidebarIklan = `<div class="grid grid-cols-1 gap-4 w-full">`;
+// 🔥 DISINI KUNCINYA: Kita ganti 'flex flex-col' asli Anda menjadi 'grid-cols-2' agar dipaksa ke samping saat layar lebar
+htmlSidebarIklan = `<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 gap-4 w-full">`;
 
 listSidebar.forEach((posisiNama, indeks) => {
   const ad = daftarIklan.find(a => a.zona_penempatan === 'sidebar' && a.posisi === posisiNama);
   const isSticky = posisiNama === 'sidebar_5' ? 'lg:sticky lg:top-20' : '';
 
   if (ad) {
-    // h-auto & object-contain agar iklan mengecil secara utuh, proporsional, dan tidak gepeng
+    // Menggunakan object-contain & h-auto agar gambar iklan mengecil utuh tanpa terpotong tulisan di dalamnya
     const kontenIklan = ad.tipe === 'script' 
       ? `<div class="w-full overflow-hidden flex items-center justify-center">${ad.kode_html}</div>` 
       : `<a href="${ad.url_tujuan}" target="_blank" rel="noopener noreferrer" class="block w-full h-auto overflow-hidden rounded-lg"><img src="${ad.url_gambar}" class="w-full h-auto object-contain mx-auto" /></a>`;
 
     htmlSidebarIklan += `
       <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-4 text-center h-fit flex flex-col justify-between hover:shadow-md transition ${isSticky}">
-        <span class="text-[9px] font-bold text-gray-400 block mb-2 uppercase tracking-tight">SPONSORED BY: ${ad.nama_sponsor}</span>
+        <span class="text-[9px] font-bold text-gray-400 block mb-2 uppercase tracking-tight">SPONSORED BY: ${ad.nama_sponsor} (${indeks + 1}/5)</span>
         ${kontenIklan}
       </div>
     `;
   } else {
-    // Slot kosong dibuat setinggi h-44 agar proporsional
+    // Tinggi slot kosong disesuaikan agar rapi
     htmlSidebarIklan += `
       <div class="w-full h-44 bg-gray-50 rounded-xl border border-dashed border-gray-300 flex flex-col items-center justify-center text-center p-4 h-fit ${isSticky}">
         <span class="text-xs font-black text-gray-400 uppercase tracking-wider">Space Iklan Tersedia</span>
@@ -257,21 +257,18 @@ htmlSidebarIklan += `</div>`;
       </div>
     </section> <!-- Batas penutup kolom kiri -->
 
-<!-- 📍 SOLUSI MUTLAK: GANTI TOTAL BLOK ASIDE ANDA DENGAN KODE INI -->
-<aside class="lg:col-span-4 w-full mx-auto overflow-hidden">
-  <!-- 
-    🔥 PAKSA KE SAMPING TANPA UBAH FRONTMATTER:
-    1. lg:grid lg:grid-cols-2 = Memaksa halaman membelah jadi 2 kolom ke samping saat layar lebar.
-    2. gap-4 = Memberikan jarak renggang antar-kotak iklan agar rapi.
-    3. [&>div]:contents = Trik rahasia untuk menghancurkan sekat "kotak raksasa" bawaan variabel 
-       htmlSidebarIklan, sehingga browser bisa melihat iklan 1-5 secara terpisah dan 
-       langsung menyusunnya berpasangan ke samping (Kiri-Kanan)!
-    4. [&_img]:w-full [&_img]:h-auto [&_img]:object-contain = Menjaga gambar iklan mengecil proporsional tanpa terpotong.
-  -->
-  <div class="w-full lg:grid lg:grid-cols-2 gap-4 [&>div]:contents [&_img]:w-full [&_img]:h-auto [&_img]:object-contain">
-    <div set:html={htmlSidebarIklan} />
-  </div>
-</aside>
+    <!-- ======================================================== -->
+    <!-- SISI KANAN: SIDEBAR HOMEPAGE                             -->
+    <!-- ======================================================== -->
+    <!-- 
+      - lg:col-span-4: Mengunci lebar sidebar iklan menjadi ramping di samping kanan.
+      Variabel htmlSidebarIklan di dalamnya sekarang otomatis membelah jadi 2 kolom ke samping!
+    -->
+    <aside class="lg:col-span-4 w-full mx-auto overflow-hidden">
+      <div class="w-full">
+        <div set:html={htmlSidebarIklan} />
+      </div>
+    </aside>
 
   </div> <!-- Penutup DIV Grid Utama -->
 </main> <!-- Penutup MAIN Luar -->
