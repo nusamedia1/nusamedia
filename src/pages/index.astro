@@ -189,9 +189,9 @@ htmlSidebarIklan += `</div>`;
 </header>
 
 <main class="max-w-6xl mx-auto px-4 py-6 w-full flex-1 space-y-8">
-  <!-- 🔥 Grid Utama: Mengaktifkan 3 Kolom Sejajar Hanya di Layar Lebar (lg:grid-cols-12) -->
+  <!-- KUNCI 3: Membuat layout 3 kolom (8 kolom kiri untuk berita, 4 kolom kanan untuk iklan) -->
   <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 md:gap-8 items-start w-full">
-    <!-- Kolom Kiri mengambil porsi 8 kolom dari total 12 kolom -->
+    <!-- Kolom berita diperlebar mengambil jatah 8 kolom -->
     <section class="lg:col-span-8 space-y-6 w-full mx-auto">
     
     <!-- ======================================================== -->
@@ -246,19 +246,18 @@ htmlSidebarIklan += `</div>`;
       <span class="text-[10px] text-gray-400 mt-1">Banner Bawah</span>
     </div>
   )}
-    <!-- 📍 LETAK BARU: Widget Terpopuler Tetap Vertikal ke Bawah di Sisi Kiri -->
-<div class="bg-white rounded-xl shadow-sm border border-gray-200 p-4 max-w-md w-full mt-6">
-  <h3 class="text-sm font-black text-slate-900 uppercase tracking-wider border-b pb-2 mb-4 border-red-500 inline-block">
-    Terpopuler
-  </h3>
-  <div class="space-y-4">
-    <div set:html={htmlBeritaPopuler} />
-  </div>
-</div>
-</section>
+          <!-- Terpopuler sekarang berdiri vertikal di kiri bawah -->
+      <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-4 max-w-md w-full mt-6">
+        <h3 class="text-sm font-black text-slate-900 uppercase tracking-wider border-b pb-2 mb-4 border-red-500 inline-block">
+          Terpopuler
+        </h3>
+        <div class="space-y-4">
+          <div set:html={htmlBeritaPopuler} />
+        </div>
+      </div>
+    </section> <!-- Batas penutup kolom kiri -->
 
-<!-- 📍 GANTI TOTAL BLOK ASIDE ANDA DENGAN KODE INI: -->
-<!-- 📍 KODE PERBAIKAN: GANTI TOTAL BLOK ASIDE ANDA DENGAN INI -->
+<!-- KUNCI 4: Wadah dibuat ramping (lg:col-span-4) dan dipaksa berbaris vertikal murni (flex-col) -->
 <aside class="lg:col-span-4 flex flex-col gap-4 w-full mx-auto overflow-hidden">
   <div class="space-y-4 w-full">
     <div set:html={htmlSidebarIklan} />
