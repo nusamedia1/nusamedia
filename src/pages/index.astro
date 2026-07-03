@@ -105,27 +105,33 @@ if (beritaPopuler.length === 0) {
   });
 }
 
-// C. RAKIT HTML 5 SUSUN IKLAN SIDEBAR (Perbaikan bug variabel 'a')
+// C. RAKIT HTML 5 SUSUN IKLAN SIDEBAR (Murni 1 Kolom Berbaris ke Bawah)
 let htmlSidebarIklan = ''; 
 const listSidebar = ['sidebar_1', 'sidebar_2', 'sidebar_3', 'sidebar_4', 'sidebar_5'];
+
+// 📍 MURNI 1 KOLOM: Kita kunci menggunakan grid-cols-1 agar iklan dipaksa lurus ke bawah
+htmlSidebarIklan = `<div class="grid grid-cols-1 gap-4 w-full">`;
+
 listSidebar.forEach((posisiNama, indeks) => {
   const ad = daftarIklan.find(a => a.zona_penempatan === 'sidebar' && a.posisi === posisiNama);
-  const isSticky = posisiNama === 'sidebar_5' ? 'sticky top-20' : '';
+  const isSticky = posisiNama === 'sidebar_5' ? 'lg:sticky lg:top-20' : '';
 
   if (ad) {
+    // h-auto & object-contain agar iklan mengecil secara utuh, proporsional, dan tidak gepeng
     const kontenIklan = ad.tipe === 'script' 
-      ? `<div>${ad.kode_html}</div>` 
-      : `<a href="${ad.url_tujuan}" target="_blank" rel="noopener noreferrer"><img src="${ad.url_gambar}" class="w-full object-cover rounded-lg shadow-sm" /></a>`;
+      ? `<div class="w-full overflow-hidden flex items-center justify-center">${ad.kode_html}</div>` 
+      : `<a href="${ad.url_tujuan}" target="_blank" rel="noopener noreferrer" class="block w-full h-auto overflow-hidden rounded-lg"><img src="${ad.url_gambar}" class="w-full h-auto object-contain mx-auto" /></a>`;
 
     htmlSidebarIklan += `
-      <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-4 text-center ${isSticky}">
-        <span class="text-[9px] font-bold text-gray-400 block mb-2">SPONSORED BY: ${ad.nama_sponsor} (${indeks + 1}/5)</span>
+      <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-4 text-center h-fit flex flex-col justify-between hover:shadow-md transition ${isSticky}">
+        <span class="text-[9px] font-bold text-gray-400 block mb-2 uppercase tracking-tight">SPONSORED BY: ${ad.nama_sponsor}</span>
         ${kontenIklan}
       </div>
     `;
   } else {
+    // Slot kosong dibuat setinggi h-44 agar proporsional
     htmlSidebarIklan += `
-      <div class="w-full h-48 bg-gray-50 rounded-xl border border-dashed border-gray-300 flex flex-col items-center justify-center text-center p-4 ${isSticky}">
+      <div class="w-full h-44 bg-gray-50 rounded-xl border border-dashed border-gray-300 flex flex-col items-center justify-center text-center p-4 h-fit ${isSticky}">
         <span class="text-xs font-black text-gray-400 uppercase tracking-wider">Space Iklan Tersedia</span>
         <span class="text-[10px] text-gray-400 mt-1">Slot Sidebar ${indeks + 1}/5</span>
         <a href="mailto:nusamediaterpercaya@gmail.com" class="text-[10px] text-blue-600 font-medium mt-3 hover:underline break-all px-2">
@@ -135,6 +141,8 @@ listSidebar.forEach((posisiNama, indeks) => {
     `;
   }
 });
+
+htmlSidebarIklan += `</div>`;
 ---
 
 <html lang="id">
@@ -251,8 +259,8 @@ listSidebar.forEach((posisiNama, indeks) => {
 
 <!-- 📍 GANTI TOTAL BLOK ASIDE ANDA DENGAN KODE INI: -->
 <!-- 📍 KODE PERBAIKAN: GANTI TOTAL BLOK ASIDE ANDA DENGAN INI -->
-<aside class="lg:col-span-4 w-full mx-auto overflow-hidden">
-  <div class="w-full lg:[column-count:2] lg:[column-gap:16px] space-y-4 [&_div]:break-inside-avoid [&_img]:w-full [&_img]:h-auto [&_img]:object-contain">
+<aside class="lg:col-span-4 flex flex-col gap-4 w-full mx-auto overflow-hidden">
+  <div class="space-y-4 w-full">
     <div set:html={htmlSidebarIklan} />
   </div>
 </aside>
