@@ -180,7 +180,7 @@ htmlSidebarIklan += `</div>`;
       <!-- Grid Induk Utama (Otomatis membagi kolom untuk HP, Tablet, Laptop) -->
       <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-12 gap-6 items-start">
         
-        <!-- KOLOM 1: DAFTAR FEED BERITA & BANNER UTAMA (KIRI) -->
+               <!-- KOLOM 1: DAFTAR FEED BERITA & BANNER UTAMA (KIRI) -->
         <section class="md:col-span-2 lg:col-span-6 space-y-6">
           <h2 class="text-lg font-bold text-slate-900 border-l-4 border-red-600 pl-2 uppercase tracking-wide">
             Berita Terbaru
@@ -191,48 +191,48 @@ htmlSidebarIklan += `</div>`;
             <div class="p-2 bg-white rounded-xl shadow-sm border border-gray-200 text-center flex flex-col items-center justify-center">
               <span class="text-[9px] font-bold text-gray-400 block mb-1">SPONSORED BY: {iklanAtas.nama_sponsor}</span>
               {iklanAtas.tipe === 'script' ? (
-        <>
-          <div set:html={iklanAtas.kode_html} />
-          <script is:inline>(adsbygoogle = window.adsbygoogle || []).push({});</script>
-        </>
-      ) : (
-        <a href={iklanAtas.url_tujuan} target="_blank" rel="noopener noreferrer">
-          <img src={iklanAtas.url_gambar} class="w-full h-auto object-cover rounded-md" />
-        </a>
-      )}
-    </div>
-  ) : (
-    <div class="w-full h-32 bg-gray-50 rounded-xl border border-dashed border-gray-300 flex flex-col items-center justify-center text-center p-4">
-      <span class="text-xs font-black text-gray-400 uppercase tracking-wider">Space Iklan Tersedia</span>
-      <span class="text-[10px] text-gray-400 mt-1">Banner Atas</span>
-    </div>
-  )}
+                <>
+                  <div set:html={iklanAtas.kode_html} />
+                  <script is:inline>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+                </>
+              ) : (
+                <a href={iklanAtas.url_tujuan} target="_blank" rel="noopener noreferrer" class="w-full">
+                  <img src={iklanAtas.url_gambar} class="w-full h-auto object-cover rounded-md" />
+                </a>
+              )}
+            </div>
+          ) : (
+            <div class="w-full h-32 bg-gray-50 rounded-xl border border-dashed border-gray-300 flex flex-col items-center justify-center text-center p-4">
+              <span class="text-xs font-black text-gray-400 uppercase tracking-wider">Space Iklan Tersedia</span>
+              <span class="text-[10px] text-gray-400 mt-1">Banner Atas</span>
+            </div>
+          )}
 
- <!-- Daftar Berita Ter-render -->
-{htmlListBerita}
+          <!-- 🔥 PERBAIKAN: Daftar Berita Ter-render Menggunakan Fragment -->
+          <Fragment set:html={htmlListBerita} />
 
-  <!-- 🔥 IKLAN BANNER BAWAH ARTIKEL -->
-  {iklanBawah ? (
-    <div class="p-2 bg-white rounded-xl shadow-sm border border-gray-200 text-center flex flex-col items-center justify-center">
-      <span class="text-[9px] font-bold text-gray-400 block mb-1">SPONSORED BY: {iklanBawah.nama_sponsor}</span>
-      {iklanBawah.tipe === 'script' ? (
-        <>
-          <div set:html={iklanBawah.kode_html} />
-          <script is:inline>(adsbygoogle = window.adsbygoogle || []).push({});</script>
-        </>
-      ) : (
-        <a href={iklanBawah.url_tujuan} target="_blank" rel="noopener noreferrer">
-          <img src={iklanBawah.url_gambar} class="w-full h-auto object-cover rounded-md" />
-        </a>
-      )}
-    </div>
-  ) : (
-    <div class="w-full h-32 bg-gray-50 rounded-xl border border-dashed border-gray-300 flex flex-col items-center justify-center text-center p-4">
-      <span class="text-xs font-black text-gray-400 uppercase tracking-wider">Space Iklan Tersedia</span>
-      <span class="text-[10px] text-gray-400 mt-1">Banner Bawah</span>
-    </div>
-  )}
-</section>
+          <!-- 🔥 IKLAN BANNER BAWAH ARTIKEL -->
+          {iklanBawah ? (
+            <div class="p-2 bg-white rounded-xl shadow-sm border border-gray-200 text-center flex flex-col items-center justify-center mt-6">
+              <span class="text-[9px] font-bold text-gray-400 block mb-1">SPONSORED BY: {iklanBawah.nama_sponsor}</span>
+              {iklanBawah.tipe === 'script' ? (
+                <>
+                  <div set:html={iklanBawah.kode_html} />
+                  <script is:inline>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+                </>
+              ) : (
+                <a href={iklanBawah.url_tujuan} target="_blank" rel="noopener noreferrer" class="w-full">
+                  <img src={iklanBawah.url_gambar} class="w-full h-auto object-cover rounded-md" />
+                </a>
+              )}
+            </div>
+          ) : (
+            <div class="w-full h-32 bg-gray-50 rounded-xl border border-dashed border-gray-300 flex flex-col items-center justify-center text-center p-4 mt-6">
+              <span class="text-xs font-black text-gray-400 uppercase tracking-wider">Space Iklan Tersedia</span>
+              <span class="text-[10px] text-gray-400 mt-1">Banner Bawah</span>
+            </div>
+          )}
+        </section>
 
             <!-- KOLOM 2: WIDGET TERPOPULER -->
         <aside class="md:col-span-1 lg:col-span-3 flex flex-col gap-4 sticky md:top-20">
