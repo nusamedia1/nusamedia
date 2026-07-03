@@ -250,14 +250,9 @@ listSidebar.forEach((posisiNama, indeks) => {
 </section>
 
 <!-- 📍 GANTI TOTAL BLOK ASIDE ANDA DENGAN KODE INI: -->
+<!-- 📍 KODE PERBAIKAN: GANTI TOTAL BLOK ASIDE ANDA DENGAN INI -->
 <aside class="lg:col-span-4 w-full mx-auto overflow-hidden">
-  <!-- 
-    🔥 TRIK CSS MULTI-COLUMN (MENGALIRKAN ISI KE SAMPING):
-    - lg:[column-count:2] = Memaksa isi string htmlSidebarIklan membelah jadi 2 kolom ke samping saat layar lebar.
-    - lg:[column-gap:16px] = Memberi jarak aman antar kolom iklan agar tidak menempel.
-    - [&_div]:break-inside-avoid = Mencegah kotak iklan terpotong di tengah-tengah saat pindah kolom.
-    - [&_img]:w-full [&_img]:h-auto [&_img]:object-contain = Menjaga iklan tetap mengecil cantik & proporsional.
-  <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 gap-4 w-full [&_img]:w-full [&_img]:h-auto [&_img]:object-contain [&_img]:rounded-xl">
+  <div class="w-full lg:[column-count:2] lg:[column-gap:16px] space-y-4 [&_div]:break-inside-avoid [&_img]:w-full [&_img]:h-auto [&_img]:object-contain">
     <div set:html={htmlSidebarIklan} />
   </div>
 </aside>
