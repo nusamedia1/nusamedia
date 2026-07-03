@@ -160,14 +160,27 @@ const daftarParagraf = kontenMentah
       <!-- ARTIKEL UTAMA (KIRI - 8 KOLOM) -->
       <section class="md:col-span-2 lg:col-span-8 space-y-6">
         
-        <!-- 🔥 IKLAN BANNER ATAS -->
+                <!-- 🔥 IKLAN BANNER ATAS (PERBAIKAN: PASTI TERBIT GAMBAR / SCRIPT) -->
         {iklanAtas ? (
-          <div class="p-2 bg-white rounded-xl shadow-sm border border-gray-200 text-center">
-            <span class="text-[9px] font-bold text-gray-400 block mb-1">SPONSORED BY: {iklanAtas.nama_sponsor}</span>
-            <div set:html={iklanAtas.kode_html || `<a href="${iklanAtas.url_tujuan}" target="_blank"><img src="${iklanAtas.url_gambar}" class="w-full h-auto rounded" /></a>`} />
+          <div class="p-3 bg-white rounded-xl shadow-sm border border-gray-200 text-center flex flex-col items-center justify-center w-full">
+            <span class="text-[9px] font-black text-gray-400 block mb-2 uppercase tracking-wider">
+              SPONSORED BY: {iklanAtas.nama_sponsor}
+            </span>
+            
+            {iklanAtas.tipe === 'script' ? (
+              /* Jalur jika iklan berupa Script Google Adsense / Monetag */
+              <div class="w-full overflow-hidden flex justify-center" set:html={iklanAtas.kode_html} />
+            ) : (
+              /* Jalur jika iklan berupa File Gambar Banner Biasa */
+              <a href={iklanAtas.url_tujuan} target="_blank" rel="noopener noreferrer" class="block w-full">
+                <img src={iklanAtas.url_gambar} alt={iklanAtas.nama_sponsor} class="w-full h-auto object-contain rounded-lg mx-auto" />
+              </a>
+            )}
           </div>
         ) : (
-          <div class="w-full h-24 bg-gray-50 rounded-xl border border-dashed border-gray-200 flex items-center justify-center text-xs text-gray-400 uppercase font-bold tracking-wider">Slot Iklan Atas</div>
+          <div class="w-full h-24 bg-gray-50 rounded-xl border border-dashed border-gray-200 flex items-center justify-center text-xs text-gray-400 uppercase font-bold tracking-wider">
+            Slot Iklan Atas Tersedia
+          </div>
         )}
 
         <!-- ISI KARTU KONTEN BERITA -->
@@ -220,19 +233,34 @@ const daftarParagraf = kontenMentah
           </div>
         </div>
 
-        <!-- 🔥 IKLAN BANNER BAWAH -->
+               <!-- 🔥 IKLAN BANNER BAWAH (PERBAIKAN: PASTI TERBIT GAMBAR / SCRIPT) -->
         {iklanBawah ? (
-          <div class="p-2 bg-white rounded-xl shadow-sm border border-gray-200 text-center">
-            <span class="text-[9px] font-bold text-gray-400 block mb-1">SPONSORED BY: {iklanBawah.nama_sponsor}</span>
-            <div set:html={iklanBawah.kode_html || `<a href="${iklanBawah.url_tujuan}" target="_blank"><img src="${iklanBawah.url_gambar}" class="w-full h-auto rounded" /></a>`} />
+          <div class="p-3 bg-white rounded-xl shadow-sm border border-gray-200 text-center flex flex-col items-center justify-center mt-6 w-full">
+            <span class="text-[9px] font-black text-gray-400 block mb-2 uppercase tracking-wider">
+              SPONSORED BY: {iklanBawah.nama_sponsor}
+            </span>
+            
+            {iklanBawah.tipe === 'script' ? (
+              /* Jalur jika iklan berupa Script Google Adsense / Monetag */
+              <div class="w-full overflow-hidden flex justify-center" set:html={iklanBawah.kode_html} />
+            ) : (
+              /* Jalur jika iklan berupa File Gambar Banner Biasa */
+              <a href={iklanBawah.url_tujuan} target="_blank" rel="noopener noreferrer" class="block w-full">
+                <img src={iklanBawah.url_gambar} alt={iklanBawah.nama_sponsor} class="w-full h-auto object-contain rounded-lg mx-auto" />
+              </a>
+            )}
           </div>
         ) : (
-          <div class="w-full h-24 bg-gray-50 rounded-xl border border-dashed border-gray-200 flex items-center justify-center text-xs text-gray-400 uppercase font-bold tracking-wider mt-6">Slot Iklan Bawah</div>
+          <div class="w-full h-24 bg-gray-50 rounded-xl border border-dashed border-gray-200 flex items-center justify-center text-xs text-gray-400 uppercase font-bold tracking-wider mt-6">
+            Slot Iklan Bawah Tersedia
+          </div>
         )}
       </section>
 
-      <!-- SIDEBAR (KANAN - 4 KOLOM) -->
+            <!-- SIDEBAR (KANAN - 4 KOLOM - FIXED: KOP IKLAN DINAMIS SESUAI DATABASE) -->
       <aside class="md:col-span-1 lg:col-span-4 space-y-6 w-full lg:sticky lg:top-24">
+        
+        <!-- Box Berita Terpopuler -->
         <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-5 w-full">
           <h3 class="text-xs font-black text-slate-900 uppercase tracking-wider border-b border-gray-100 pb-2 mb-4">🔥 Berita Terpopuler</h3>
           <div class="flex flex-col gap-4 w-full">
@@ -240,9 +268,51 @@ const daftarParagraf = kontenMentah
           </div>
         </div>
 
+        <!-- Box Susunan Banner Iklan Murni Komponen Astro (Persis Seperti Index) -->
         <div class="space-y-4 w-full">
-          <Fragment set:html={htmlSidebarIklan} />
+          {listSidebar.map((posisiNama, indeks) => {
+            const ad = daftarIklan.find(a => a.zona_penempatan === 'sidebar' && a.posisi === posisiNama);
+            
+            return ad ? (
+              /* JALUR UTAMA: JIKA IKLAN AKTIF DI DATABASE */
+              <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-4 text-center flex flex-col justify-between hover:shadow-md transition w-full">
+                <span class="text-[9px] font-bold text-gray-400 block mb-2 uppercase tracking-tight">
+                  SPONSORED BY: {ad.nama_sponsor} ({indeks + 1}/5)
+                </span>
+                
+                {ad.tipe === 'script' ? (
+                  <div class="w-full overflow-hidden flex justify-center" set:html={ad.kode_html} />
+                ) : (
+                  <a href={ad.url_tujuan} target="_blank" rel="noopener noreferrer" class="block w-full">
+                    <img src={ad.url_gambar} alt={ad.nama_sponsor} class="w-full h-auto object-contain rounded-lg mx-auto" />
+                  </a>
+                )}
+              </div>
+            ) : (
+              /* JALUR CADANGAN: JIKA SLOT SIDEBAR DATABASE KOSONG */
+              <div class="w-full bg-gray-50 rounded-xl border border-dashed border-gray-200 flex flex-col items-center justify-center text-center p-5">
+                <span class="text-xs font-black text-gray-400 uppercase tracking-wider">Space Iklan Tersedia</span>
+                <span class="text-[10px] text-gray-400 mt-1">Slot Sidebar {indeks + 1}/5</span>
+                <a href="mailto:nusamediaterpercaya@gmail.com" class="text-[10px] text-blue-600 font-medium mt-3 hover:underline break-all px-2">
+                  Hubungi Redaksi
+                </a>
+              </div>
+            );
+          })}
         </div>
+
+        <!-- AREA AMP ADSENSE DENGAN PROTEKSI OVERFLOW -->
+        <div class="w-full overflow-hidden flex justify-center py-2">
+          <amp-ad width="100vw" height="320"
+                 type="adsense"
+                 data-ad-client="ca-pub-9117310114118325"
+                 data-ad-slot="1346127443"
+                 data-auto-format="rspv"
+                 data-full-width="">
+            <div overflow=""></div>
+          </amp-ad>
+        </div>
+
       </aside>
 
     </div>
