@@ -1,27 +1,83 @@
 ---
 // src/layouts/Layout.astro
 interface Props {
-	title?: string;
+  title: string;
+  description?: string;
+  image?: string;
+  kategori?: string;
 }
 
-const { title = "Nusa Media" } = Astro.props;
+const { 
+  title, 
+  description = "Nusa-Media menyajikan berita terkini, viral, politik, gaya lifestyle, dan informasi teknologi terupdate secara real-time.", 
+  image = "https://pages.dev", 
+  kategori = "News"
+} = Astro.props;
+
+const urlPenuh = Astro.url.href;
 ---
 
-<!DOCTYPE html>
+<!doctype html>
 <html lang="id">
-	<head>
-		<meta charset="UTF-8" />
-		<meta name="description" content="Nusa Media Website" />
-		<meta name="viewport" content="width=device-width" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<meta name="generator" content={Astro.generator} />
-		
-		<!-- Tambahan Kode Verifikasi Google Search Console -->
-		<meta name="google-site-verification" content="l5OUrKYhXd2xSJoOiUK7_SgioLghRAJtkMeem4d4yzA" />
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="generator" content={Astro.generator} />
 
-		<title>{title}</title>
-	</head>
-	<body>
-		<slot />
-	</body>
+    <!-- METADATA SEO STANDAR -->
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta name="keywords" content={`berita terkini, nusa media, portal berita, berita viral, berita indonesia, ${kategori}`} />
+    <meta name="author" content="Redaksi Nusa Media" />
+    <meta name="robots" content="index, follow" />
+
+    <!-- PROTOKOL OPEN GRAPH (PRATINJAU WA & FB MUNCUL GAMBAR) -->
+    <meta property="og:type" content="article" />
+    <meta property="og:url" content={urlPenuh} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={image} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:site_name" content="Nusa Media" />
+    <meta property="og:locale" content="id_ID" />
+
+    <!-- TWITTER CARDS -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:url" content={urlPenuh} />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={image} />
+
+    <!-- KODE VERIFIKASI IKLAN & SITUS (DIPERTAHANKAN) -->
+    <meta name="monetag" content="e2d28fc31d665936f12fb3b18580ad5e" />
+    <meta name="google-site-verification" content="l5OUrKYhXd2xSJoOiUK7_SgioLghRAJtkMeem4d4yzA" />
+    <meta name="google-adsense-account" content="ca-pub-9117310114118325" />
+
+    <!-- FONTS -->
+    <link rel="preconnect" href="https://googleapis.com">
+    <link rel="preconnect" href="https://gstatic.com" crossorigin>
+    <link href="https://googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
+  </head>
+  <body class="bg-gray-50 text-gray-900 min-h-screen antialiased flex flex-col">
+    
+    <!-- Tempat masuknya konten utama dari halaman web Anda -->
+    <slot />
+
+  </body>
 </html>
+
+<style is:global>
+  html {
+    scroll-behavior: smooth;
+  }
+  body {
+    font-family: 'Roboto', sans-serif;
+  }
+  /* Mengamankan elemen gambar agar tidak pecah/meluber keluar grid */
+  img {
+    max-width: 100%;
+    height: auto;
+  }
+</style>
