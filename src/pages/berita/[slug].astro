@@ -105,19 +105,51 @@ const daftarParagraf = kontenMentah
   .filter(p => p.length > 0);
 ---
 
-<Layout title={`${berita.judul} | Nusa Media`}>
-  <!-- HEADER & NAVBAR -->
-  <header class="bg-white border-b border-gray-200 shadow-sm sticky top-0 z-50">
+<!-- 🔥 PERBAIKAN: Mengirim data detail artikel ke Layout untuk pratinjau WhatsApp/Facebook -->
+<Layout 
+  title={`${berita.judul} | Nusa Media`} 
+  description={berita.ringkasan || (berita.isi_konten ? berita.isi_konten.replace(/<[^>]*>/g, '').substring(0, 150) + '...' : 'Baca berita selengkapnya di Nusa Media.')}
+  image={berita.gambar_url || "https://pages.dev"}
+  kategori={berita.kategori || "Fokus"}
+>
+  <!-- HEADER & NAVBAR (BARU: NAVBAR TIDAK MEMBEKU & IKON PANAH MODERN) -->
+  <header class="bg-white border-b border-gray-200 shadow-sm">
     <div class="max-w-7xl mx-auto px-4 py-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+      
+      <!-- SISI KIRI: BRANDING UTAMA -->
       <div>
         <a href="/" class="flex flex-col group items-center sm:items-start">
           <span class="text-2xl sm:text-3xl font-black text-red-600 tracking-tighter leading-none">NUSA<span class="text-slate-800"> MEDIA</span></span>
           <span class="text-[10px] font-bold text-gray-400 tracking-widest uppercase block mt-1">Media Berita Terpercaya</span>
         </a>
       </div>
-      <a href="/" class="inline-flex items-center justify-center gap-1.5 font-bold text-blue-600 hover:underline text-xs">
-        🏠 Kembali ke Beranda
-      </a>
+
+      <!-- SISI KANAN: KONTAK EMAIL & IKON KEMBALI MODERN INTERAKTIF -->
+      <div class="flex flex-col sm:flex-row items-center gap-3 sm:gap-5 text-xs text-gray-500 w-full sm:w-auto justify-center sm:justify-end">
+        
+        <!-- Kontak Redaksi Aktif Langsung Terhubung ke Email -->
+        <div class="flex items-center justify-center bg-gray-50 sm:bg-transparent px-3 py-1.5 sm:p-0 rounded-full border border-gray-100 sm:border-0 w-full sm:w-auto text-center">
+          <span class="font-medium mr-1 hidden sm:inline">Kontak Redaksi:</span>
+          <a href="mailto:nusamediaterpercaya@://gmail.com" class="hover:text-red-600 transition flex items-center justify-center gap-1.5 text-slate-700 sm:text-gray-500 font-semibold sm:font-normal group/email">
+            <svg xmlns="http://w3.org" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-3.5 h-3.5 text-gray-400 group-hover/email:text-red-600">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25m19.5 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0L3.32 8.91a2.25 2.25 0 0 1-1.07-1.916V6.75" />
+            </svg>
+            <span class="underline decoration-gray-300 hover:decoration-red-600">nusamediaterpercaya@gmail.com</span>
+          </a>
+        </div>
+
+        <span class="text-gray-200 hidden sm:inline">|</span>
+
+        <!-- Tombol Beranda dengan Ikon Vektor Panah Modern -->
+        <a href="/" class="inline-flex items-center justify-center gap-2 font-bold text-slate-700 hover:text-blue-600 bg-gray-100 sm:bg-transparent hover:bg-gray-200 sm:hover:bg-transparent w-full sm:w-auto px-4 py-2 sm:p-0 rounded-lg sm:rounded-none transition group/back text-sm sm:text-xs">
+          <svg xmlns="http://w3.org" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-4 h-4 transform group-hover/back:-translate-x-1 transition-transform text-gray-400 group-hover:text-blue-600">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" />
+          </svg>
+          <span>Beranda</span>
+        </a>
+
+      </div>
+
     </div>
   </header>
 
@@ -155,7 +187,19 @@ const daftarParagraf = kontenMentah
             <span class="text-xs font-bold text-gray-400 uppercase tracking-wider mr-1">Bagikan:</span>
             <a id="btnShareWhatsapp" href="#" target="_blank" class="bg-emerald-500 text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-sm">WhatsApp</a>
             <a id="btnShareFacebook" href="#" target="_blank" class="bg-blue-600 text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-sm">Facebook</a>
-            <button id="btn-share-native" class="bg-indigo-600 text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-sm lg:hidden border-0 cursor-pointer" type="button">Sistem HP</button>
+            <!-- 🔥 PERBAIKAN: Tombol Sistem HP diubah menjadi label "Bagikan" dengan Ikon Modern -->
+<button 
+  id="btn-share-native" 
+  class="inline-flex items-center gap-1.5 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-sm transition-colors cursor-pointer border-0 lg:hidden" 
+  type="button"
+  data-judul={berita.judul}
+>
+  <!-- Ikon Share Vektor Minimalis -->
+  <svg xmlns="http://w3.org" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-3.5 h-3.5">
+    <path stroke-linecap="round" stroke-linejoin="round" d="M7.217 10.907a2.25 2.25 0 1 0 0 2.186m0-2.186.057-.034a2.25 2.25 0 1 0 2.829-3.414m-2.886 3.448L14.78 8.02m-7.508 5.964.057.034a2.25 2.25 0 1 0 2.837 3.418m-2.894-3.452 6.94 4.14" />
+  </svg>
+  <span>Bagikan</span>
+</button>
             <button id="btnSalinTautan" class="bg-gray-700 text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-sm border-0 cursor-pointer"><span id="teksTombolSalin">Salin Tautan</span></button>
           </div>
 
