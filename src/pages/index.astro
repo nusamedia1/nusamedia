@@ -250,8 +250,8 @@ listSidebar.forEach((posisiNama, indeks) => {
 </section>
 
 <!-- 📍 Kolom Kanan mengambil porsi 4 kolom dengan susunan vertikal lurus ke bawah -->
-<aside class="lg:col-span-4 flex flex-col gap-4 w-full mx-auto overflow-hidden">
-  <div class="space-y-4 w-full">
+<aside class="lg:col-span-4 flex flex-col gap-4 w-full lg:max-w-[360px] mx-auto overflow-hidden">
+  <div class="space-y-4 w-full [&_img]:w-full [&_img]:h-48 [&_img]:object-cover [&_img]:rounded-xl">
     <div set:html={htmlSidebarIklan} />
   </div>
 </aside>
