@@ -181,9 +181,9 @@ listSidebar.forEach((posisiNama, indeks) => {
 </header>
 
 <main class="max-w-6xl mx-auto px-4 py-6 w-full flex-1 space-y-8">
-  <!-- 🔥 Grid Utama: Pecah Kiri-Kanan hanya saat Layar Lebar (lg:) -->
+  <!-- 🔥 Grid Utama: Mengaktifkan 3 Kolom Sejajar Hanya di Layar Lebar (lg:grid-cols-12) -->
   <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 md:gap-8 items-start w-full">
-    <!-- Kolom Kiri mengambil porsi 8 kolom -->
+    <!-- Kolom Kiri mengambil porsi 8 kolom dari total 12 kolom -->
     <section class="lg:col-span-8 space-y-6 w-full mx-auto">
     
     <!-- ======================================================== -->
@@ -238,8 +238,8 @@ listSidebar.forEach((posisiNama, indeks) => {
       <span class="text-[10px] text-gray-400 mt-1">Banner Bawah</span>
     </div>
   )}
-    <!-- 📍 LETAK BARU: Widget Terpopuler Tetap Vertikal ke Bawah -->
-<div class="bg-white rounded-xl shadow-sm border border-gray-200 p-5 max-w-md w-full mt-8">
+    <!-- 📍 LETAK BARU: Widget Terpopuler Tetap Vertikal ke Bawah di Sisi Kiri -->
+<div class="bg-white rounded-xl shadow-sm border border-gray-200 p-4 max-w-md w-full mt-6">
   <h3 class="text-sm font-black text-slate-900 uppercase tracking-wider border-b pb-2 mb-4 border-red-500 inline-block">
     Terpopuler
   </h3>
@@ -249,18 +249,11 @@ listSidebar.forEach((posisiNama, indeks) => {
 </div>
 </section>
 
-    <!-- 📍 GANTI SELEBIHNYA BLOK ASIDE ANDA DENGAN INI: -->
-<aside class="lg:col-span-4 w-full mx-auto grid grid-cols-1 md:grid-cols-2 lg:flex lg:flex-col gap-4 overflow-hidden">
-  
-  <!-- 
-    Di dalam sini, string rakitan iklan Anda akan otomatis mengikuti perintah induknya.
-    - Saat Tablet Tegak (md): Iklan membelah 2 kolom ke samping secara simetris.
-    - Saat Layar Lebar (lg): Iklan berbaris lurus kembali ke bawah (vertikal).
-  -->
-  <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:flex lg:flex-col gap-4 w-full col-span-1 md:col-span-2 lg:col-span-1">
+<!-- 📍 Kolom Kanan mengambil porsi 4 kolom dengan susunan vertikal lurus ke bawah -->
+<aside class="lg:col-span-4 flex flex-col gap-4 w-full mx-auto overflow-hidden">
+  <div class="space-y-4 w-full">
     <div set:html={htmlSidebarIklan} />
   </div>
-
 </aside>
 
   </div> <!-- Penutup DIV Grid Utama -->
