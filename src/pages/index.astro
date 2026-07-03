@@ -180,9 +180,11 @@ listSidebar.forEach((posisiNama, indeks) => {
     </div>
 </header>
 
-<main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full flex flex-col items-center">
-    <!-- 🔥 STRUKTUR GRID UTAMA HOMEPAGE (FIXED: HP RAPAT, TABLET JARAK NORMAL) -->
- <div class="flex flex-col lg:grid lg:grid-cols-12 gap-4 md:gap-8 items-start max-w-6xl mx-auto w-full">
+<main class="max-w-6xl mx-auto px-4 py-6 w-full flex-1 space-y-8">
+  <!-- 🔥 Grid Utama: Pecah Kiri-Kanan hanya saat Layar Lebar (lg:) -->
+  <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 md:gap-8 items-start w-full">
+    <!-- Kolom Kiri mengambil porsi 8 kolom -->
+    <section class="lg:col-span-8 space-y-6 w-full mx-auto">
     
     <!-- ======================================================== -->
     <!-- SISI KIRI: DAFTAR FEED BERITA & BANNER UTAMA             -->
@@ -236,28 +238,27 @@ listSidebar.forEach((posisiNama, indeks) => {
       <span class="text-[10px] text-gray-400 mt-1">Banner Bawah</span>
     </div>
   )}
+    <!-- 📍 LETAK BARU: Widget Terpopuler Tetap Vertikal ke Bawah -->
+<div class="bg-white rounded-xl shadow-sm border border-gray-200 p-5 max-w-md w-full mt-8">
+  <h3 class="text-sm font-black text-slate-900 uppercase tracking-wider border-b pb-2 mb-4 border-red-500 inline-block">
+    Terpopuler
+  </h3>
+  <div class="space-y-4">
+    <div set:html={htmlBeritaPopuler} />
+  </div>
+</div>
 </section>
 
     <!-- ======================================================== -->
     <!-- SISI KANAN: SIDEBAR HOMEPAGE (PINDAH KANAN DI TABLET)   -->
     <!-- ======================================================== -->
    <!-- 📍 GANTI BARIS TAG ASIDE ANDA MENJADI INI: -->
-   <aside class="lg:col-span-4 w-full mx-auto grid grid-cols-1 md:grid-cols-2 lg:block gap-6 overflow-hidden">
-          <!-- Widget Populer -->
-          <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
-            <h3 class="text-sm font-black text-slate-900 uppercase tracking-wider border-b pb-2 mb-4 border-red-500 inline-block">
-              Terpopuler
-            </h3>
-            <div class="space-y-4">
-              <div set:html={htmlBeritaPopuler} />
-            </div>
-          </div>
-
-          <!-- Susunan Iklan Sidebar 1-5 -->
-          <div class="space-y-4">
-            <div set:html={htmlSidebarIklan} />
-          </div>
-            </aside>
+    <!-- 📍 Kolom Kanan mengambil porsi 4 kolom dengan susunan flex vertikal ke bawah -->
+<aside class="lg:col-span-4 flex flex-col gap-4 w-full h-fit mx-auto overflow-hidden">
+  <div class="space-y-4 w-full">
+    <div set:html={htmlSidebarIklan} />
+  </div>
+</aside>
 
   </div> <!-- Penutup DIV Grid Utama -->
 </main> <!-- Penutup MAIN Luar -->
