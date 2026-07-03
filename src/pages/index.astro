@@ -257,9 +257,18 @@ htmlSidebarIklan += `</div>`;
       </div>
     </section> <!-- Batas penutup kolom kiri -->
 
-<!-- KUNCI 4: Wadah dibuat ramping (lg:col-span-4) dan dipaksa berbaris vertikal murni (flex-col) -->
-<aside class="lg:col-span-4 flex flex-col gap-4 w-full mx-auto overflow-hidden">
-  <div class="space-y-4 w-full">
+<!-- 📍 SOLUSI MUTLAK: GANTI TOTAL BLOK ASIDE ANDA DENGAN KODE INI -->
+<aside class="lg:col-span-4 w-full mx-auto overflow-hidden">
+  <!-- 
+    🔥 PAKSA KE SAMPING TANPA UBAH FRONTMATTER:
+    1. lg:grid lg:grid-cols-2 = Memaksa halaman membelah jadi 2 kolom ke samping saat layar lebar.
+    2. gap-4 = Memberikan jarak renggang antar-kotak iklan agar rapi.
+    3. [&>div]:contents = Trik rahasia untuk menghancurkan sekat "kotak raksasa" bawaan variabel 
+       htmlSidebarIklan, sehingga browser bisa melihat iklan 1-5 secara terpisah dan 
+       langsung menyusunnya berpasangan ke samping (Kiri-Kanan)!
+    4. [&_img]:w-full [&_img]:h-auto [&_img]:object-contain = Menjaga gambar iklan mengecil proporsional tanpa terpotong.
+  -->
+  <div class="w-full lg:grid lg:grid-cols-2 gap-4 [&>div]:contents [&_img]:w-full [&_img]:h-auto [&_img]:object-contain">
     <div set:html={htmlSidebarIklan} />
   </div>
 </aside>
