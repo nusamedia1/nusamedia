@@ -249,15 +249,18 @@ listSidebar.forEach((posisiNama, indeks) => {
 </div>
 </section>
 
-    <!-- ======================================================== -->
-    <!-- SISI KANAN: SIDEBAR HOMEPAGE (PINDAH KANAN DI TABLET)   -->
-    <!-- ======================================================== -->
-   <!-- 📍 GANTI BARIS TAG ASIDE ANDA MENJADI INI: -->
-    <!-- 📍 Kolom Kanan mengambil porsi 4 kolom dengan susunan flex vertikal ke bawah -->
-<aside class="lg:col-span-4 flex flex-col gap-4 w-full h-fit mx-auto overflow-hidden">
-  <div class="space-y-4 w-full">
+    <!-- 📍 GANTI SELEBIHNYA BLOK ASIDE ANDA DENGAN INI: -->
+<aside class="lg:col-span-4 w-full mx-auto grid grid-cols-1 md:grid-cols-2 lg:flex lg:flex-col gap-4 overflow-hidden">
+  
+  <!-- 
+    Di dalam sini, string rakitan iklan Anda akan otomatis mengikuti perintah induknya.
+    - Saat Tablet Tegak (md): Iklan membelah 2 kolom ke samping secara simetris.
+    - Saat Layar Lebar (lg): Iklan berbaris lurus kembali ke bawah (vertikal).
+  -->
+  <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:flex lg:flex-col gap-4 w-full col-span-1 md:col-span-2 lg:col-span-1">
     <div set:html={htmlSidebarIklan} />
   </div>
+
 </aside>
 
   </div> <!-- Penutup DIV Grid Utama -->
