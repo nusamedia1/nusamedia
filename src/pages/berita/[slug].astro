@@ -1,26 +1,20 @@
 ---
 // src/pages/berita/[slug].astro
-export const prerender = false;
+export const prerender = false; // Murni Server-Side Rendering (SSR)
 
 import Layout from '../../layouts/Layout.astro';
 import { supabase } from '../../lib/supabase'; 
 import '../../styles/global.css';
 
 const { slug } = Astro.params;
-
-// Amankan jika slug kosong
 const slugAman = slug || "fitur-berita";
-
-const PROJECT_ID = import.meta.env.SUPABASE_PROJECT_ID || "gnuxrjwiyiikkyjxgzff";
-const ANON_KEY = import.meta.env.SUPABASE_ANON_KEY || "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdudXhyandpeWlpa2t5anhnemZmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk2MTQyOTQsImV4cCI6MjA5NTE5MDI5NH0.OFjoavfuIebaPiSLSgDyf-rUbfyzfvf9dibRgkmoNDg";
-const BASE_URL = `https://${PROJECT_ID}.supabase.co/rest/v1`;
 
 let berita = null;
 let beritaPopuler = [];
 let daftarIklan = [];
 
 try {
-  // Ambil data dengan metode pengaman agar tidak memicu crash keras
+  // Ambil data berita secara aman agar tidak crash jika slug tidak ada
   const [resDetail, resPopuler, resIklan] = await Promise.all([
     supabase.from('berita').select('*').eq('slug', slugAman).maybeSingle(),
     supabase.from('berita').select('*').order('views', { ascending: false }).limit(5),
@@ -31,107 +25,79 @@ try {
   beritaPopuler = resPopuler?.data || [];
   daftarIklan = resIklan?.data || [];
 } catch (e) {
-  console.error("Gagal memuat data:", e);
+  console.error("Gagal memuat data dari database:", e);
 }
+
+// UPDATE JUMLAH PEMBACA (VIEWS)
 if (berita && berita.id) {
-  // Ambil nilai views saat ini, jika tidak ada set ke 0, lalu tambah 1
   const viewsSaatIni = berita.views || 0;
   const viewsBaru = viewsSaatIni + 1;
 
-  // Langsung update ke tabel 'berita' berdasarkan ID-nya
-  const { error: updateError } = await supabase
+  await supabase
     .from('berita')
     .update({ views: viewsBaru })
-    .eq('id', berita.id); // Mencocokkan ID artikel
-
-  if (updateError) {
-    console.error("🔴 GAGAL UPDATE VIEWS:", updateError.message);
-  } else {
-    // Update data lokal agar langsung tampil di layar pembaca
-    berita.views = viewsBaru;
-  }
+    .eq('id', berita.id);
+    
+  berita.views = viewsBaru;
 }
-// ─── KONDISI JIKA BERITA KOSONG / BELUM TERSEDIA ───
-// Alih-alih melempar redirect, kita siapkan data bayangan agar halaman TIDAK ERROR
+
+// JIKA BERITA KOSONG (SIAPKAN DATA CADANGAN AGAR HALAMAN TIDAK EROR)
 if (!berita) {
   berita = {
     judul: "Artikel Belum Tersedia atau Sedang Dalam Peninjauan",
     kategori: "Info",
     penulis: "Redaksi Nusa Media",
-    isi_konten: "Mohon maaf, artikel berita dengan alamat tautan tersebut tidak ditemukan atau telah diperbarui oleh redaksi kami. Silakan kembali ke halaman utama untuk membaca berita terhangat lainnya.",
+    isi_konten: "Mohon maaf, artikel berita dengan alamat tautan tersebut tidak ditemukan atau telah diperbarui oleh redaksi kami.",
     gambar_url: null,
     created_at: new Date().toISOString()
   };
 }
 
-// 3. FILTER DATA IKLAN BANNER UTAMA
+// FILTER BANNER IKLAN UTAMA
 const iklanAtas = daftarIklan.find(ad => ad.zona_penempatan === 'artikel' && ad.posisi === 'banner_atas');
 const iklanBawah = daftarIklan.find(ad => ad.zona_penempatan === 'artikel' && ad.posisi === 'banner_bawah');
 
-// ==========================================
-// 🔥 STRATEGI RAKIT HTML IKLAN & WIDGET (FRONTMATTER)
-// ==========================================
-
-// A. RAKIT HTML WIDGET BERITA POPULER SIDEBAR
+// RAKIT HTML BERITA POPULER SIDEBAR
 let htmlBeritaPopuler = '';
 beritaPopuler.forEach((pop, index) => {
   htmlBeritaPopuler += `
-    <div class="flex items-start gap-3 group border-b border-gray-100 pb-2 last:border-0 last:pb-0">
-      <span class="text-lg font-black text-gray-300 group-hover:text-red-600 transition min-w-[20px]">0${index + 1}</span>
-      <div>
-        <h4 class="text-xs font-bold text-slate-800 group-hover:text-blue-600 transition line-clamp-2 leading-tight mb-1">
-          <a href="/berita/${pop.slug}">${pop.judul}</a>
+    <div class="flex items-start gap-3 group border-b border-gray-100 pb-3 last:border-0 last:pb-0 pt-2 first:pt-0">
+      <span class="text-2xl font-black text-gray-200 group-hover:text-red-600 transition min-w-[30px] text-center">0${index + 1}</span>
+      <div class="flex-1">
+        <h4 class="text-sm font-semibold text-slate-800 group-hover:text-red-600 transition line-clamp-2 leading-snug mb-1">
+          <a href="/berita/${pop.slug || pop.id}">${pop.judul}</a>
         </h4>
-        <span class="text-[10px] text-gray-400">👁️ ${pop.views || 0} pembaca</span>
-        <br/>
-        <span class="text-[10px] text-gray-400">Hubungi kami: </span> 
-        <a href="mailto:nusamediaterpercaya@gmail.com" class="text-blue-600 text-[10px] hover:underline">nusamediaterpercaya@gmail.com</a>
+        <span class="text-[11px] text-gray-400">👁️ ${pop.views || 0} pembaca</span>
       </div>
     </div>
   `;
 });
 
-// B. RAKIT HTML 5 SUSUN IKLAN SIDEBAR
+// RAKIT HTML 5 SUSUN IKLAN SIDEBAR
 let htmlSidebarIklan = '';
 const listSidebar = ['sidebar_1', 'sidebar_2', 'sidebar_3', 'sidebar_4', 'sidebar_5'];
-listSidebar.forEach((posisiNama, indeks) => {
+listSidebar.forEach((posisiNama) => {
   const ad = daftarIklan.find(a => a.zona_penempatan === 'sidebar' && a.posisi === posisiNama);
-  const isSticky = posisiNama === 'sidebar_5' ? 'sticky top-20' : '';
-
   if (ad) {
     const kontenIklan = ad.tipe === 'script' 
-      ? `<div>${ad.kode_html}</div>` 
-      : `<a href="${ad.url_tujuan}" target="_blank" rel="noopener noreferrer"><img src="${ad.url_gambar}" class="w-full object-cover rounded-lg shadow-sm" /></a>`;
+      ? `<div class="w-full overflow-hidden flex items-center justify-center">${ad.kode_html}</div>` 
+      : `<a href="${ad.url_tujuan}" target="_blank" rel="noopener noreferrer" class="block w-full overflow-hidden rounded-lg shadow-sm"><img src="${ad.url_gambar}" class="w-full h-auto object-cover mx-auto" /></a>`;
 
-    htmlSidebarIklan += `
-      <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-4 text-center ${isSticky}">
-        <span class="text-[9px] font-bold text-gray-400 block mb-2">SPONSORED BY: ${ad.nama_sponsor} (${indeks + 1}/5)</span>
-        ${kontenIklan}
-      </div>
-    `;
-  } else {
-    htmlSidebarIklan += `
-      <div class="w-full h-48 bg-gray-50 rounded-xl border border-dashed border-gray-300 flex flex-col items-center justify-center text-center p-4 ${isSticky}">
-        <span class="text-xs font-black text-gray-400 uppercase tracking-wider">Space Iklan Tersedia</span>
-        <span class="text-[10px] text-gray-400 mt-1">Slot Sidebar ${indeks + 1}/5</span>
-        <a href="mailto:nusamediaterpercaya@gmail.com" class="text-[10px] text-blue-600 font-medium mt-3 hover:underline break-all px-2">
-          Hubungi Redaksi
-        </a>
-      </div>
-    `;
+    htmlSidebarIklan += `<div class="bg-white rounded-xl shadow-sm border border-gray-200 p-4 text-center">${kontenIklan}</div>`;
   }
 });
 
 const tanggalFormat = berita.created_at ? new Date(berita.created_at).toLocaleDateString('id-ID', { dateStyle: 'long' }) : '';
 
-// 🟢 WARNAI/TARUH KODE BARU DI SINI: 
+// PECAH TEKS BERITA MENJADI PARAGRAF & PENGATURAN LINK SOSIAL MEDIA
 const DOMAIN_UTAMA = "https://nusamedia-11t.pages.dev"; 
 const urlArtikelPenuh = encodeURIComponent(`${DOMAIN_UTAMA}/berita/${slug}`);
 const judulArtikelPenuh = encodeURIComponent(berita.judul);
 
-const linkShareWhatsapp = `https://api.whatsapp.com/send/?text=nusamedia-11t.pages.dev`;
-const linkShareFacebook = `https://facebook.com/share/nusamedia-11t.pages.dev`;
-const urlAsliUntukSalin = `https://nusamedia-11t.pages.dev/berita/`;
+const linkShareWhatsapp = `https://whatsapp.com{judulArtikelPenuh}%20${urlArtikelPenuh}`;
+const linkShareFacebook = `https://facebook.com{urlArtikelPenuh}`;
+const urlAsliUntukSalin = `${DOMAIN_UTAMA}/berita/${slug}`;
+
 const kontenMentah = berita.isi_konten || berita.konten || "";
 const daftarParagraf = kontenMentah
   .split(/\r?\n/)
@@ -140,285 +106,169 @@ const daftarParagraf = kontenMentah
 ---
 
 <Layout title={`${berita.judul} | Nusa Media`}>
-  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-    
-            <!-- 🔝 BARIS NAVIGASI PALING ATAS (OPTIMAL DI HP & TABLET) -->
-    <div class="flex flex-col md:flex-row md:items-center md:justify-between border-b border-gray-200 pb-4 mb-6 gap-4">
-      <!-- SISI KIRI: BRANDING UTAMA -->
-      <div class="text-center md:text-left">
-        <a href="/" class="flex flex-col group items-center md:items-start">
-          <span class="text-2xl sm:text-3xl font-black text-red-600 tracking-tighter leading-none">NUSA MEDIA</span>
-          <span class="text-[9px] sm:text-[10px] font-bold text-gray-400 tracking-widest uppercase block mt-1">
-            Media Berita Terpercaya
-          </span>
+  <!-- HEADER & NAVBAR -->
+  <header class="bg-white border-b border-gray-200 shadow-sm sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 py-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+      <div>
+        <a href="/" class="flex flex-col group items-center sm:items-start">
+          <span class="text-2xl sm:text-3xl font-black text-red-600 tracking-tighter leading-none">NUSA<span class="text-slate-800"> MEDIA</span></span>
+          <span class="text-[10px] font-bold text-gray-400 tracking-widest uppercase block mt-1">Media Berita Terpercaya</span>
         </a>
       </div>
-      
-      <!-- SISI KANAN: KONTAK REDAKSI & TOMBOL BERANDA RESPONSIF -->
-      <div class="flex flex-col sm:flex-row items-center gap-3 sm:gap-4 text-xs text-gray-500 w-full md:w-auto justify-center md:justify-end">
-        <!-- Kontak Email Redaksi -->
-        <div class="flex items-center justify-center bg-gray-50 md:bg-transparent px-3 py-1.5 md:p-0 rounded-full border border-gray-100 md:border-0 w-full sm:w-auto text-center">
-          <span class="font-medium mr-1 hidden sm:inline">Kontak Redaksi:</span>
-          <a href="mailto:nusamediaterpercaya@gmail.com" class="hover:text-red-600 transition flex items-center justify-center gap-1 text-slate-700 md:text-gray-500 font-semibold md:font-normal">
-            ✉️ <span class="underline">nusamediaterpercaya@gmail.com</span>
-          </a>
-        </div>
-
-        <!-- Pembatas Vertikal (Sembunyi otomatis di layar kecil ponsel) -->
-        <span class="text-gray-300 hidden sm:inline">|</span>
-
-        <!-- Tombol Kembali Ke Beranda Berformat Tombol Ketuk Lebar di HP -->
-        <a href="/" class="inline-flex items-center justify-center gap-1.5 font-bold text-white sm:text-red-600 bg-red-600 sm:bg-transparent hover:bg-red-700 sm:hover:bg-transparent w-full sm:w-auto px-4 py-2 sm:p-0 rounded-lg sm:rounded-none transition-colors group">
-          <svg xmlns="http://w3.org" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-3.5 h-3.5 transform group-hover:-translate-x-0.5 transition-transform">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" />
-          </svg>
-          Kembali ke Beranda
-        </a>
-      </div>
-    </div>
-
-    <script async custom-element="amp-ad" src="https://cdn.ampproject.org/v0/amp-ad-0.1.js"></script>
-
-    <!-- STRUKTUR GRID KONTEN UTAMA (FIXED: TABLET OTOMATIS KE SAMPING KANAN) -->
-    <div class="grid grid-cols-1 md:grid-cols-12 gap-8 items-start max-w-6xl mx-auto w-full flex flex-col items-center md:items-stretch md:block">
-
-    <!-- SISI KIRI: ISI BERITA LENGKAP & BANNER IKLAN (OPEN DI TABLET) -->
-    <section class="md:col-span-8 space-y-6 w-full max-w-md md:max-w-none mx-auto">
-
-      <!-- 🔥 IKLAN BANNER ATAS ARTIKEL -->
-      {iklanAtas ? (
-        <div class="p-2 bg-white rounded-xl shadow-sm border border-gray-200 text-center flex flex-col items-center justify-center">
-          <span class="text-[9px] font-bold text-gray-400 block mb-1">SPONSORED BY: {iklanAtas.nama_sponsor}</span>
-          {iklanAtas.tipe === 'script' ? <div set:html={iklanAtas.kode_html} /> : <a href={iklanAtas.url_tujuan} target="_blank" rel="noopener noreferrer"><img src={iklanAtas.url_gambar} class="w-full h-auto object-cover rounded-md" /></a>}
-        </div>
-      ) : (
-        <div class="w-full h-32 bg-gray-50 rounded-xl border border-dashed border-gray-300 flex flex-col items-center justify-center text-center p-4">
-          <span class="text-xs font-black text-gray-400 uppercase tracking-wider">Space Iklan Tersedia</span>
-          <span class="text-[10px] text-gray-400 mt-1">Banner Atas</span>
-        </div>
-      )}
-
-      <!-- 📰 KONTEN UTAMA BERITA -->
-      <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6 md:p-8 content-area w-full">
-        <div class="flex items-center gap-3 text-xs mb-4">
-          <span class="bg-red-100 text-red-700 font-bold px-2 py-0.5 rounded text-[10px] uppercase">{berita.kategori || 'Fokus'}</span>
-          <span class="text-gray-400">{tanggalFormat}</span>
-          <span class="text-gray-400">•</span>
-          <span class="text-gray-400">Oleh: <strong class="text-gray-700">{berita.penulis || 'Redaksi'}</strong></span>
-        </div>
-
-        <h1 class="text-xl sm:text-2xl md:text-3xl font-black text-slate-900 leading-tight mb-6">{berita.judul}</h1>
-
-                <!-- 📢 BARIS TOMBOL BAGIKAN MEDIA SOSIAL & SALIN TAUTAN (TAHAP 2: DIOPTIMALKAN & STRUKTUR VALID) -->
-        <div class="flex items-center gap-2 pt-3 pb-3 border-b border-t border-gray-100 flex-wrap my-4">
-          <span class="text-xs font-bold text-gray-400 uppercase tracking-wider mr-1 w-full sm:w-auto block mb-1 sm:mb-0">Bagikan:</span>
-          
-          <!-- WhatsApp -->
-          <a id="btnShareWhatsapp" href={linkShareWhatsapp} target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1.5 bg-emerald-500 hover:bg-emerald-600 text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-sm transition-colors text-decoration-none">
-            WhatsApp
-          </a>
-
-          <!-- Facebook -->
-          <a id="btnShareFacebook" href={linkShareFacebook} target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-sm transition-colors text-decoration-none">
-            Facebook
-          </a>
-
-          <!-- Native Share Button (Disembunyikan di layar laptop dengan kelas 'lg:hidden' agar tidak tumpang tindih) -->
-          <button 
-            id="btn-share-native" 
-            data-judul={berita.judul} 
-            class="inline-flex items-center gap-1.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-sm transition-colors cursor-pointer border-0 lg:hidden"
-            type="button"
-          >
-            <svg class="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24">
-              <path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92s2.92-1.31 2.92-2.92c0-1.61-1.31-2.92-2.92-2.92z"/>
-            </svg>
-            <span>Bagi ke WA / FB</span>
-          </button>
-
-          <!-- Salin Tautan -->
-          <button id="btnSalinTautan" data-url={urlAsliUntukSalin} class="inline-flex items-center gap-1.5 bg-gray-700 hover:bg-gray-800 text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-sm transition-colors cursor-pointer border-0">
-            <span id="teksTombolSalin">Salin Tautan</span>
-          </button>
-        </div>
-
-        {berita.gambar_url && (
-          <div class="rounded-xl overflow-hidden mb-6 bg-slate-100">
-            <img src={berita.gambar_url} alt={berita.judul} class="w-full h-auto max-h-[450px] object-cover" />
-          </div>
-        )}
-
-        <article>
-                  <!-- ISI KONTEN BERITA (TAHAP 3: NYAMAN DI HP & TABLET) -->
-        <!-- text-base di HP agar pas, sm:text-lg di tablet/PC. max-w-3xl mencegah teks melar di tablet landscape -->
-        <div class="text-base sm:text-lg text-gray-800 leading-relaxed text-justify space-y-6 max-w-3xl mx-auto w-full">
-           {daftarParagraf.map((paragraf) => (
-              <p>{paragraf}</p>
-           ))}
-        </div>
-        </article>
-
-      <!-- 🔥 IKLAN BANNER BAWAH ARTIKEL -->
-      {iklanBawah ? (
-        <div class="p-2 bg-white rounded-xl shadow-sm border border-gray-200 text-center flex flex-col items-center justify-center">
-          <span class="text-[9px] font-bold text-gray-400 block mb-1">SPONSORED BY: {iklanBawah.nama_sponsor}</span>
-          {iklanBawah.tipe === 'script' ? <div set:html={iklanBawah.kode_html} /> : <a href={iklanBawah.url_tujuan} target="_blank" rel="noopener noreferrer"><img src={iklanBawah.url_gambar} class="w-full h-auto object-cover rounded-md" /></a>}
-        </div>
-      ) : (
-        <div class="w-full h-32 bg-gray-50 rounded-xl border border-dashed border-gray-300 flex flex-col items-center justify-center text-center p-4">
-          <span class="text-xs font-black text-gray-400 uppercase tracking-wider">Space Iklan Tersedia</span>
-          <span class="text-[10px] text-gray-400 mt-1">Banner Bawah</span>
-        </div>
-      )}
-    </section>
-
-        <!-- SISI KANAN: SIDEBAR WIDGET & IKLAN SUSUN (PINDAH KANAN DI TABLET) -->
-        <aside class="md:col-span-4 space-y-6 w-full max-w-md md:max-w-none mx-auto flex flex-col items-center md:items-stretch overflow-hidden">
-
-        <!-- WIDGET POPULER RESPONSIF -->
-        <!-- p-5 memberikan ruang ketuk yang lebih lega bagi pembaca lewat HP -->
-        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-5 w-full">
-          <h3 class="text-xs font-black text-slate-900 uppercase tracking-wider border-b border-gray-100 pb-2 mb-4 flex items-center gap-1.5">
-            🔥 Berita Terpopuler
-          </h3>
-          <div class="flex flex-col gap-4 w-full">
-            <div set:html={htmlBeritaPopuler} class="w-full space-y-3" />
-          </div>
-        </div>
-
-        <!-- 5 SLOT IKLAN SIDEBAR RESPONSIF -->
-        <!-- Menjamin gambar atau script iklan dari pihak ketiga tidak merusak lebar layout HP -->
-        <div class="space-y-4 w-full [&_img]:w-full [&_img]:h-auto [&_img]:object-cover [&_img]:rounded-lg">
-          <div set:html={htmlSidebarIklan} class="space-y-4 w-full" />
-        </div>
-
-        <!-- AREA AMP ADSENSE DENGAN PROTEKSI OVERFLOW -->
-        <div class="w-full overflow-hidden flex justify-center py-2">
-          <amp-ad width="100vw" height="320"
-                 type="adsense"
-                 data-ad-client="ca-pub-9117310114118325"
-                 data-ad-slot="1346127443"
-                 data-auto-format="rspv"
-                 data-full-width="">
-            <div overflow=""></div>
-          </amp-ad>
-        </div>
-
-      </aside>
-      
-    </main>
-
-        <!-- FOOTER -->
-<footer class="bg-white border-b border-t border-gray-200 mt-12 py-6 text-center text-xs text-gray-400">
-  <div class="max-w-6xl mx-auto px-4">
-    <!-- Menu Tambahan Footer -->
-    <div class="flex justify-center items-center gap-4 mb-3">
-      <a href="mailto:nusamediaterpercaya@gmail.com" class="text-gray-500 hover:text-red-600 transition">
-        Kontak Redaksi
+      <a href="/" class="inline-flex items-center justify-center gap-1.5 font-bold text-blue-600 hover:underline text-xs">
+        🏠 Kembali ke Beranda
       </a>
     </div>
-    
-    <!-- Hak Cipta -->
+  </header>
+
+  <!-- KONTEN UTAMA -->
+  <main class="max-w-7xl w-full mx-auto px-4 py-6 flex-1">
+    <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-12 gap-6 items-start">
+
+      <!-- ARTIKEL UTAMA (KIRI - 8 KOLOM) -->
+      <section class="md:col-span-2 lg:col-span-8 space-y-6">
+        
+        <!-- 🔥 IKLAN BANNER ATAS -->
+        {iklanAtas ? (
+          <div class="p-2 bg-white rounded-xl shadow-sm border border-gray-200 text-center">
+            <span class="text-[9px] font-bold text-gray-400 block mb-1">SPONSORED BY: {iklanAtas.nama_sponsor}</span>
+            <div set:html={iklanAtas.kode_html || `<a href="${iklanAtas.url_tujuan}" target="_blank"><img src="${iklanAtas.url_gambar}" class="w-full h-auto rounded" /></a>`} />
+          </div>
+        ) : (
+          <div class="w-full h-24 bg-gray-50 rounded-xl border border-dashed border-gray-200 flex items-center justify-center text-xs text-gray-400 uppercase font-bold tracking-wider">Slot Iklan Atas</div>
+        )}
+
+        <!-- ISI KARTU KONTEN BERITA -->
+        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-5 md:p-6 lg:p-8 w-full">
+          <div class="flex flex-wrap items-center gap-2 text-xs mb-4">
+            <span class="bg-red-100 text-red-700 font-bold px-2 py-0.5 rounded text-[10px] uppercase">{berita.kategori}</span>
+            <span class="text-gray-400">•</span>
+            <span class="text-gray-500">{tanggalFormat}</span>
+            <span class="text-gray-400">•</span>
+            <span class="text-gray-500">Oleh: <strong class="text-gray-700">{berita.penulis}</strong></span>
+          </div>
+
+          <h1 class="text-xl sm:text-2xl md:text-3xl font-black text-slate-900 leading-tight mb-4">{berita.judul}</h1>
+
+          <!-- PANEL TOMBOL BERBAGI -->
+          <div class="flex items-center gap-2 pt-3 pb-3 border-b border-t border-gray-100 flex-wrap my-4">
+            <span class="text-xs font-bold text-gray-400 uppercase tracking-wider mr-1">Bagikan:</span>
+            <a id="btnShareWhatsapp" href="#" target="_blank" class="bg-emerald-500 text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-sm">WhatsApp</a>
+            <a id="btnShareFacebook" href="#" target="_blank" class="bg-blue-600 text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-sm">Facebook</a>
+            <button id="btn-share-native" class="bg-indigo-600 text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-sm lg:hidden border-0 cursor-pointer" type="button">Sistem HP</button>
+            <button id="btnSalinTautan" class="bg-gray-700 text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-sm border-0 cursor-pointer"><span id="teksTombolSalin">Salin Tautan</span></button>
+          </div>
+
+          <!-- GAMBAR BERITA -->
+          {berita.gambar_url && (
+            <div class="rounded-xl overflow-hidden mb-6 bg-slate-100 max-h-[450px]">
+              <img src={berita.gambar_url} alt={berita.judul} class="w-full h-auto object-cover" />
+            </div>
+          )}
+
+          <!-- PARAGRAF TEKS BERITA -->
+          <div class="text-base sm:text-lg text-gray-800 leading-relaxed text-justify space-y-6 max-w-3xl mx-auto w-full">
+            {daftarParagraf.length > 0 ? (
+              daftarParagraf.map((paragraf) => <p set:html={paragraf}></p>)
+            ) : (
+              <div set:html={berita.isi_konten} />
+            )}
+          </div>
+        </div>
+
+        <!-- 🔥 IKLAN BANNER BAWAH -->
+        {iklanBawah ? (
+          <div class="p-2 bg-white rounded-xl shadow-sm border border-gray-200 text-center">
+            <span class="text-[9px] font-bold text-gray-400 block mb-1">SPONSORED BY: {iklanBawah.nama_sponsor}</span>
+            <div set:html={iklanBawah.kode_html || `<a href="${iklanBawah.url_tujuan}" target="_blank"><img src="${iklanBawah.url_gambar}" class="w-full h-auto rounded" /></a>`} />
+          </div>
+        ) : (
+          <div class="w-full h-24 bg-gray-50 rounded-xl border border-dashed border-gray-200 flex items-center justify-center text-xs text-gray-400 uppercase font-bold tracking-wider mt-6">Slot Iklan Bawah</div>
+        )}
+      </section>
+
+      <!-- SIDEBAR (KANAN - 4 KOLOM) -->
+      <aside class="md:col-span-1 lg:col-span-4 space-y-6 w-full lg:sticky lg:top-24">
+        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-5 w-full">
+          <h3 class="text-xs font-black text-slate-900 uppercase tracking-wider border-b border-gray-100 pb-2 mb-4">🔥 Berita Terpopuler</h3>
+          <div class="flex flex-col gap-4 w-full">
+            <Fragment set:html={htmlBeritaPopuler} />
+          </div>
+        </div>
+
+        <div class="space-y-4 w-full">
+          <Fragment set:html={htmlSidebarIklan} />
+        </div>
+      </aside>
+
+    </div>
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="bg-white border-t border-gray-200 mt-12 py-6 text-center text-xs text-gray-400">
     <p>&copy; {new Date().getFullYear()} NUSA MEDIA. All Rights Reserved.</p>
-  </div>
-</footer>
+  </footer>
+</Layout>
 
   </body>
 </html>
 
-<script>
-  // 1. LOGIKA UNTUK TOMBOL SALIN TAUTAN
-  const inisialisasiSalinLink = () => {
-    // DISESUAIKAN: Menggunakan ID 'btnSalinTautan' dan 'teksTombolSalin' sesuai HTML Anda
-    const tombol = document.getElementById('btnSalinTautan');
-    const teksTombol = document.getElementById('teksTombolSalin');
+<script is:inline>
+  const inisialisasiFiturArtikelNusa = () => {
+    const urlBeritaAktif = window.location.href;
+    const judulBeritaText = document.querySelector('h1')?.textContent || "NUSA MEDIA";
 
-    if (tombol && teksTombol) {
-      tombol.addEventListener('click', async () => {
-        // Mengambil URL asli dari browser saat ini jika atribut data-url kosong
-        const linkBerita = tombol.getAttribute('data-url') || window.location.href;
+    // 1. FUNGSI SALIN TAUTAN
+    const tombolSalin = document.getElementById('btnSalinTautan');
+    const teksTombolSalin = document.getElementById('teksTombolSalin');
+
+    if (tombolSalin && teksTombolSalin) {
+      tombolSalin.addEventListener('click', async (e) => {
+        e.preventDefault();
         try {
-          await navigator.clipboard.writeText(linkBerita);
-          teksTombol.textContent = "Link Berhasil Disalin! 👍";
+          await navigator.clipboard.writeText(urlBeritaAktif);
+          teksTombolSalin.textContent = "✓ Berhasil Disalin!";
+          tombolSalin.classList.add('bg-emerald-600');
           
           setTimeout(() => {
-            teksTombol.textContent = "Salin Tautan";
+            teksTombolSalin.textContent = "Salin Tautan";
+            tombolSalin.classList.remove('bg-emerald-600');
           }, 2000);
         } catch (err) {
-          console.error('Gagal menyalin tautan:', err);
+          console.error('Gagal menyalin:', err);
         }
       });
     }
-  };
 
-  // 2. LOGIKA UNTUK OTOMATISASI URL WHATSAPP & FACEBOOK
-  const inisialisasiTombolBagikan = () => {
-    const urlBeritaAktif = window.location.href;
-    const judulBeritaText = "Baca berita menarik ini di NUSA MEDIA: ";
-
-    // Mengisi tautan WhatsApp secara dinamis
-    const tombolWA = document.getElementById('share-wa-nusa');
+    // 2. LOGIKA TOMBOL BAGIKAN MEDIA SOSIAL
+    const tombolWA = document.getElementById('btnShareWhatsapp');
     if (tombolWA) {
-      tombolWA.setAttribute('href', `https://whatsapp.com{encodeURIComponent(judulBeritaText + urlBeritaAktif)}`);
+      tombolWA.setAttribute('href', `https://whatsapp.com{encodeURIComponent(judulBeritaText + "\n" + urlBeritaAktif)}`);
     }
 
-    // Mengisi tautan Facebook secara dinamis
-    const tombolFB = document.getElementById('share-fb-nusa');
+    const tombolFB = document.getElementById('btnShareFacebook');
     if (tombolFB) {
       tombolFB.setAttribute('href', `https://facebook.com{encodeURIComponent(urlBeritaAktif)}`);
     }
-  };
 
-  // Jalankan semua fungsi saat halaman selesai dimuat di browser
-  inisialisasiSalinLink();
-  inisialisasiTombolBagikan();
-</script>
-
-<script>
-  // Logika ditaruh di dalam fungsi agar aman dieksekusi di browser pembaca
-  const jalankanSistemBerbagiNusa = () => {
-    const tombolShareBaru = document.getElementById('btn-share-native');
-
-    if (tombolShareBaru) {
-      tombolShareBaru.addEventListener('click', async (e) => {
+    // 3. FITUR BAGIKAN BAWAHAN HP (NATIVE)
+    const tombolShareNative = document.getElementById('btn-share-native');
+    if (tombolShareNative) {
+      tombolShareNative.addEventListener('click', async (e) => {
         e.preventDefault();
-        
-        // Browser mengambil URL dan judul asli secara real-time saat diklik
-        const judulBerita = tombolShareBaru.getAttribute('data-judul') || "NUSA MEDIA";
-        let urlBerita = window.location.href;
-
-        // Bersihkan parameter fbclid Facebook jika ada agar link rapi
-        if (urlBerita.includes('fbclid=')) {
-          try {
-            const objekURL = new URL(urlBerita);
-            objekURL.searchParams.delete('fbclid');
-            urlBerita = objekURL.toString();
-          } catch (err) {
-            console.error(err);
-          }
-        }
-
-        // Eksekusi Fitur Bagikan Native HP
         if (navigator.share) {
           try {
-            await navigator.share({
-              title: judulBerita,
-              text: `${judulBerita}\n\n`,
-              url: urlBerita,
-            });
+            await navigator.share({ title: judulBeritaText, url: urlBeritaAktif });
           } catch (err) {
             console.log('Batal berbagi:', err);
           }
-        } else {
-          // Jalur cadangan jika dibuka lewat komputer/laptop (Membuka WA Web)
-          const linkBackupWA = `https://whatsapp.com{encodeURIComponent(judulBerita + " " + urlBerita)}`;
-          window.open(linkBackupWA, '_blank', 'noopener,noreferrer');
         }
       });
     }
   };
 
-  // Pastikan skrip dimuat ulang dengan aman oleh lifecycle Astro
-  document.addEventListener('astro:page-load', jalankanSistemBerbagiNusa);
-  jalankanSistemBerbagiNusa();
+  document.addEventListener('astro:page-load', inisialisasiFiturArtikelNusa);
+  document.addEventListener('DOMContentLoaded', inisialisasiFiturArtikelNusa);
+  inisialisasiFiturArtikelNusa();
 </script>
+
